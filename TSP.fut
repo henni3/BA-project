@@ -27,7 +27,7 @@ let segmented_scan [n] 't (op: t -> t -> t) (ne: t)
 
 
 
-let main (n : i32) : []i32
+let main (n : i32) : []i32 =
     let totIter = ((n-1)*(n-2))/2
     let len = n-2
     let aoa_val = replicate len 1
@@ -37,5 +37,5 @@ let main (n : i32) : []i32
                       ) (iota len)
     let flagArr = mkFlagArray aoa_shp 0 aoa_val
     let Iarr = scan (+) 0 flagArr |> map (\x -> x-1)
-    let Jarr = segmented_scan (+) 0 flagArr (replicate totIter 1) |> map (\x -> x-1)
-    Iarr
+    in segmented_scan (+) 0 flagArr (replicate totIter 1) |> map (\x -> x-1)
+    
