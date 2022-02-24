@@ -1,17 +1,17 @@
 -- mkFlagArray is taken from PMPH lecture notes p. 48
 let mkFlagArray 't [m] 
-        (aoa_shp: [m]i64) (zero: t)
-        (aoa_val: [m]t) : []i64 =
+        (aoa_shp: [m]i32) (zero: t)
+        (aoa_val: [m]t) : []t =
     let shp_rot = map (\i -> if i == 0 then 0
                              else aoa_shp[i-1]
                       ) (iota m)
     let shp_scn = scan (+) 0 shp_rot    
-    let aoa_len = shp_scn[m-1]+ aoa_shp[m-1]
+    let aoa_len = shp_scn[m-1]+ aoa_shp[m-1] |> i64.i32
     let shp_ind = map2 (\shp ind -> 
                         if shp == 0 then -1
                         else ind
                         ) aoa_shp shp_scn
-    in scatter (replicate aoa_len zero) shp_ind aoa_val
+    in scatter (replicate aoa_len zero) (map i64.i32 shp_ind) aoa_val
 
 -- segmented_scan is taken from PMPH Futhark code 
 let segmented_scan [n] 't (op: t -> t -> t) (ne: t)
@@ -39,17 +39,17 @@ let changeComparator (t1 : (i32, i32, i32)) (t2: (i32, i32, i32)) : (i32, i32, i
 
 -- findMinChange is the parallel implementation of the two for loops
 -- in the 2-opt move algorithm
-let findMinChange [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : (i32, i32, i32) =
-    let totIter = ((cities-1)*(cities-2))/2
-    let len = cities-2
+let findMinChange [m] [n] (dist : [m]i32) (tour : [n]i32) (cities : i32) : (i32, i32, i32) =
+    let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
+    let len = i64.i32 (cities-2)
     let aoa_val = replicate len 1i32
-    let temp = map (+1) (iota len)
+    let temp = map (+1) (iota len) |> map i32.i64
     let aoa_shp = map (\i ->
                        temp[len - i - 1] 
                       ) (iota len)
-    let flagArr = mkFlagArray aoa_shp 0i64 aoa_val
-    let Iarr = scan (+) 0i64 flagArr |> map (\x -> x-1)
-    let Jarr = segmented_scan (+) 0i64 flagArr (replicate totIter 1) |> map (\x -> x-1)
+    let flagArr = mkFlagArray aoa_shp 0i32 aoa_val
+    let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
+    let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
     let changeArr = map (\ind -> 
                         let i = Iarr[ind]
                         let iCity = tour[i]
@@ -65,17 +65,20 @@ let findMinChange [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : (i32
     in reduce changeComparator (2147483647, -1, -1) changeArr
 
 -- This function swaps the two edges that produce the lowest cost
-let swap [m] (i : i32) (j : i32) (cities : i32) (tour : [m]i32) : [m]i3 =
+let swap [m] (i : i32) (j : i32) (tour : [m]i32) : [m]i32 =
+    --let cities = m - 1 in
+    map i32.i64 (iota m) |>
     map(\ind ->
         if ind < i || ind > j then
             tour[ind]
         else
             tour[j - (ind - i)]
-    ) (iota cities + 1) 
+    ) 
 
 
-let main (cities : i32) : []i32 =
+let main : []i32 =
     let cities = 5
+    let tour = [0,1,2,3,4,0]
     let distM = [0,4,6,8,3,
                  4,0,4,5,2,
                  6,4,0,2,3,
