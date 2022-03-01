@@ -30,13 +30,13 @@ int* twoOptMove(int** distM, int* tour, int cities){
                 tj = iterativeTour[j];
                 tjplus1 = iterativeTour[j+1];
                 change = distM[ti][tj] + distM[tiplus1][tjplus1] - (distM[ti][tiplus1] + distM[tj][tjplus1]);
-                printf("change is %d \n", change);
+                //printf("change is %d \n", change);
                 if(change < minChange){
                     minChange = change;
-                    printf("minchange is %d with index i %d and index j %d \n", minChange, i, j);
+                    //printf("minchange is %d with index i %d and index j %d \n", minChange, i, j);
                     mini = i;
                     minj = j;
-                    printf("after min\n");
+                    //printf("after min\n");
                 }   
             }
         }
@@ -94,7 +94,8 @@ int main() {
     }*/
 
     int* tour = malloc((cities + 1 ) * sizeof(int));
-    createTour(tour, cities);
+   //createTour(tour, cities);
+    memcpy(tour, (int[6]) {5,3,1,4,2,5}, sizeof(int) * (column));
     int * opt_tour = twoOptMove(distM, tour, cities);
     int oldCost = 0;
     int newCost = 0;
@@ -102,8 +103,8 @@ int main() {
         if(i < cities){
             oldCost += distM[tour[i]][tour[i+1]];
             newCost += distM[opt_tour[i]][opt_tour[i+1]];
-            printf("new_cost is = %d \n",newCost);
-            printf("distM: %d\n", distM[opt_tour[i]][opt_tour[i+1]]);
+            //printf("new_cost is = %d \n",newCost);
+            //printf("distM: %d\n", distM[opt_tour[i]][opt_tour[i+1]]);
         }
         printf("%d is City %d \n", i, opt_tour[i]);
     }

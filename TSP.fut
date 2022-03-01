@@ -66,30 +66,39 @@ let findMinChange [m] [n] (dist : [m]i32) (tour : [n]i32) (cities : i32) : (i32,
 
 -- This function swaps the two edges that produce the lowest cost
 let swap [m] (i : i32) (j : i32) (tour : [m]i32) : [m]i32 =
-    --let cities = m - 1 in
+    let minI = i+1 in 
     map i32.i64 (iota m) |>
     map(\ind ->
-        if ind < i || ind > j then
+        if ind < minI || ind > j then
             tour[ind]
         else
-            tour[j - (ind - i)]
+            tour[j - (ind - minI)]
     ) 
 
+let cost [n] [m] (tour : [n]i32) (distM : [m]i32) : i32 = 
+        map (\i ->  distM[tour[i] * i32.i64(n-1) + tour[i+1]]
+            ) (iota (n-1)) |> reduce (+) 0
 
-let main : []i32 =
+let twoOptAlg [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : (i32, []i32) =
+    --let retTour = tour
+    let init = findMinChange distM tour cities
+    --let xs = findMinChange distM tour cities
+    let rs = loop (i, xs, cond) = (0, tour, init)  while cond.0 < 0 do 
+        (i+cond.0, swap cond.1 cond.2 xs, findMinChange distM xs cities)
+    in (rs.0, rs.1)
+
+let main : (i32, i32, []i32, i32) =
     let cities = 5
-    let tour = [0,1,2,3,4,0]
+    let tour = [4,2,3,1,0,4]
     let distM = [0,4,6,8,3,
                  4,0,4,5,2,
                  6,4,0,2,3,
                  8,5,2,0,4,
                  3,2,3,4,0]
-    
-    let minChange = findMinChange distM tour cities
-    in swap minChange.1 minChange.2 tour
-
-
-    
-
-    
+    let oldCost = cost tour distM            
+    --let minTour = twoOptAlg distM tour cities
+    let firstChange = findMinChange distM tour cities
+    let firstTour = swap firstChange.1 firstChange.2 tour
+    let newCost = cost firstTour distM
+    in (oldCost, newCost, firstTour, firstChange.0)
     
