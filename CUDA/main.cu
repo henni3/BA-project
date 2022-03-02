@@ -32,7 +32,7 @@ int twoOptMove(int block_size, int cities){
     scanInc< Add<int> > (block_size, totIter, index_shp_sc_d, index_shp_d, d_tmp_int);
 
     // 2. create an array of zeros
-    replicate0<<< num_blocks, block_size >>> ( tot_size, flags_d );
+    replicate0<<< num_blocks, block_size >>> ( totIter, flags_d );
 
     // 3. scatter the flag array
     mkFlags<<< num_blocks_shp, block_size >>> ( mat_rows, mat_shp_sc_d, flags_d );
