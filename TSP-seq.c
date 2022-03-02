@@ -41,13 +41,13 @@ int* twoOptMove(int** distM, int* tour, int cities){
             }
         }
         if (minChange < 0){
-            printf("before swap\n");
+            //printf("before swap\n");
             twoOptSwap(iterativeTour, mini, minj);
             for (int i = 0; i < cities + 1; i++) {
                 printf("%d ", iterativeTour[i]);
             }
             printf("\n");
-            printf("after swap\n");
+            //printf("after swap\n");
         }
     }
     return iterativeTour;
