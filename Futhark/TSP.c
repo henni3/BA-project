@@ -4252,12 +4252,12 @@ static inline f16 fpconv_f64_f16(double x) {
 
 static int init_constants(struct futhark_context *);
 static int free_constants(struct futhark_context *);
-static int32_t static_array_realtype_9567[6] = {4, 2, 3, 1, 0, 4};
-static int32_t static_array_realtype_9568[25] = {0, 4, 6, 8, 3, 4, 0, 4, 5, 2,
-                                                 6, 4, 0, 2, 3, 8, 5, 2, 0, 4,
-                                                 3, 2, 3, 4, 0};
-static int32_t counter_mem_realtype_9630[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static int32_t counter_mem_realtype_9644[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int32_t static_array_realtype_10132[6] = {4, 2, 0, 3, 1, 4};
+static int32_t static_array_realtype_10133[25] = {0, 4, 6, 8, 3, 4, 0, 4, 5, 2,
+                                                  6, 4, 0, 2, 3, 8, 5, 2, 0, 4,
+                                                  3, 2, 3, 4, 0};
+static int32_t counter_mem_realtype_10195[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static int32_t counter_mem_realtype_10209[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 struct memblock_device {
     int *references;
     cl_mem mem;
@@ -5462,119 +5462,121 @@ static const char *opencl_program[] =
                    "e __local uint32_t *p, uint32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMax((uint32_t*)p, x);\n#else\n  return atomic_max(p, x);\n#endif\n}\n\ninline uint32_t atomic_umin_i32_global(volatile __global uint32_t *p, uint32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((uint32_t*)p, x);\n#else\n  return atomic_min(p, x);\n#endif\n}\n\ninline uint32_t atomic_umin_i32_local(volatile __local uint32_t *p, uint32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((uint32_t*)p, x);\n#else\n  return atomic_min(p, x);\n#endif\n}\n\ninline int32_t atomic_and_i32_global(volatile __global int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAnd((int32_t*)p, x);\n#else\n  return atomic_and(p, x);\n#endif\n}\n\ninline int32_t atomic_and_i32_local(volatile __local int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAnd((int32_t*)p, x);\n#else\n  return atomic_and(p, x);\n#endif\n}\n\ninline int32_t atomic_or_i32_global(volatile __global int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicOr((int32_t*)p, x);\n#else\n  return atomic_or(p, x);\n#endif\n}\n\ninline int32_t atomic_or_i32_local(volatile __local int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicOr((int32_t*)p, x);\n#else\n  return atomic_or(p, x);\n#endif\n}\n\ninline int32_t atomic_xor_i32_global(volatile __global int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicXor((int32_t*)p, x);\n#else\n  return atomic_xor(p, x);\n#endif\n}\n\ninline int32_t atomic_xor_i32_local(volatile __local int32_t *p, int32_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicXor((int32_t*)p, x);\n#else\n  return atomic_xor(p, x);\n#endif\n}\n\n// Start of 64 bit atomics\n\ninline int64_t atomic_xchg_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicExch((uint64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\ninline int64_t atomic_xchg_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicExch((uint64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\ninline int64_t atomic_cmpxchg_i64_global(volatile",
                    " __global int64_t *p,\n                                         int64_t cmp, int64_t val) {\n#ifdef FUTHARK_CUDA\n  return atomicCAS((uint64_t*)p, cmp, val);\n#else\n  return atom_cmpxchg(p, cmp, val);\n#endif\n}\n\ninline int64_t atomic_cmpxchg_i64_local(volatile __local int64_t *p,\n                                        int64_t cmp, int64_t val) {\n#ifdef FUTHARK_CUDA\n  return atomicCAS((uint64_t*)p, cmp, val);\n#else\n  return atom_cmpxchg(p, cmp, val);\n#endif\n}\n\ninline int64_t atomic_add_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAdd((uint64_t*)p, x);\n#else\n  return atom_add(p, x);\n#endif\n}\n\ninline int64_t atomic_add_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAdd((uint64_t*)p, x);\n#else\n  return atom_add(p, x);\n#endif\n}\n\n#ifdef FUTHARK_F64_ENABLED\n\ninline double atomic_fadd_f64_global(volatile __global double *p, double x) {\n#if defined(FUTHARK_CUDA) && __CUDA_ARCH__ >= 600\n  return atomicAdd((double*)p, x);\n#else\n  union { int64_t i; double f; } old;\n  union { int64_t i; double f; } assumed;\n  old.f = *p;\n  do {\n    assumed.f = old.f;\n    old.f = old.f + x;\n    old.i = atomic_cmpxchg_i64_global((volatile __global int64_t*)p, assumed.i, old.i);\n  } while (assumed.i != old.i);\n  return old.f;\n#endif\n}\n\ninline double atomic_fadd_f64_local(volatile __local double *p, double x) {\n#if defined(FUTHARK_CUDA) && __CUDA_ARCH__ >= 600\n  return atomicAdd((double*)p, x);\n#else\n  union { int64_t i; double f; } old;\n  union { int64_t i; double f; } assumed;\n  old.f = *p;\n  do {\n    assumed.f = old.f;\n    old.f = old.f + x;\n    old.i = atomic_cmpxchg_i64_local((volatile __local int64_t*)p, assumed.i, old.i);\n  } while (assumed.i != old.i);\n  return old.f;\n#endif\n}\n\n#endif\n\ninline int64_t atomic_smax_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMax((int64_t*)p, x);\n#else\n  return atom_max(p, x);\n#endif\n}\n\ninline int64_t atomic_smax_i64_local(volatile __loca",
                    "l int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMax((int64_t*)p, x);\n#else\n  return atom_max(p, x);\n#endif\n}\n\ninline int64_t atomic_smin_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((int64_t*)p, x);\n#else\n  return atom_min(p, x);\n#endif\n}\n\ninline int64_t atomic_smin_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((int64_t*)p, x);\n#else\n  return atom_min(p, x);\n#endif\n}\n\ninline uint64_t atomic_umax_i64_global(volatile __global uint64_t *p, uint64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMax((uint64_t*)p, x);\n#else\n  return atom_max(p, x);\n#endif\n}\n\ninline uint64_t atomic_umax_i64_local(volatile __local uint64_t *p, uint64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMax((uint64_t*)p, x);\n#else\n  return atom_max(p, x);\n#endif\n}\n\ninline uint64_t atomic_umin_i64_global(volatile __global uint64_t *p, uint64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((uint64_t*)p, x);\n#else\n  return atom_min(p, x);\n#endif\n}\n\ninline uint64_t atomic_umin_i64_local(volatile __local uint64_t *p, uint64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicMin((uint64_t*)p, x);\n#else\n  return atom_min(p, x);\n#endif\n}\n\ninline int64_t atomic_and_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAnd((int64_t*)p, x);\n#else\n  return atom_and(p, x);\n#endif\n}\n\ninline int64_t atomic_and_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicAnd((int64_t*)p, x);\n#else\n  return atom_and(p, x);\n#endif\n}\n\ninline int64_t atomic_or_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicOr((int64_t*)p, x);\n#else\n  return atom_or(p, x);\n#endif\n}\n\ninline int64_t atomic_or_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicOr((int64_t*)p, x);\n#else\n  return atom_or(p, x);\n#endif\n}\n\ninline int64_t atomic_xor_i64_global(volatile __global int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n",
-                   "  return atomicXor((int64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\ninline int64_t atomic_xor_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicXor((int64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\n// End of atomics.h\n\n\n\n__kernel void builtinzhreplicate_i32zireplicate_9277(int32_t num_elems_9274,\n                                                     int32_t val_9275, __global\n                                                     unsigned char *mem_9273)\n{\n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    int32_t replicate_gtid_9277;\n    int32_t replicate_ltid_9278;\n    int32_t replicate_gid_9279;\n    \n    replicate_gtid_9277 = get_global_id(0);\n    replicate_ltid_9278 = get_local_id(0);\n    replicate_gid_9279 = get_group_id(0);\n    \n    int64_t slice_9283 = num_elems_9274;\n    int64_t rep_i_9282 = sext_i32_i64(replicate_gtid_9277);\n    int64_t remnant_9284 = sext_i32_i64(replicate_gtid_9277) - rep_i_9282;\n    \n    if (slt64(replicate_gtid_9277, num_elems_9274)) {\n        ((__global int32_t *) mem_9273)[rep_i_9282] = val_9275;\n    }\n    \n  error_0:\n    return;\n}\n__kernel void scan_stage1_8988(__global int *global_failure,\n                               int failure_is_an_option, __global\n                               int64_t *global_failure_args, __local volatile\n                               int64_t *scan_arr_mem_9221_backing_aligned_0,\n                               int32_t num_threads_9215, __global\n                               unsigned char *mem_9161)\n{\n    #define segscan_group_sizze_8983 (segscan_group_sizze_8982)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9221_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9221_backing_aligned_0;\n    volatile __local bool local_failure;\n  ",
-                   "  \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n    }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *scan_arr_mem_9221;\n    int32_t global_tid_9216;\n    int32_t local_tid_9217;\n    int64_t group_sizze_9220;\n    int32_t wave_sizze_9219;\n    int32_t group_tid_9218;\n    \n    global_tid_9216 = get_global_id(0);\n    local_tid_9217 = get_local_id(0);\n    group_sizze_9220 = get_local_size(0);\n    wave_sizze_9219 = LOCKSTEP_WIDTH;\n    group_tid_9218 = get_group_id(0);\n    \n    int32_t phys_tid_8988 = global_tid_9216;\n    \n    scan_arr_mem_9221 = (__local unsigned char *) scan_arr_mem_9221_backing_0;\n    \n    int32_t x_8729;\n    int32_t x_8730;\n    \n    x_8729 = 0;\n    for (int64_t j_9223 = 0; j_9223 < sdiv_up64((int64_t) 3,\n                                                sext_i32_i64(num_threads_9215));\n         j_9223++) {\n        int64_t chunk_offset_9224 = segscan_group_sizze_8983 * j_9223 +\n                sext_i32_i64(group_tid_9218) * (segscan_group_sizze_8983 *\n                                                sdiv_up64((int64_t) 3,\n                                                          sext_i32_i64(num_threads_9215)));\n        int64_t flat_idx_9225 = chunk_offset_9224 +\n                sext_i32_i64(local_tid_9217);\n        int64_t gtid_8987 = flat_idx_9225;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_8987, (int64_t) 3)) {\n                bool cond_8733 = gtid_8987 == (int64_t) 0;\n                int32_t defunc_0_f_res_8734;\n                \n                if (cond_8733) {\n                    defunc_0_f_res_8734 = 0;\n                } else {\n                    int64_t i_8735 = sub64(gtid_8987, (int64_t) 1);\n                    bool x_8736 = sle64((int64_t) 0, i_8735);\n                    bool y_8737 = slt64(i_8735, (int64_t) 3);\n                    bool bounds_check_8738 = x_8736 && y_8737;\n         ",
-                   "           bool index_certs_8739;\n                    \n                    if (!bounds_check_8738) {\n                        {\n                            if (atomic_cmpxchg_i32_global(global_failure, -1,\n                                                          0) == -1) {\n                                global_failure_args[0] = (int64_t) i_8735;\n                                global_failure_args[1] = (int64_t) (int64_t) 3;\n                                ;\n                            }\n                            local_failure = true;\n                            goto error_0;\n                        }\n                    }\n                    \n                    int64_t convop_x_8740 = sub64((int64_t) 3, i_8735);\n                    int32_t index_primexp_8741 = sext_i64_i32(convop_x_8740);\n                    \n                    defunc_0_f_res_8734 = index_primexp_8741;\n                }\n                // write to-scan values to parameters\n                {\n                    x_8730 = defunc_0_f_res_8734;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n            // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_8987, (int64_t) 3)) {\n                    x_8730 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                int32_t defunc_1_op_res_8731 = add32(x_8729, x_8730);\n                \n                ((__local\n                  int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)] =\n                    defunc_1_op_res_8731;\n            }\n            \n          error_0:\n            barrier(CLK_LOCAL_MEM_FENCE);\n            if (local_failure)\n                return;\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            int32_t x_9226;\n            int32_t x_9227;\n            int3",
-                   "2_t x_9229;\n            int32_t x_9230;\n            bool ltid_in_bounds_9232 = slt64(sext_i32_i64(local_tid_9217),\n                                             segscan_group_sizze_8983);\n            int32_t skip_threads_9233;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9232) {\n                    x_9227 = ((volatile __local\n                               int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)];\n                    if ((local_tid_9217 - squot32(local_tid_9217, 32) * 32) ==\n                        0) {\n                        x_9226 = x_9227;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9233 = 1;\n                while (slt32(skip_threads_9233, 32)) {\n                    bool thread_active_9234 = sle32(skip_threads_9233,\n                                                    local_tid_9217 -\n                                                    squot32(local_tid_9217,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9232;\n                    \n                    if (thread_active_9234) {\n                        // read operands\n                        {\n                            x_9226 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217) -\n                                                                     sext_i32_i64(skip_threads_9233)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9234) {\n                            int32_t defunc_1_op_res_9228 = add32(x_9226,\n                                                                 x_9227);\n                            \n                            x_9226 = defunc_1_op_res_9228;\n                        }",
-                   "\n                    }\n                    if (sle32(wave_sizze_9219, skip_threads_9233)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9234) {\n                        // write result\n                        {\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)] =\n                                x_9226;\n                            x_9227 = x_9226;\n                        }\n                    }\n                    if (sle32(wave_sizze_9219, skip_threads_9233)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9233 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9217 - squot32(local_tid_9217, 32) * 32) == 31 &&\n                    ltid_in_bounds_9232) {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9221)[sext_i32_i64(squot32(local_tid_9217,\n                                                                         32))] =\n                        x_9226;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9235;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9217, 32) == 0 &&\n                        ltid_in_bounds_9232) {\n                        x_9230 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)];\n                        if ((local_tid_9217 - squot32(local_tid_9217, 32) *\n                             32) == 0) {\n                            x_9229 = x_9230;\n         ",
-                   "               }\n                    }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9235 = 1;\n                    while (slt32(skip_threads_9235, 32)) {\n                        bool thread_active_9236 = sle32(skip_threads_9235,\n                                                        local_tid_9217 -\n                                                        squot32(local_tid_9217,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9217, 32) == 0 &&\n                              ltid_in_bounds_9232);\n                        \n                        if (thread_active_9236) {\n                            // read operands\n                            {\n                                x_9229 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217) -\n                                                                         sext_i32_i64(skip_threads_9235)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9236) {\n                                int32_t defunc_1_op_res_9231 = add32(x_9229,\n                                                                     x_9230);\n                                \n                                x_9229 = defunc_1_op_res_9231;\n                            }\n                        }\n                        if (sle32(wave_sizze_9219, skip_threads_9235)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9236) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)] =",
-                   "\n                                    x_9229;\n                                x_9230 = x_9229;\n                            }\n                        }\n                        if (sle32(wave_sizze_9219, skip_threads_9235)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9235 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9237 = squot32(local_tid_9217, 32) == 0 ||\n                 !ltid_in_bounds_9232;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9237) {\n                        x_9227 = x_9226;\n                        x_9226 = ((__local\n                                   int32_t *) scan_arr_mem_9221)[sext_i32_i64(squot32(local_tid_9217,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9237) {\n                        int32_t defunc_1_op_res_9228 = add32(x_9226, x_9227);\n                        \n                        x_9226 = defunc_1_op_res_9228;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9237) {\n                        ((__local\n                          int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)] =\n                            x_9226;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9217, 32) == 0 && ltid_in_bounds_9232) {\n                    ((__local\n                 ",
-                   "     int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)] =\n                        x_9227;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_8987, (int64_t) 3)) {\n                    int32_t tmp_9238;\n                    \n                    tmp_9238 = ((__local\n                                 int32_t *) scan_arr_mem_9221)[sext_i32_i64(local_tid_9217)];\n                    ((__global int32_t *) mem_9161)[gtid_8987] = tmp_9238;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9239 = 0;\n                bool should_load_carry_9240 = local_tid_9217 == 0 &&\n                     !crosses_segment_9239;\n                \n                if (should_load_carry_9240) {\n                    x_8729 = ((__local\n                               int32_t *) scan_arr_mem_9221)[segscan_group_sizze_8983 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9240) {\n                    x_8729 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_8983\n}\n__kernel void scan_stage1_9002(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9303_backing_aligned_0,\n                               int64_t defunc_0_f_res_8744,\n                               int32_t num_threads_9297, __global\n                               unsigned char *mem_9164, __global\n                               unsigned char *mem_9169)\n{\n    #define segscan_group_sizze_8997 (segscan_group_sizze_8996)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsi",
-                   "gned char *restrict scan_arr_mem_9303_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9303_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9303;\n    int32_t global_tid_9298;\n    int32_t local_tid_9299;\n    int64_t group_sizze_9302;\n    int32_t wave_sizze_9301;\n    int32_t group_tid_9300;\n    \n    global_tid_9298 = get_global_id(0);\n    local_tid_9299 = get_local_id(0);\n    group_sizze_9302 = get_local_size(0);\n    wave_sizze_9301 = LOCKSTEP_WIDTH;\n    group_tid_9300 = get_group_id(0);\n    \n    int32_t phys_tid_9002 = global_tid_9298;\n    \n    scan_arr_mem_9303 = (__local unsigned char *) scan_arr_mem_9303_backing_0;\n    \n    int32_t x_8765;\n    int32_t x_8766;\n    \n    x_8765 = 0;\n    for (int64_t j_9305 = 0; j_9305 < sdiv_up64(defunc_0_f_res_8744,\n                                                sext_i32_i64(num_threads_9297));\n         j_9305++) {\n        int64_t chunk_offset_9306 = segscan_group_sizze_8997 * j_9305 +\n                sext_i32_i64(group_tid_9300) * (segscan_group_sizze_8997 *\n                                                sdiv_up64(defunc_0_f_res_8744,\n                                                          sext_i32_i64(num_threads_9297)));\n        int64_t flat_idx_9307 = chunk_offset_9306 +\n                sext_i32_i64(local_tid_9299);\n        int64_t gtid_9001 = flat_idx_9307;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_9001, defunc_0_f_res_8744)) {\n                int32_t x_8768;\n                \n                x_8768 = ((__global int32_t *) mem_9164)[gtid_9001];\n                // write to-scan values to parameters\n                {\n                    x_8766 = x_8768;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n      ",
-                   "      // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_9001, defunc_0_f_res_8744)) {\n                    x_8766 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                int32_t defunc_1_op_res_8767 = add32(x_8765, x_8766);\n                \n                ((__local\n                  int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)] =\n                    defunc_1_op_res_8767;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            int32_t x_9308;\n            int32_t x_9309;\n            int32_t x_9311;\n            int32_t x_9312;\n            bool ltid_in_bounds_9314 = slt64(sext_i32_i64(local_tid_9299),\n                                             segscan_group_sizze_8997);\n            int32_t skip_threads_9315;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9314) {\n                    x_9309 = ((volatile __local\n                               int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)];\n                    if ((local_tid_9299 - squot32(local_tid_9299, 32) * 32) ==\n                        0) {\n                        x_9308 = x_9309;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9315 = 1;\n                while (slt32(skip_threads_9315, 32)) {\n                    bool thread_active_9316 = sle32(skip_threads_9315,\n                                                    local_tid_9299 -\n                                                    squot32(local_tid_9299,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9314;\n                    \n                    if (thread_active_9316) {\n                        // read operands\n                        {\n                ",
-                   "            x_9308 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299) -\n                                                                     sext_i32_i64(skip_threads_9315)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9316) {\n                            int32_t defunc_1_op_res_9310 = add32(x_9308,\n                                                                 x_9309);\n                            \n                            x_9308 = defunc_1_op_res_9310;\n                        }\n                    }\n                    if (sle32(wave_sizze_9301, skip_threads_9315)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9316) {\n                        // write result\n                        {\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)] =\n                                x_9308;\n                            x_9309 = x_9308;\n                        }\n                    }\n                    if (sle32(wave_sizze_9301, skip_threads_9315)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9315 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9299 - squot32(local_tid_9299, 32) * 32) == 31 &&\n                    ltid_in_bounds_9314) {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9303)[sext_i32_i64(squot32(local_tid_9299,\n                                                                         32))] =\n                        x_9308;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENC",
-                   "E);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9317;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9299, 32) == 0 &&\n                        ltid_in_bounds_9314) {\n                        x_9312 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)];\n                        if ((local_tid_9299 - squot32(local_tid_9299, 32) *\n                             32) == 0) {\n                            x_9311 = x_9312;\n                        }\n                    }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9317 = 1;\n                    while (slt32(skip_threads_9317, 32)) {\n                        bool thread_active_9318 = sle32(skip_threads_9317,\n                                                        local_tid_9299 -\n                                                        squot32(local_tid_9299,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9299, 32) == 0 &&\n                              ltid_in_bounds_9314);\n                        \n                        if (thread_active_9318) {\n                            // read operands\n                            {\n                                x_9311 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299) -\n                                                                         sext_i32_i64(skip_threads_9317)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9318) {\n                                int32_t defunc_1_op_res_9313 = add32(x",
-                   "_9311,\n                                                                     x_9312);\n                                \n                                x_9311 = defunc_1_op_res_9313;\n                            }\n                        }\n                        if (sle32(wave_sizze_9301, skip_threads_9317)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9318) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)] =\n                                    x_9311;\n                                x_9312 = x_9311;\n                            }\n                        }\n                        if (sle32(wave_sizze_9301, skip_threads_9317)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9317 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9319 = squot32(local_tid_9299, 32) == 0 ||\n                 !ltid_in_bounds_9314;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9319) {\n                        x_9309 = x_9308;\n                        x_9308 = ((__local\n                                   int32_t *) scan_arr_mem_9303)[sext_i32_i64(squot32(local_tid_9299,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9319) {\n                        int32_t defunc_1_op_res_9310 = add32(x_9308, x_9309);\n     ",
-                   "                   \n                        x_9308 = defunc_1_op_res_9310;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9319) {\n                        ((__local\n                          int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)] =\n                            x_9308;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9299, 32) == 0 && ltid_in_bounds_9314) {\n                    ((__local\n                      int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)] =\n                        x_9309;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_9001, defunc_0_f_res_8744)) {\n                    int32_t tmp_9320;\n                    \n                    tmp_9320 = ((__local\n                                 int32_t *) scan_arr_mem_9303)[sext_i32_i64(local_tid_9299)];\n                    ((__global int32_t *) mem_9169)[gtid_9001] = tmp_9320;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9321 = 0;\n                bool should_load_carry_9322 = local_tid_9299 == 0 &&\n                     !crosses_segment_9321;\n                \n                if (should_load_carry_9322) {\n                    x_8765 = ((__local\n                               int32_t *) scan_arr_mem_9303)[segscan_group_sizze_8997 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9322) {\n                    x_8765 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE)",
-                   ";\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_8997\n}\n__kernel void scan_stage1_9030(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9375_backing_aligned_0,\n                               __local volatile\n                               int64_t *scan_arr_mem_9373_backing_aligned_1,\n                               int32_t num_threads_9367, __global\n                               unsigned char *mem_9164, __global\n                               unsigned char *mem_9176, __global\n                               unsigned char *mem_9178)\n{\n    #define segscan_group_sizze_9025 (segscan_group_sizze_9024)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9375_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9375_backing_aligned_0;\n    __local volatile unsigned char *restrict scan_arr_mem_9373_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9373_backing_aligned_1;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9375;\n    __local unsigned char *scan_arr_mem_9373;\n    int32_t global_tid_9368;\n    int32_t local_tid_9369;\n    int64_t group_sizze_9372;\n    int32_t wave_sizze_9371;\n    int32_t group_tid_9370;\n    \n    global_tid_9368 = get_global_id(0);\n    local_tid_9369 = get_local_id(0);\n    group_sizze_9372 = get_local_size(0);\n    wave_sizze_9371 = LOCKSTEP_WIDTH;\n    group_tid_9370 = get_group_id(0);\n    \n    int32_t phys_tid_9030 = global_tid_9368;\n    \n    scan_arr_mem_9373 = (__local unsigned char *) scan_arr_mem_9373_backing_0;\n    scan_arr_mem_9375 = (__local unsigned char *) scan_arr_mem_9375_backing_1;\n    \n    bool x_8792;\n    int32_t x_8793;\n    bool x_8794;\n    int32_t x_8795;\n  ",
-                   "  \n    x_8792 = 0;\n    x_8793 = 0;\n    for (int64_t j_9377 = 0; j_9377 < sdiv_up64((int64_t) 6,\n                                                sext_i32_i64(num_threads_9367));\n         j_9377++) {\n        int64_t chunk_offset_9378 = segscan_group_sizze_9025 * j_9377 +\n                sext_i32_i64(group_tid_9370) * (segscan_group_sizze_9025 *\n                                                sdiv_up64((int64_t) 6,\n                                                          sext_i32_i64(num_threads_9367)));\n        int64_t flat_idx_9379 = chunk_offset_9378 +\n                sext_i32_i64(local_tid_9369);\n        int64_t gtid_9029 = flat_idx_9379;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_9029, (int64_t) 6)) {\n                int32_t x_8799;\n                \n                x_8799 = ((__global int32_t *) mem_9164)[gtid_9029];\n                \n                bool defunc_0_f_res_8801 = itob_i32_bool(x_8799);\n                \n                // write to-scan values to parameters\n                {\n                    x_8794 = defunc_0_f_res_8801;\n                    x_8795 = 1;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n            // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_9029, (int64_t) 6)) {\n                    x_8794 = 0;\n                    x_8795 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                bool fl_8796 = x_8792 || x_8794;\n                int32_t vl_8797;\n                \n                if (x_8794) {\n                    vl_8797 = x_8795;\n                } else {\n                    int32_t defunc_1_op_res_8798 = add32(x_8793, x_8795);\n                    \n                    vl_8797 = defunc_1_op_res_8798;\n                }\n               ",
-                   " ((__local\n                  bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)] =\n                    fl_8796;\n                ((__local\n                  int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)] =\n                    vl_8797;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool x_9380;\n            int32_t x_9381;\n            bool x_9382;\n            int32_t x_9383;\n            bool x_9387;\n            int32_t x_9388;\n            bool x_9389;\n            int32_t x_9390;\n            bool ltid_in_bounds_9394 = slt64(sext_i32_i64(local_tid_9369),\n                                             segscan_group_sizze_9025);\n            int32_t skip_threads_9395;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9394) {\n                    x_9382 = ((volatile __local\n                               bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)];\n                    x_9383 = ((volatile __local\n                               int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)];\n                    if ((local_tid_9369 - squot32(local_tid_9369, 32) * 32) ==\n                        0) {\n                        x_9380 = x_9382;\n                        x_9381 = x_9383;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9395 = 1;\n                while (slt32(skip_threads_9395, 32)) {\n                    bool thread_active_9396 = sle32(skip_threads_9395,\n                                                    local_tid_9369 -\n                                                    squot32(local_tid_9369,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9394;\n                    \n                    if (thread_active_9396) {\n                        // read operands\n                        {\n         ",
-                   "                   x_9380 = ((volatile __local\n                                       bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369) -\n                                                                  sext_i32_i64(skip_threads_9395)];\n                            x_9381 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369) -\n                                                                     sext_i32_i64(skip_threads_9395)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9396) {\n                            bool fl_9384 = x_9380 || x_9382;\n                            int32_t vl_9385;\n                            \n                            if (x_9382) {\n                                vl_9385 = x_9383;\n                            } else {\n                                int32_t defunc_1_op_res_9386 = add32(x_9381,\n                                                                     x_9383);\n                                \n                                vl_9385 = defunc_1_op_res_9386;\n                            }\n                            x_9380 = fl_9384;\n                            x_9381 = vl_9385;\n                        }\n                    }\n                    if (sle32(wave_sizze_9371, skip_threads_9395)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9396) {\n                        // write result\n                        {\n                            ((volatile __local\n                              bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)] =\n                                x_9380;\n                            x_9382 = x_9380;\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)] =\n                                x",
-                   "_9381;\n                            x_9383 = x_9381;\n                        }\n                    }\n                    if (sle32(wave_sizze_9371, skip_threads_9395)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9395 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9369 - squot32(local_tid_9369, 32) * 32) == 31 &&\n                    ltid_in_bounds_9394) {\n                    ((volatile __local\n                      bool *) scan_arr_mem_9373)[sext_i32_i64(squot32(local_tid_9369,\n                                                                      32))] =\n                        x_9380;\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9375)[sext_i32_i64(squot32(local_tid_9369,\n                                                                         32))] =\n                        x_9381;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9397;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9369, 32) == 0 &&\n                        ltid_in_bounds_9394) {\n                        x_9389 = ((volatile __local\n                                   bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)];\n                        x_9390 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)];\n                        if ((local_tid_9369 - squot32(local_tid_9369, 32) *\n                             32) == 0) {\n                            x_9387 = x_9389;\n                            x_9388 = x_9390;\n                        }\n          ",
-                   "          }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9397 = 1;\n                    while (slt32(skip_threads_9397, 32)) {\n                        bool thread_active_9398 = sle32(skip_threads_9397,\n                                                        local_tid_9369 -\n                                                        squot32(local_tid_9369,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9369, 32) == 0 &&\n                              ltid_in_bounds_9394);\n                        \n                        if (thread_active_9398) {\n                            // read operands\n                            {\n                                x_9387 = ((volatile __local\n                                           bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369) -\n                                                                      sext_i32_i64(skip_threads_9397)];\n                                x_9388 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369) -\n                                                                         sext_i32_i64(skip_threads_9397)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9398) {\n                                bool fl_9391 = x_9387 || x_9389;\n                                int32_t vl_9392;\n                                \n                                if (x_9389) {\n                                    vl_9392 = x_9390;\n                                } else {\n                                    int32_t defunc_1_op_res_9393 = add32(x_9388,\n                                                                         x_9390);\n                                    \n        ",
-                   "                            vl_9392 = defunc_1_op_res_9393;\n                                }\n                                x_9387 = fl_9391;\n                                x_9388 = vl_9392;\n                            }\n                        }\n                        if (sle32(wave_sizze_9371, skip_threads_9397)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9398) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)] =\n                                    x_9387;\n                                x_9389 = x_9387;\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)] =\n                                    x_9388;\n                                x_9390 = x_9388;\n                            }\n                        }\n                        if (sle32(wave_sizze_9371, skip_threads_9397)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9397 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9399 = squot32(local_tid_9369, 32) == 0 ||\n                 !ltid_in_bounds_9394;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9399) {\n                        x_9382 = x_9380;\n                        x_9383 = x_9381;\n                        x_9380 = ((__local\n                                   bool *) scan_arr_mem_9373)[sext_i32_i64(squot32(local_tid_9369,\n                                                                                   32)) -\n                 ",
-                   "                                             (int64_t) 1];\n                        x_9381 = ((__local\n                                   int32_t *) scan_arr_mem_9375)[sext_i32_i64(squot32(local_tid_9369,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9399) {\n                        bool fl_9384 = x_9380 || x_9382;\n                        int32_t vl_9385;\n                        \n                        if (x_9382) {\n                            vl_9385 = x_9383;\n                        } else {\n                            int32_t defunc_1_op_res_9386 = add32(x_9381,\n                                                                 x_9383);\n                            \n                            vl_9385 = defunc_1_op_res_9386;\n                        }\n                        x_9380 = fl_9384;\n                        x_9381 = vl_9385;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9399) {\n                        ((__local\n                          bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)] =\n                            x_9380;\n                        ((__local\n                          int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)] =\n                            x_9381;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9369, 32) == 0 && ltid_in_bounds_9394) {\n                    ((__local\n                      bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)] =\n                        x_9382;\n                    ((__local\n                      int32_",
-                   "t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)] =\n                        x_9383;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_9029, (int64_t) 6)) {\n                    bool tmp_9400;\n                    \n                    tmp_9400 = ((__local\n                                 bool *) scan_arr_mem_9373)[sext_i32_i64(local_tid_9369)];\n                    ((__global bool *) mem_9176)[gtid_9029] = tmp_9400;\n                    \n                    int32_t tmp_9401;\n                    \n                    tmp_9401 = ((__local\n                                 int32_t *) scan_arr_mem_9375)[sext_i32_i64(local_tid_9369)];\n                    ((__global int32_t *) mem_9178)[gtid_9029] = tmp_9401;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9402 = 0;\n                bool should_load_carry_9403 = local_tid_9369 == 0 &&\n                     !crosses_segment_9402;\n                \n                if (should_load_carry_9403) {\n                    x_8792 = ((__local\n                               bool *) scan_arr_mem_9373)[segscan_group_sizze_9025 -\n                                                          (int64_t) 1];\n                    x_8793 = ((__local\n                               int32_t *) scan_arr_mem_9375)[segscan_group_sizze_9025 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9403) {\n                    x_8792 = 0;\n                    x_8793 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_9025\n}\n__kernel void scan_stage2_8988(__global int *global_failure, __local volatile\n            ",
-                   "                   int64_t *scan_arr_mem_9246_backing_aligned_0,\n                               int64_t stage1_num_groups_9214,\n                               int32_t num_threads_9215, __global\n                               unsigned char *mem_9161)\n{\n    #define segscan_group_sizze_8983 (segscan_group_sizze_8982)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9246_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9246_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9246;\n    int32_t global_tid_9241;\n    int32_t local_tid_9242;\n    int64_t group_sizze_9245;\n    int32_t wave_sizze_9244;\n    int32_t group_tid_9243;\n    \n    global_tid_9241 = get_global_id(0);\n    local_tid_9242 = get_local_id(0);\n    group_sizze_9245 = get_local_size(0);\n    wave_sizze_9244 = LOCKSTEP_WIDTH;\n    group_tid_9243 = get_group_id(0);\n    \n    int32_t phys_tid_8988 = global_tid_9241;\n    \n    scan_arr_mem_9246 = (__local unsigned char *) scan_arr_mem_9246_backing_0;\n    \n    int64_t flat_idx_9248 = (sext_i32_i64(local_tid_9242) + (int64_t) 1) *\n            (segscan_group_sizze_8983 * sdiv_up64((int64_t) 3,\n                                                  sext_i32_i64(num_threads_9215))) -\n            (int64_t) 1;\n    int64_t gtid_8987 = flat_idx_9248;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_8987, (int64_t) 3)) {\n            int32_t tmp_9249;\n            \n            tmp_9249 = ((__global int32_t *) mem_9161)[gtid_8987];\n            ((__local\n              int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] =\n                tmp_9249;\n        } else {\n            ((__local\n              int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] = 0;\n        }\n    }\n    barri",
-                   "er(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t x_8729;\n    int32_t x_8730;\n    int32_t x_9250;\n    int32_t x_9251;\n    bool ltid_in_bounds_9253 = slt64(sext_i32_i64(local_tid_9242),\n                                     stage1_num_groups_9214);\n    int32_t skip_threads_9254;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9253) {\n            x_8730 = ((volatile __local\n                       int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)];\n            if ((local_tid_9242 - squot32(local_tid_9242, 32) * 32) == 0) {\n                x_8729 = x_8730;\n            }\n        }\n    }\n    // in-block scan (hopefully no barriers needed)\n    {\n        skip_threads_9254 = 1;\n        while (slt32(skip_threads_9254, 32)) {\n            bool thread_active_9255 = sle32(skip_threads_9254, local_tid_9242 -\n                                            squot32(local_tid_9242, 32) * 32) &&\n                 ltid_in_bounds_9253;\n            \n            if (thread_active_9255) {\n                // read operands\n                {\n                    x_8729 = ((volatile __local\n                               int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242) -\n                                                             sext_i32_i64(skip_threads_9254)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9255) {\n                    int32_t defunc_1_op_res_8731 = add32(x_8729, x_8730);\n                    \n                    x_8729 = defunc_1_op_res_8731;\n                }\n            }\n            if (sle32(wave_sizze_9244, skip_threads_9254)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9255) {\n                // write result\n                {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] =\n                        x_8729;\n                    x_8730 = x_8729;\n             ",
-                   "   }\n            }\n            if (sle32(wave_sizze_9244, skip_threads_9254)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9254 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9242 - squot32(local_tid_9242, 32) * 32) == 31 &&\n            ltid_in_bounds_9253) {\n            ((volatile __local\n              int32_t *) scan_arr_mem_9246)[sext_i32_i64(squot32(local_tid_9242,\n                                                                 32))] = x_8729;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9256;\n        \n        // read input for in-block scan\n        {\n            if (squot32(local_tid_9242, 32) == 0 && ltid_in_bounds_9253) {\n                x_9251 = ((volatile __local\n                           int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)];\n                if ((local_tid_9242 - squot32(local_tid_9242, 32) * 32) == 0) {\n                    x_9250 = x_9251;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9256 = 1;\n            while (slt32(skip_threads_9256, 32)) {\n                bool thread_active_9257 = sle32(skip_threads_9256,\n                                                local_tid_9242 -\n                                                squot32(local_tid_9242, 32) *\n                                                32) && (squot32(local_tid_9242,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9253);\n                \n                if (thread_active_9257) {\n                    // read operands\n                    {\n                        x_9250 = ((volatile __local\n                                   ",
-                   "int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242) -\n                                                                 sext_i32_i64(skip_threads_9256)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9257) {\n                        int32_t defunc_1_op_res_9252 = add32(x_9250, x_9251);\n                        \n                        x_9250 = defunc_1_op_res_9252;\n                    }\n                }\n                if (sle32(wave_sizze_9244, skip_threads_9256)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9257) {\n                    // write result\n                    {\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] =\n                            x_9250;\n                        x_9251 = x_9250;\n                    }\n                }\n                if (sle32(wave_sizze_9244, skip_threads_9256)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9256 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9258 = squot32(local_tid_9242, 32) == 0 ||\n         !ltid_in_bounds_9253;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9258) {\n                x_8730 = x_8729;\n                x_8729 = ((__local\n                           int32_t *) scan_arr_mem_9246)[sext_i32_i64(squot32(local_tid_9242,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9258) {\n                int32_t defunc_1_op_res_8731 = add32(x_8729, x_8730);\n                \n                x_8729 = defunc_1_op_res_8731;",
-                   "\n            }\n        }\n        // write final result\n        {\n            if (!no_carry_in_9258) {\n                ((__local\n                  int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] =\n                    x_8729;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9242, 32) == 0 && ltid_in_bounds_9253) {\n            ((__local\n              int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)] =\n                x_8730;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_8987, (int64_t) 3)) {\n            int32_t tmp_9259;\n            \n            tmp_9259 = ((__local\n                         int32_t *) scan_arr_mem_9246)[sext_i32_i64(local_tid_9242)];\n            ((__global int32_t *) mem_9161)[gtid_8987] = tmp_9259;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_8983\n}\n__kernel void scan_stage2_9002(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9328_backing_aligned_0,\n                               int64_t defunc_0_f_res_8744,\n                               int64_t stage1_num_groups_9296,\n                               int32_t num_threads_9297, __global\n                               unsigned char *mem_9169)\n{\n    #define segscan_group_sizze_8997 (segscan_group_sizze_8996)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9328_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9328_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9328;\n    int32_t global_tid_9323;\n    int32_t local_tid_9324;\n    int64_t group_sizze_9327;\n    int32_t wave_sizze_9326;",
-                   "\n    int32_t group_tid_9325;\n    \n    global_tid_9323 = get_global_id(0);\n    local_tid_9324 = get_local_id(0);\n    group_sizze_9327 = get_local_size(0);\n    wave_sizze_9326 = LOCKSTEP_WIDTH;\n    group_tid_9325 = get_group_id(0);\n    \n    int32_t phys_tid_9002 = global_tid_9323;\n    \n    scan_arr_mem_9328 = (__local unsigned char *) scan_arr_mem_9328_backing_0;\n    \n    int64_t flat_idx_9330 = (sext_i32_i64(local_tid_9324) + (int64_t) 1) *\n            (segscan_group_sizze_8997 * sdiv_up64(defunc_0_f_res_8744,\n                                                  sext_i32_i64(num_threads_9297))) -\n            (int64_t) 1;\n    int64_t gtid_9001 = flat_idx_9330;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_9001, defunc_0_f_res_8744)) {\n            int32_t tmp_9331;\n            \n            tmp_9331 = ((__global int32_t *) mem_9169)[gtid_9001];\n            ((__local\n              int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)] =\n                tmp_9331;\n        } else {\n            ((__local\n              int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)] = 0;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t x_8765;\n    int32_t x_8766;\n    int32_t x_9332;\n    int32_t x_9333;\n    bool ltid_in_bounds_9335 = slt64(sext_i32_i64(local_tid_9324),\n                                     stage1_num_groups_9296);\n    int32_t skip_threads_9336;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9335) {\n            x_8766 = ((volatile __local\n                       int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)];\n            if ((local_tid_9324 - squot32(local_tid_9324, 32) * 32) == 0) {\n                x_8765 = x_8766;\n            }\n        }\n    }\n    // in-block scan (hopefully no barriers needed)\n    {\n        skip_threads_9336 = 1;\n        while (slt32(skip_threads_9336, 32)) {\n            bool thread_active_9337 = sle32(skip_threads_9336, local_tid_9324 -",
-                   "\n                                            squot32(local_tid_9324, 32) * 32) &&\n                 ltid_in_bounds_9335;\n            \n            if (thread_active_9337) {\n                // read operands\n                {\n                    x_8765 = ((volatile __local\n                               int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324) -\n                                                             sext_i32_i64(skip_threads_9336)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9337) {\n                    int32_t defunc_1_op_res_8767 = add32(x_8765, x_8766);\n                    \n                    x_8765 = defunc_1_op_res_8767;\n                }\n            }\n            if (sle32(wave_sizze_9326, skip_threads_9336)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9337) {\n                // write result\n                {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)] =\n                        x_8765;\n                    x_8766 = x_8765;\n                }\n            }\n            if (sle32(wave_sizze_9326, skip_threads_9336)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9336 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9324 - squot32(local_tid_9324, 32) * 32) == 31 &&\n            ltid_in_bounds_9335) {\n            ((volatile __local\n              int32_t *) scan_arr_mem_9328)[sext_i32_i64(squot32(local_tid_9324,\n                                                                 32))] = x_8765;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9338;\n        \n        // read input for in-block scan\n       ",
-                   " {\n            if (squot32(local_tid_9324, 32) == 0 && ltid_in_bounds_9335) {\n                x_9333 = ((volatile __local\n                           int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)];\n                if ((local_tid_9324 - squot32(local_tid_9324, 32) * 32) == 0) {\n                    x_9332 = x_9333;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9338 = 1;\n            while (slt32(skip_threads_9338, 32)) {\n                bool thread_active_9339 = sle32(skip_threads_9338,\n                                                local_tid_9324 -\n                                                squot32(local_tid_9324, 32) *\n                                                32) && (squot32(local_tid_9324,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9335);\n                \n                if (thread_active_9339) {\n                    // read operands\n                    {\n                        x_9332 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324) -\n                                                                 sext_i32_i64(skip_threads_9338)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9339) {\n                        int32_t defunc_1_op_res_9334 = add32(x_9332, x_9333);\n                        \n                        x_9332 = defunc_1_op_res_9334;\n                    }\n                }\n                if (sle32(wave_sizze_9326, skip_threads_9338)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9339) {\n                    // write result\n                    {\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9328)",
-                   "[sext_i32_i64(local_tid_9324)] =\n                            x_9332;\n                        x_9333 = x_9332;\n                    }\n                }\n                if (sle32(wave_sizze_9326, skip_threads_9338)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9338 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9340 = squot32(local_tid_9324, 32) == 0 ||\n         !ltid_in_bounds_9335;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9340) {\n                x_8766 = x_8765;\n                x_8765 = ((__local\n                           int32_t *) scan_arr_mem_9328)[sext_i32_i64(squot32(local_tid_9324,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9340) {\n                int32_t defunc_1_op_res_8767 = add32(x_8765, x_8766);\n                \n                x_8765 = defunc_1_op_res_8767;\n            }\n        }\n        // write final result\n        {\n            if (!no_carry_in_9340) {\n                ((__local\n                  int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)] =\n                    x_8765;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9324, 32) == 0 && ltid_in_bounds_9335) {\n            ((__local\n              int32_t *) scan_arr_mem_9328)[sext_i32_i64(local_tid_9324)] =\n                x_8766;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_9001, defunc_0_f_res_8744)) {\n            int32_t tmp_9341;\n            \n            tmp_9341 = ((__local\n                         int32_t *) scan_arr_mem_9328",
-                   ")[sext_i32_i64(local_tid_9324)];\n            ((__global int32_t *) mem_9169)[gtid_9001] = tmp_9341;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_8997\n}\n__kernel void scan_stage2_9030(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9411_backing_aligned_0,\n                               __local volatile\n                               int64_t *scan_arr_mem_9409_backing_aligned_1,\n                               int64_t stage1_num_groups_9366,\n                               int32_t num_threads_9367, __global\n                               unsigned char *mem_9176, __global\n                               unsigned char *mem_9178)\n{\n    #define segscan_group_sizze_9025 (segscan_group_sizze_9024)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9411_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9411_backing_aligned_0;\n    __local volatile unsigned char *restrict scan_arr_mem_9409_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9409_backing_aligned_1;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9411;\n    __local unsigned char *scan_arr_mem_9409;\n    int32_t global_tid_9404;\n    int32_t local_tid_9405;\n    int64_t group_sizze_9408;\n    int32_t wave_sizze_9407;\n    int32_t group_tid_9406;\n    \n    global_tid_9404 = get_global_id(0);\n    local_tid_9405 = get_local_id(0);\n    group_sizze_9408 = get_local_size(0);\n    wave_sizze_9407 = LOCKSTEP_WIDTH;\n    group_tid_9406 = get_group_id(0);\n    \n    int32_t phys_tid_9030 = global_tid_9404;\n    \n    scan_arr_mem_9409 = (__local unsigned char *) scan_arr_mem_9409_backing_0;\n    scan_arr_mem_9411 = (__local unsigned char *) scan_arr_mem_9",
-                   "411_backing_1;\n    \n    int64_t flat_idx_9413 = (sext_i32_i64(local_tid_9405) + (int64_t) 1) *\n            (segscan_group_sizze_9025 * sdiv_up64((int64_t) 6,\n                                                  sext_i32_i64(num_threads_9367))) -\n            (int64_t) 1;\n    int64_t gtid_9029 = flat_idx_9413;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_9029, (int64_t) 6)) {\n            bool tmp_9414;\n            \n            tmp_9414 = ((__global bool *) mem_9176)[gtid_9029];\n            ((__local bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                tmp_9414;\n            \n            int32_t tmp_9415;\n            \n            tmp_9415 = ((__global int32_t *) mem_9178)[gtid_9029];\n            ((__local\n              int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)] =\n                tmp_9415;\n        } else {\n            ((__local bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                0;\n            ((__local\n              int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)] = 0;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool x_8792;\n    int32_t x_8793;\n    bool x_8794;\n    int32_t x_8795;\n    bool x_9416;\n    int32_t x_9417;\n    bool x_9418;\n    int32_t x_9419;\n    bool ltid_in_bounds_9423 = slt64(sext_i32_i64(local_tid_9405),\n                                     stage1_num_groups_9366);\n    int32_t skip_threads_9424;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9423) {\n            x_8794 = ((volatile __local\n                       bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)];\n            x_8795 = ((volatile __local\n                       int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)];\n            if ((local_tid_9405 - squot32(local_tid_9405, 32) * 32) == 0) {\n                x_8792 = x_8794;\n                x_8793 = x_8795;\n            }\n        }\n    }\n    // in-block scan (hopefully no",
-                   " barriers needed)\n    {\n        skip_threads_9424 = 1;\n        while (slt32(skip_threads_9424, 32)) {\n            bool thread_active_9425 = sle32(skip_threads_9424, local_tid_9405 -\n                                            squot32(local_tid_9405, 32) * 32) &&\n                 ltid_in_bounds_9423;\n            \n            if (thread_active_9425) {\n                // read operands\n                {\n                    x_8792 = ((volatile __local\n                               bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405) -\n                                                          sext_i32_i64(skip_threads_9424)];\n                    x_8793 = ((volatile __local\n                               int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405) -\n                                                             sext_i32_i64(skip_threads_9424)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9425) {\n                    bool fl_8796 = x_8792 || x_8794;\n                    int32_t vl_8797;\n                    \n                    if (x_8794) {\n                        vl_8797 = x_8795;\n                    } else {\n                        int32_t defunc_1_op_res_8798 = add32(x_8793, x_8795);\n                        \n                        vl_8797 = defunc_1_op_res_8798;\n                    }\n                    x_8792 = fl_8796;\n                    x_8793 = vl_8797;\n                }\n            }\n            if (sle32(wave_sizze_9407, skip_threads_9424)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9425) {\n                // write result\n                {\n                    ((volatile __local\n                      bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                        x_8792;\n                    x_8794 = x_8792;\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9411)[sext_i32_i64(local",
-                   "_tid_9405)] =\n                        x_8793;\n                    x_8795 = x_8793;\n                }\n            }\n            if (sle32(wave_sizze_9407, skip_threads_9424)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9424 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9405 - squot32(local_tid_9405, 32) * 32) == 31 &&\n            ltid_in_bounds_9423) {\n            ((volatile __local\n              bool *) scan_arr_mem_9409)[sext_i32_i64(squot32(local_tid_9405,\n                                                              32))] = x_8792;\n            ((volatile __local\n              int32_t *) scan_arr_mem_9411)[sext_i32_i64(squot32(local_tid_9405,\n                                                                 32))] = x_8793;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9426;\n        \n        // read input for in-block scan\n        {\n            if (squot32(local_tid_9405, 32) == 0 && ltid_in_bounds_9423) {\n                x_9418 = ((volatile __local\n                           bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)];\n                x_9419 = ((volatile __local\n                           int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)];\n                if ((local_tid_9405 - squot32(local_tid_9405, 32) * 32) == 0) {\n                    x_9416 = x_9418;\n                    x_9417 = x_9419;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9426 = 1;\n            while (slt32(skip_threads_9426, 32)) {\n                bool thread_active_9427 = sle32(skip_threads_9426,\n                                                local_tid_9405 -\n                                                squot32(local_tid_94",
-                   "05, 32) *\n                                                32) && (squot32(local_tid_9405,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9423);\n                \n                if (thread_active_9427) {\n                    // read operands\n                    {\n                        x_9416 = ((volatile __local\n                                   bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405) -\n                                                              sext_i32_i64(skip_threads_9426)];\n                        x_9417 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405) -\n                                                                 sext_i32_i64(skip_threads_9426)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9427) {\n                        bool fl_9420 = x_9416 || x_9418;\n                        int32_t vl_9421;\n                        \n                        if (x_9418) {\n                            vl_9421 = x_9419;\n                        } else {\n                            int32_t defunc_1_op_res_9422 = add32(x_9417,\n                                                                 x_9419);\n                            \n                            vl_9421 = defunc_1_op_res_9422;\n                        }\n                        x_9416 = fl_9420;\n                        x_9417 = vl_9421;\n                    }\n                }\n                if (sle32(wave_sizze_9407, skip_threads_9426)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9427) {\n                    // write result\n                    {\n                        ((volatile __local\n                          bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                      ",
-                   "      x_9416;\n                        x_9418 = x_9416;\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)] =\n                            x_9417;\n                        x_9419 = x_9417;\n                    }\n                }\n                if (sle32(wave_sizze_9407, skip_threads_9426)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9426 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9428 = squot32(local_tid_9405, 32) == 0 ||\n         !ltid_in_bounds_9423;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9428) {\n                x_8794 = x_8792;\n                x_8795 = x_8793;\n                x_8792 = ((__local\n                           bool *) scan_arr_mem_9409)[sext_i32_i64(squot32(local_tid_9405,\n                                                                           32)) -\n                                                      (int64_t) 1];\n                x_8793 = ((__local\n                           int32_t *) scan_arr_mem_9411)[sext_i32_i64(squot32(local_tid_9405,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9428) {\n                bool fl_8796 = x_8792 || x_8794;\n                int32_t vl_8797;\n                \n                if (x_8794) {\n                    vl_8797 = x_8795;\n                } else {\n                    int32_t defunc_1_op_res_8798 = add32(x_8793, x_8795);\n                    \n                    vl_8797 = defunc_1_op_res_8798;\n                }\n                x_8792 = fl_8796;\n                x_8793 = vl_8797;\n            }\n        }\n        // write final result\n        {\n            ",
-                   "if (!no_carry_in_9428) {\n                ((__local\n                  bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                    x_8792;\n                ((__local\n                  int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)] =\n                    x_8793;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9405, 32) == 0 && ltid_in_bounds_9423) {\n            ((__local bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)] =\n                x_8794;\n            ((__local\n              int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)] =\n                x_8795;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_9029, (int64_t) 6)) {\n            bool tmp_9429;\n            \n            tmp_9429 = ((__local\n                         bool *) scan_arr_mem_9409)[sext_i32_i64(local_tid_9405)];\n            ((__global bool *) mem_9176)[gtid_9029] = tmp_9429;\n            \n            int32_t tmp_9430;\n            \n            tmp_9430 = ((__local\n                         int32_t *) scan_arr_mem_9411)[sext_i32_i64(local_tid_9405)];\n            ((__global int32_t *) mem_9178)[gtid_9029] = tmp_9430;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9025\n}\n__kernel void scan_stage3_8988(__global int *global_failure,\n                               int64_t num_groups_8985,\n                               int32_t num_threads_9215,\n                               int32_t required_groups_9260, __global\n                               unsigned char *mem_9161)\n{\n    #define segscan_group_sizze_8983 (segscan_group_sizze_8982)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9261;\n    int32_t local_tid_9262;\n    int64_t group_sizze_9265;\n",
-                   "    int32_t wave_sizze_9264;\n    int32_t group_tid_9263;\n    \n    global_tid_9261 = get_global_id(0);\n    local_tid_9262 = get_local_id(0);\n    group_sizze_9265 = get_local_size(0);\n    wave_sizze_9264 = LOCKSTEP_WIDTH;\n    group_tid_9263 = get_group_id(0);\n    \n    int32_t phys_tid_8988 = global_tid_9261;\n    int32_t phys_group_id_9266;\n    \n    phys_group_id_9266 = get_group_id(0);\n    \n    int32_t iterations_9267 = sdiv_up32(required_groups_9260 -\n                                        phys_group_id_9266,\n                                        sext_i64_i32(num_groups_8985));\n    \n    for (int32_t i_9268 = 0; i_9268 < iterations_9267; i_9268++) {\n        int32_t virt_group_id_9269 = phys_group_id_9266 + i_9268 *\n                sext_i64_i32(num_groups_8985);\n        int64_t flat_idx_9270 = sext_i32_i64(virt_group_id_9269) *\n                segscan_group_sizze_8983 + sext_i32_i64(local_tid_9262);\n        int64_t gtid_8987 = flat_idx_9270;\n        int64_t orig_group_9271 = squot64(flat_idx_9270,\n                                          segscan_group_sizze_8983 *\n                                          sdiv_up64((int64_t) 3,\n                                                    sext_i32_i64(num_threads_9215)));\n        int64_t carry_in_flat_idx_9272 = orig_group_9271 *\n                (segscan_group_sizze_8983 * sdiv_up64((int64_t) 3,\n                                                      sext_i32_i64(num_threads_9215))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_8987, (int64_t) 3)) {\n            if (!(orig_group_9271 == (int64_t) 0 || flat_idx_9270 ==\n                  (orig_group_9271 + (int64_t) 1) * (segscan_group_sizze_8983 *\n                                                     sdiv_up64((int64_t) 3,\n                                                               sext_i32_i64(num_threads_9215))) -\n                  (int64_t) 1)) {\n                int32_t x_8729;\n                int32_t x_8730;\n                \n                x_8729 = ((__gl",
-                   "obal\n                           int32_t *) mem_9161)[carry_in_flat_idx_9272];\n                x_8730 = ((__global int32_t *) mem_9161)[gtid_8987];\n                \n                int32_t defunc_1_op_res_8731 = add32(x_8729, x_8730);\n                \n                x_8729 = defunc_1_op_res_8731;\n                ((__global int32_t *) mem_9161)[gtid_8987] = x_8729;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_8983\n}\n__kernel void scan_stage3_9002(__global int *global_failure,\n                               int64_t defunc_0_f_res_8744,\n                               int64_t num_groups_8999,\n                               int32_t num_threads_9297,\n                               int32_t required_groups_9342, __global\n                               unsigned char *mem_9169)\n{\n    #define segscan_group_sizze_8997 (segscan_group_sizze_8996)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9343;\n    int32_t local_tid_9344;\n    int64_t group_sizze_9347;\n    int32_t wave_sizze_9346;\n    int32_t group_tid_9345;\n    \n    global_tid_9343 = get_global_id(0);\n    local_tid_9344 = get_local_id(0);\n    group_sizze_9347 = get_local_size(0);\n    wave_sizze_9346 = LOCKSTEP_WIDTH;\n    group_tid_9345 = get_group_id(0);\n    \n    int32_t phys_tid_9002 = global_tid_9343;\n    int32_t phys_group_id_9348;\n    \n    phys_group_id_9348 = get_group_id(0);\n    \n    int32_t iterations_9349 = sdiv_up32(required_groups_9342 -\n                                        phys_group_id_9348,\n                                        sext_i64_i32(num_groups_8999));\n    \n    for (int32_t i_9350 = 0; i_9350 < iterations_9349; i_9350++) {\n        int32_t virt_group_id_9351 = phys_group_id_9348 + i_9350 *\n                sext_i64_i32(num_groups_8999);\n        int64_t flat_idx_9352 = sext_i3",
-                   "2_i64(virt_group_id_9351) *\n                segscan_group_sizze_8997 + sext_i32_i64(local_tid_9344);\n        int64_t gtid_9001 = flat_idx_9352;\n        int64_t orig_group_9353 = squot64(flat_idx_9352,\n                                          segscan_group_sizze_8997 *\n                                          sdiv_up64(defunc_0_f_res_8744,\n                                                    sext_i32_i64(num_threads_9297)));\n        int64_t carry_in_flat_idx_9354 = orig_group_9353 *\n                (segscan_group_sizze_8997 * sdiv_up64(defunc_0_f_res_8744,\n                                                      sext_i32_i64(num_threads_9297))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_9001, defunc_0_f_res_8744)) {\n            if (!(orig_group_9353 == (int64_t) 0 || flat_idx_9352 ==\n                  (orig_group_9353 + (int64_t) 1) * (segscan_group_sizze_8997 *\n                                                     sdiv_up64(defunc_0_f_res_8744,\n                                                               sext_i32_i64(num_threads_9297))) -\n                  (int64_t) 1)) {\n                int32_t x_8765;\n                int32_t x_8766;\n                \n                x_8765 = ((__global\n                           int32_t *) mem_9169)[carry_in_flat_idx_9354];\n                x_8766 = ((__global int32_t *) mem_9169)[gtid_9001];\n                \n                int32_t defunc_1_op_res_8767 = add32(x_8765, x_8766);\n                \n                x_8765 = defunc_1_op_res_8767;\n                ((__global int32_t *) mem_9169)[gtid_9001] = x_8765;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_8997\n}\n__kernel void scan_stage3_9030(__global int *global_failure,\n                               int64_t num_groups_9027,\n                               int32_t num_threads_9367,\n                               int32_t required_groups_9431, __global\n            ",
-                   "                   unsigned char *mem_9176, __global\n                               unsigned char *mem_9178)\n{\n    #define segscan_group_sizze_9025 (segscan_group_sizze_9024)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9432;\n    int32_t local_tid_9433;\n    int64_t group_sizze_9436;\n    int32_t wave_sizze_9435;\n    int32_t group_tid_9434;\n    \n    global_tid_9432 = get_global_id(0);\n    local_tid_9433 = get_local_id(0);\n    group_sizze_9436 = get_local_size(0);\n    wave_sizze_9435 = LOCKSTEP_WIDTH;\n    group_tid_9434 = get_group_id(0);\n    \n    int32_t phys_tid_9030 = global_tid_9432;\n    int32_t phys_group_id_9437;\n    \n    phys_group_id_9437 = get_group_id(0);\n    \n    int32_t iterations_9438 = sdiv_up32(required_groups_9431 -\n                                        phys_group_id_9437,\n                                        sext_i64_i32(num_groups_9027));\n    \n    for (int32_t i_9439 = 0; i_9439 < iterations_9438; i_9439++) {\n        int32_t virt_group_id_9440 = phys_group_id_9437 + i_9439 *\n                sext_i64_i32(num_groups_9027);\n        int64_t flat_idx_9441 = sext_i32_i64(virt_group_id_9440) *\n                segscan_group_sizze_9025 + sext_i32_i64(local_tid_9433);\n        int64_t gtid_9029 = flat_idx_9441;\n        int64_t orig_group_9442 = squot64(flat_idx_9441,\n                                          segscan_group_sizze_9025 *\n                                          sdiv_up64((int64_t) 6,\n                                                    sext_i32_i64(num_threads_9367)));\n        int64_t carry_in_flat_idx_9443 = orig_group_9442 *\n                (segscan_group_sizze_9025 * sdiv_up64((int64_t) 6,\n                                                      sext_i32_i64(num_threads_9367))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_9029, (int64_t) 6)) {\n            if (!(orig_group_9442 == (int64_t) 0 || flat",
-                   "_idx_9441 ==\n                  (orig_group_9442 + (int64_t) 1) * (segscan_group_sizze_9025 *\n                                                     sdiv_up64((int64_t) 6,\n                                                               sext_i32_i64(num_threads_9367))) -\n                  (int64_t) 1)) {\n                bool x_8792;\n                int32_t x_8793;\n                bool x_8794;\n                int32_t x_8795;\n                \n                x_8792 = ((__global bool *) mem_9176)[carry_in_flat_idx_9443];\n                x_8793 = ((__global\n                           int32_t *) mem_9178)[carry_in_flat_idx_9443];\n                x_8794 = ((__global bool *) mem_9176)[gtid_9029];\n                x_8795 = ((__global int32_t *) mem_9178)[gtid_9029];\n                \n                bool fl_8796 = x_8792 || x_8794;\n                int32_t vl_8797;\n                \n                if (x_8794) {\n                    vl_8797 = x_8795;\n                } else {\n                    int32_t defunc_1_op_res_8798 = add32(x_8793, x_8795);\n                    \n                    vl_8797 = defunc_1_op_res_8798;\n                }\n                x_8792 = fl_8796;\n                x_8793 = vl_8797;\n                ((__global bool *) mem_9176)[gtid_9029] = x_8792;\n                ((__global int32_t *) mem_9178)[gtid_9029] = x_8793;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9025\n}\n__kernel void segmap_8990(__global int *global_failure,\n                          int failure_is_an_option, __global\n                          int64_t *global_failure_args,\n                          int64_t defunc_0_f_res_8744, __global\n                          unsigned char *mem_9161, __global\n                          unsigned char *mem_9164)\n{\n    #define segmap_group_sizze_8993 (segmap_group_sizze_8992)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 =",
-                   " 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9286;\n    int32_t local_tid_9287;\n    int64_t group_sizze_9290;\n    int32_t wave_sizze_9289;\n    int32_t group_tid_9288;\n    \n    global_tid_9286 = get_global_id(0);\n    local_tid_9287 = get_local_id(0);\n    group_sizze_9290 = get_local_size(0);\n    wave_sizze_9289 = LOCKSTEP_WIDTH;\n    group_tid_9288 = get_group_id(0);\n    \n    int32_t phys_tid_8990 = global_tid_9286;\n    int64_t global_tid_9291 = sext_i32_i64(group_tid_9288) *\n            segmap_group_sizze_8993 + sext_i32_i64(local_tid_9287);\n    int64_t slice_9292 = (int64_t) 3;\n    int64_t write_i_8989 = global_tid_9291;\n    int64_t remnant_9293 = global_tid_9291 - write_i_8989;\n    \n    if (slt64(write_i_8989, (int64_t) 3)) {\n        int64_t x_8749 = sub64((int64_t) 3, write_i_8989);\n        int64_t i_8750 = sub64(x_8749, (int64_t) 1);\n        bool x_8751 = sle64((int64_t) 0, i_8750);\n        bool y_8752 = slt64(i_8750, (int64_t) 3);\n        bool bounds_check_8753 = x_8751 && y_8752;\n        bool index_certs_8754;\n        \n        if (!bounds_check_8753) {\n            {\n                if (atomic_cmpxchg_i32_global(global_failure, -1, 1) == -1) {\n                    global_failure_args[0] = (int64_t) i_8750;\n                    global_failure_args[1] = (int64_t) (int64_t) 3;\n                    ;\n                }\n                return;\n            }\n        }\n        \n        int32_t index_primexp_8755 = sext_i64_i32(x_8749);\n        bool cond_8756 = index_primexp_8755 == 0;\n        int32_t defunc_1_f_res_8757;\n        \n        if (cond_8756) {\n            defunc_1_f_res_8757 = -1;\n        } else {\n            int32_t x_8748;\n            \n            x_8748 = ((__global int32_t *) mem_9161)[write_i_8989];\n            defunc_1_f_res_8757 = x_8748;\n        }\n        \n        int64_t defunc_0_f_res_8758 = sext_i32_i64(defunc_1_f_res_8757);\n        \n        if (sle64((int64_t) 0, defunc_0_f_res_8758) &&\n            slt64(defunc_0_",
-                   "f_res_8758, defunc_0_f_res_8744)) {\n            ((__global int32_t *) mem_9164)[defunc_0_f_res_8758] = 1;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_8993\n}\n__kernel void segmap_9019(__global int *global_failure,\n                          int64_t defunc_0_f_res_8744, __global\n                          unsigned char *mem_9169, __global\n                          unsigned char *mem_9173)\n{\n    #define segmap_group_sizze_9015 (segmap_group_sizze_9006)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9356;\n    int32_t local_tid_9357;\n    int64_t group_sizze_9360;\n    int32_t wave_sizze_9359;\n    int32_t group_tid_9358;\n    \n    global_tid_9356 = get_global_id(0);\n    local_tid_9357 = get_local_id(0);\n    group_sizze_9360 = get_local_size(0);\n    wave_sizze_9359 = LOCKSTEP_WIDTH;\n    group_tid_9358 = get_group_id(0);\n    \n    int32_t phys_tid_9019 = global_tid_9356;\n    int64_t global_tid_9361 = sext_i32_i64(group_tid_9358) *\n            segmap_group_sizze_9015 + sext_i32_i64(local_tid_9357);\n    int64_t slice_9362 = defunc_0_f_res_8744;\n    int64_t gtid_9018 = global_tid_9361;\n    int64_t remnant_9363 = global_tid_9361 - gtid_9018;\n    \n    if (slt64(gtid_9018, defunc_0_f_res_8744)) {\n        int32_t x_9020;\n        \n        x_9020 = ((__global int32_t *) mem_9169)[gtid_9018];\n        \n        int32_t defunc_0_f_res_9022 = sub32(x_9020, 1);\n        \n        ((__global int32_t *) mem_9173)[gtid_9018] = defunc_0_f_res_9022;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9015\n}\n__kernel void segmap_9049(__global int *global_failure, __global\n                          unsigned char *mem_9178, __global\n                          unsigned char *mem_9181)\n{\n    #define segmap_group_sizze_9045 (segmap_group_sizze_9034)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2",
-                   ";\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9445;\n    int32_t local_tid_9446;\n    int64_t group_sizze_9449;\n    int32_t wave_sizze_9448;\n    int32_t group_tid_9447;\n    \n    global_tid_9445 = get_global_id(0);\n    local_tid_9446 = get_local_id(0);\n    group_sizze_9449 = get_local_size(0);\n    wave_sizze_9448 = LOCKSTEP_WIDTH;\n    group_tid_9447 = get_group_id(0);\n    \n    int32_t phys_tid_9049 = global_tid_9445;\n    int64_t global_tid_9450 = sext_i32_i64(group_tid_9447) *\n            segmap_group_sizze_9045 + sext_i32_i64(local_tid_9446);\n    int64_t slice_9451 = (int64_t) 6;\n    int64_t gtid_9048 = global_tid_9450;\n    int64_t remnant_9452 = global_tid_9450 - gtid_9048;\n    \n    if (slt64(gtid_9048, (int64_t) 6)) {\n        int32_t x_9051;\n        \n        x_9051 = ((__global int32_t *) mem_9178)[gtid_9048];\n        \n        int32_t defunc_0_f_res_9054 = sub32(x_9051, 1);\n        \n        ((__global int32_t *) mem_9181)[gtid_9048] = defunc_0_f_res_9054;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9045\n}\n__kernel void segmap_9102(__global int *global_failure,\n                          int failure_is_an_option, __global\n                          int64_t *global_failure_args,\n                          int32_t defunc_2_reduce_res_8820, int32_t minI_8919,\n                          __global unsigned char *mem_9156, __global\n                          unsigned char *mem_9191)\n{\n    #define segmap_group_sizze_9098 (segmap_group_sizze_9070)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9520;\n    int32_t local_tid_9521;\n    int64_t group_sizze_9524;\n    int32_t wave_sizze_9523;\n    int32_t group_tid_9522;\n    \n    global_tid_9520 = get_global_id(0);\n    local_tid_9521 = get_local_id(0);\n    group_sizze_9524 = get_local_size(0);\n    wave_sizze_9523 = LOCKSTEP_WIDTH;\n    group_tid_9522 = get_group",
-                   "_id(0);\n    \n    int32_t phys_tid_9102 = global_tid_9520;\n    int64_t global_tid_9525 = sext_i32_i64(group_tid_9522) *\n            segmap_group_sizze_9098 + sext_i32_i64(local_tid_9521);\n    int64_t slice_9526 = (int64_t) 6;\n    int64_t gtid_9101 = global_tid_9525;\n    int64_t remnant_9527 = global_tid_9525 - gtid_9101;\n    \n    if (slt64(gtid_9101, (int64_t) 6)) {\n        int32_t defunc_0_f_res_9104 = sext_i64_i32(gtid_9101);\n        bool cond_9105 = slt32(defunc_0_f_res_9104, minI_8919);\n        bool cond_f_res_9106 = slt32(defunc_2_reduce_res_8820,\n                                     defunc_0_f_res_9104);\n        bool x_9107 = !cond_9105;\n        bool y_9108 = cond_f_res_9106 && x_9107;\n        bool cond_9109 = cond_9105 || y_9108;\n        int32_t defunc_0_f_res_9110;\n        \n        if (cond_9109) {\n            int64_t ind_9111 = sext_i32_i64(defunc_0_f_res_9104);\n            bool x_9112 = sle64((int64_t) 0, ind_9111);\n            bool y_9113 = slt64(ind_9111, (int64_t) 6);\n            bool bounds_check_9114 = x_9112 && y_9113;\n            bool index_certs_9115;\n            \n            if (!bounds_check_9114) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 11) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) ind_9111;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    return;\n                }\n            }\n            \n            int32_t defunc_0_f_res_t_res_9116;\n            \n            defunc_0_f_res_t_res_9116 = ((__global\n                                          int32_t *) mem_9156)[ind_9111];\n            defunc_0_f_res_9110 = defunc_0_f_res_t_res_9116;\n        } else {\n            int32_t y_9117 = sub32(defunc_0_f_res_9104, minI_8919);\n            int32_t i_9118 = sub32(defunc_2_reduce_res_8820, y_9117);\n            int64_t i_9119 = sext_i32_i64(i_9118);\n            bool x_9120 =",
-                   " sle64((int64_t) 0, i_9119);\n            bool y_9121 = slt64(i_9119, (int64_t) 6);\n            bool bounds_check_9122 = x_9120 && y_9121;\n            bool index_certs_9123;\n            \n            if (!bounds_check_9122) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 12) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_9119;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    return;\n                }\n            }\n            \n            int32_t defunc_0_f_res_f_res_9124;\n            \n            defunc_0_f_res_f_res_9124 = ((__global int32_t *) mem_9156)[i_9119];\n            defunc_0_f_res_9110 = defunc_0_f_res_f_res_9124;\n        }\n        ((__global int32_t *) mem_9191)[gtid_9101] = defunc_0_f_res_9110;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9098\n}\n__kernel void segred_nonseg_9066(__global int *global_failure,\n                                 int failure_is_an_option, __global\n                                 int64_t *global_failure_args, __local volatile\n                                 int64_t *red_arr_mem_9474_backing_aligned_0,\n                                 __local volatile\n                                 int64_t *red_arr_mem_9472_backing_aligned_1,\n                                 __local volatile\n                                 int64_t *red_arr_mem_9470_backing_aligned_2,\n                                 __local volatile\n                                 int64_t *sync_arr_mem_9468_backing_aligned_3,\n                                 int64_t defunc_0_f_res_8744,\n                                 int64_t num_groups_9059, __global\n                                 unsigned char *mem_9156, __global\n                                 unsigned char *mem_9158, __global\n                                 unsigned char *mem_9173, __global\n                              ",
-                   "   unsigned char *mem_9181, __global\n                                 unsigned char *mem_9184, __global\n                                 unsigned char *mem_9186, __global\n                                 unsigned char *mem_9188, __global\n                                 unsigned char *counter_mem_9454, __global\n                                 unsigned char *segred_tmp_mem_9456, __global\n                                 unsigned char *segred_tmp_mem_9458, __global\n                                 unsigned char *segred_tmp_mem_9460)\n{\n    #define segred_group_sizze_9057 (segred_group_sizze_9056)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict red_arr_mem_9474_backing_3 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_9474_backing_aligned_0;\n    __local volatile unsigned char *restrict red_arr_mem_9472_backing_2 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_9472_backing_aligned_1;\n    __local volatile unsigned char *restrict red_arr_mem_9470_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_9470_backing_aligned_2;\n    __local volatile unsigned char *restrict sync_arr_mem_9468_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) sync_arr_mem_9468_backing_aligned_3;\n    volatile __local bool local_failure;\n    \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n    }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *red_arr_mem_9474;\n    __local unsigned char *red_arr_mem_9472;\n    __local unsigned char *red_arr_mem_9470;\n    __local unsigned char *sync_arr_mem_9468;\n    int32_t gl",
-                   "obal_tid_9463;\n    int32_t local_tid_9464;\n    int64_t group_sizze_9467;\n    int32_t wave_sizze_9466;\n    int32_t group_tid_9465;\n    \n    global_tid_9463 = get_global_id(0);\n    local_tid_9464 = get_local_id(0);\n    group_sizze_9467 = get_local_size(0);\n    wave_sizze_9466 = LOCKSTEP_WIDTH;\n    group_tid_9465 = get_group_id(0);\n    \n    int32_t phys_tid_9066 = global_tid_9463;\n    \n    sync_arr_mem_9468 = (__local unsigned char *) sync_arr_mem_9468_backing_0;\n    red_arr_mem_9470 = (__local unsigned char *) red_arr_mem_9470_backing_1;\n    red_arr_mem_9472 = (__local unsigned char *) red_arr_mem_9472_backing_2;\n    red_arr_mem_9474 = (__local unsigned char *) red_arr_mem_9474_backing_3;\n    \n    int64_t dummy_9064 = (int64_t) 0;\n    int64_t gtid_9065 = (int64_t) 0;\n    int32_t x_acc_9476;\n    int32_t x_acc_9477;\n    int32_t x_acc_9478;\n    int64_t chunk_sizze_9479;\n    int64_t starting_point_9480 = phys_tid_9066 * sdiv_up64((int64_t) 6,\n                                                            sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                                                            num_groups_9059)));\n    int64_t remaining_elements_9481 = (int64_t) 6 - starting_point_9480;\n    \n    if (sle64(remaining_elements_9481, (int64_t) 0) || sle64((int64_t) 6,\n                                                             starting_point_9480)) {\n        chunk_sizze_9479 = (int64_t) 0;\n    } else {\n        if (slt64((int64_t) 6, (phys_tid_9066 + (int64_t) 1) *\n                  sdiv_up64((int64_t) 6,\n                            sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                            num_groups_9059))))) {\n            chunk_sizze_9479 = (int64_t) 6 - phys_tid_9066 *\n                sdiv_up64((int64_t) 6,\n                          sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                          num_groups_9059)));\n        } else {\n            chunk_sizze_9479 = sdiv_up64((int64_t) 6,\n                                     ",
-                   "    sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                                         num_groups_9059)));\n        }\n    }\n    \n    int32_t x_8821;\n    int32_t x_8822;\n    int32_t x_8823;\n    int32_t x_8824;\n    int32_t x_8825;\n    int32_t x_8826;\n    \n    // neutral-initialise the accumulators\n    {\n        x_acc_9476 = 2147483647;\n        x_acc_9477 = -1;\n        x_acc_9478 = -1;\n    }\n    for (int64_t i_9508 = 0; i_9508 < sdiv_up64((int64_t) 6,\n                                                sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                                                num_groups_9059))); i_9508++) {\n        gtid_9065 = sext_i32_i64(local_tid_9464) + (squot64(phys_tid_9066,\n                                                            segred_group_sizze_9057) *\n                                                    sdiv_up64((int64_t) 6,\n                                                              sext_i32_i64(sext_i64_i32(segred_group_sizze_9057 *\n                                                              num_groups_9059))) +\n                                                    i_9508) *\n            segred_group_sizze_9057;\n        if (slt64(gtid_9065, (int64_t) 6)) {\n            // apply map function\n            {\n                bool y_8849 = slt64(gtid_9065, defunc_0_f_res_8744);\n                bool index_certs_8851;\n                \n                if (!y_8849) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 2) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) gtid_9065;\n                            global_failure_args[1] =\n                                (int64_t) defunc_0_f_res_8744;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t i_8852;\n                \n    ",
-                   "            i_8852 = ((__global int32_t *) mem_9173)[gtid_9065];\n                \n                int64_t i_8853 = sext_i32_i64(i_8852);\n                bool x_8854 = sle64((int64_t) 0, i_8853);\n                bool y_8855 = slt64(i_8853, (int64_t) 6);\n                bool bounds_check_8856 = x_8854 && y_8855;\n                bool index_certs_8857;\n                \n                if (!bounds_check_8856) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 3) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8853;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t iCity_8858;\n                \n                iCity_8858 = ((__global int32_t *) mem_9156)[i_8853];\n                \n                int32_t i_8859 = add32(1, i_8852);\n                int64_t i_8860 = sext_i32_i64(i_8859);\n                bool x_8861 = sle64((int64_t) 0, i_8860);\n                bool y_8862 = slt64(i_8860, (int64_t) 6);\n                bool bounds_check_8863 = x_8861 && y_8862;\n                bool index_certs_8864;\n                \n                if (!bounds_check_8863) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 4) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8860;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t iCityp1_8865;\n                \n                iCityp1_8865 = ((__global int32_t *) mem",
-                   "_9156)[i_8860];\n                \n                int32_t x_8869;\n                \n                x_8869 = ((__global int32_t *) mem_9181)[gtid_9065];\n                \n                int32_t x_8870 = add32(i_8852, x_8869);\n                int32_t j_8871 = add32(2, x_8870);\n                int64_t j_8872 = sext_i32_i64(j_8871);\n                bool x_8873 = sle64((int64_t) 0, j_8872);\n                bool y_8874 = slt64(j_8872, (int64_t) 6);\n                bool bounds_check_8875 = x_8873 && y_8874;\n                bool index_certs_8876;\n                \n                if (!bounds_check_8875) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 5) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) j_8872;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t jCity_8877;\n                \n                jCity_8877 = ((__global int32_t *) mem_9156)[j_8872];\n                \n                int32_t i_8878 = add32(3, x_8870);\n                int64_t i_8879 = sext_i32_i64(i_8878);\n                bool x_8880 = sle64((int64_t) 0, i_8879);\n                bool y_8881 = slt64(i_8879, (int64_t) 6);\n                bool bounds_check_8882 = x_8880 && y_8881;\n                bool index_certs_8883;\n                \n                if (!bounds_check_8882) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 6) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8879;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n             ",
-                   "           goto error_0;\n                    }\n                }\n                \n                int32_t jCityp1_8884;\n                \n                jCityp1_8884 = ((__global int32_t *) mem_9156)[i_8879];\n                \n                int32_t x_8885 = mul32(5, iCity_8858);\n                int32_t i_8886 = add32(jCity_8877, x_8885);\n                int64_t i_8887 = sext_i32_i64(i_8886);\n                bool x_8888 = sle64((int64_t) 0, i_8887);\n                bool y_8889 = slt64(i_8887, (int64_t) 25);\n                bool bounds_check_8890 = x_8888 && y_8889;\n                bool index_certs_8891;\n                \n                if (!bounds_check_8890) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 7) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8887;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t x_8892;\n                \n                x_8892 = ((__global int32_t *) mem_9158)[i_8887];\n                \n                int32_t x_8893 = mul32(5, iCityp1_8865);\n                int32_t i_8894 = add32(jCityp1_8884, x_8893);\n                int64_t i_8895 = sext_i32_i64(i_8894);\n                bool x_8896 = sle64((int64_t) 0, i_8895);\n                bool y_8897 = slt64(i_8895, (int64_t) 25);\n                bool bounds_check_8898 = x_8896 && y_8897;\n                bool index_certs_8899;\n                \n                if (!bounds_check_8898) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 8) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8895;\n                            global_failure_args[1] = (int64_t)",
-                   " (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t y_8900;\n                \n                y_8900 = ((__global int32_t *) mem_9158)[i_8895];\n                \n                int32_t x_8901 = add32(x_8892, y_8900);\n                int32_t i_8902 = add32(iCityp1_8865, x_8885);\n                int64_t i_8903 = sext_i32_i64(i_8902);\n                bool x_8904 = sle64((int64_t) 0, i_8903);\n                bool y_8905 = slt64(i_8903, (int64_t) 25);\n                bool bounds_check_8906 = x_8904 && y_8905;\n                bool index_certs_8907;\n                \n                if (!bounds_check_8906) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 9) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_8903;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t x_8908;\n                \n                x_8908 = ((__global int32_t *) mem_9158)[i_8903];\n                \n                int32_t x_8909 = mul32(5, jCity_8877);\n                int32_t i_8910 = add32(jCityp1_8884, x_8909);\n                int64_t i_8911 = sext_i32_i64(i_8910);\n                bool x_8912 = sle64((int64_t) 0, i_8911);\n                bool y_8913 = slt64(i_8911, (int64_t) 25);\n                bool bounds_check_8914 = x_8912 && y_8913;\n                bool index_certs_8915;\n                \n                if (!bounds_check_8914) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 10) ==\n                            -1) {\n             ",
-                   "               global_failure_args[0] = (int64_t) i_8911;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t y_8916;\n                \n                y_8916 = ((__global int32_t *) mem_9158)[i_8911];\n                \n                int32_t y_8917 = add32(x_8908, y_8916);\n                int32_t defunc_0_f_res_8918 = sub32(x_8901, y_8917);\n                \n                // save map-out results\n                { }\n                // load accumulator\n                {\n                    x_8821 = x_acc_9476;\n                    x_8822 = x_acc_9477;\n                    x_8823 = x_acc_9478;\n                }\n                // load new values\n                {\n                    x_8824 = defunc_0_f_res_8918;\n                    x_8825 = i_8852;\n                    x_8826 = j_8871;\n                }\n                // apply reduction operator\n                {\n                    bool cond_8827 = slt32(x_8821, x_8824);\n                    int32_t defunc_1_op_res_8828;\n                    int32_t defunc_1_op_res_8829;\n                    int32_t defunc_1_op_res_8830;\n                    \n                    if (cond_8827) {\n                        defunc_1_op_res_8828 = x_8821;\n                        defunc_1_op_res_8829 = x_8822;\n                        defunc_1_op_res_8830 = x_8823;\n                    } else {\n                        bool cond_8831 = x_8821 == x_8824;\n                        int32_t defunc_1_op_res_f_res_8832;\n                        int32_t defunc_1_op_res_f_res_8833;\n                        int32_t defunc_1_op_res_f_res_8834;\n                        \n                        if (cond_8831) {\n                            bool cond_8835 = slt32(x_8822, x_8825);\n                            int32_t defunc_1_op",
-                   "_res_f_res_t_res_8836;\n                            int32_t defunc_1_op_res_f_res_t_res_8837;\n                            int32_t defunc_1_op_res_f_res_t_res_8838;\n                            \n                            if (cond_8835) {\n                                defunc_1_op_res_f_res_t_res_8836 = x_8821;\n                                defunc_1_op_res_f_res_t_res_8837 = x_8822;\n                                defunc_1_op_res_f_res_t_res_8838 = x_8823;\n                            } else {\n                                bool cond_8839 = x_8822 == x_8825;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8840;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8841;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8842;\n                                \n                                if (cond_8839) {\n                                    bool cond_8843 = slt32(x_8823, x_8826);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8844;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8844 =\n                                            x_8821;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8844 =\n                                            x_8824;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8845;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8845 =\n                                            x_8822;\n                                    } else {\n                      ",
-                   "                  defunc_1_op_res_f_res_t_res_f_res_t_res_8845 =\n                                            x_8825;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8846;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846 =\n                                            x_8823;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846 =\n                                            x_8826;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_8840 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8844;\n                                    defunc_1_op_res_f_res_t_res_f_res_8841 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8845;\n                                    defunc_1_op_res_f_res_t_res_f_res_8842 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_8840 =\n                                        x_8824;\n                                    defunc_1_op_res_f_res_t_res_f_res_8841 =\n                                        x_8825;\n                                    defunc_1_op_res_f_res_t_res_f_res_8842 =\n                                        x_8826;\n                                }\n                                defunc_1_op_res_f_res_t_res_8836 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8840;\n                                defunc_1_op_res_f_res_t_res_8837 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8841;\n      ",
-                   "                          defunc_1_op_res_f_res_t_res_8838 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8842;\n                            }\n                            defunc_1_op_res_f_res_8832 =\n                                defunc_1_op_res_f_res_t_res_8836;\n                            defunc_1_op_res_f_res_8833 =\n                                defunc_1_op_res_f_res_t_res_8837;\n                            defunc_1_op_res_f_res_8834 =\n                                defunc_1_op_res_f_res_t_res_8838;\n                        } else {\n                            defunc_1_op_res_f_res_8832 = x_8824;\n                            defunc_1_op_res_f_res_8833 = x_8825;\n                            defunc_1_op_res_f_res_8834 = x_8826;\n                        }\n                        defunc_1_op_res_8828 = defunc_1_op_res_f_res_8832;\n                        defunc_1_op_res_8829 = defunc_1_op_res_f_res_8833;\n                        defunc_1_op_res_8830 = defunc_1_op_res_f_res_8834;\n                    }\n                    // store in accumulator\n                    {\n                        x_acc_9476 = defunc_1_op_res_8828;\n                        x_acc_9477 = defunc_1_op_res_8829;\n                        x_acc_9478 = defunc_1_op_res_8830;\n                    }\n                }\n            }\n        }\n        // to reduce current chunk, first store our result in memory\n        {\n            x_8821 = x_acc_9476;\n            x_8822 = x_acc_9477;\n            x_8823 = x_acc_9478;\n            ((__local\n              int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n                x_8821;\n            ((__local\n              int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n                x_8822;\n            ((__local\n              int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n                x_8823;\n        }\n        \n      error_0:\n        barrier(CLK_LOCAL_MEM_FENCE);\n        if (local_failure)\n            retu",
-                   "rn;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        \n        int32_t offset_9509;\n        int32_t skip_waves_9510 = 1;\n        int32_t x_9482;\n        int32_t x_9483;\n        int32_t x_9484;\n        int32_t x_9485;\n        int32_t x_9486;\n        int32_t x_9487;\n        \n        offset_9509 = 0;\n        // participating threads read initial accumulator\n        {\n            if (slt32(local_tid_9464, sext_i64_i32(segred_group_sizze_9057))) {\n                x_9482 = ((__local\n                           int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                        offset_9509)];\n                x_9483 = ((__local\n                           int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                        offset_9509)];\n                x_9484 = ((__local\n                           int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464 +\n                                                        offset_9509)];\n            }\n        }\n        offset_9509 = 1;\n        while (slt32(offset_9509, wave_sizze_9466)) {\n            if (slt32(local_tid_9464 + offset_9509,\n                      sext_i64_i32(segred_group_sizze_9057)) &&\n                ((local_tid_9464 - squot32(local_tid_9464, wave_sizze_9466) *\n                  wave_sizze_9466) & (2 * offset_9509 - 1)) == 0) {\n                // read array element\n                {\n                    x_9485 = ((volatile __local\n                               int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9509)];\n                    x_9486 = ((volatile __local\n                               int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9509)];\n                    x_9487 = ((volatile __local\n                               int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_946",
-                   "4 +\n                                                            offset_9509)];\n                }\n                // apply reduction operation\n                {\n                    bool cond_9488 = slt32(x_9482, x_9485);\n                    int32_t defunc_1_op_res_9489;\n                    int32_t defunc_1_op_res_9490;\n                    int32_t defunc_1_op_res_9491;\n                    \n                    if (cond_9488) {\n                        defunc_1_op_res_9489 = x_9482;\n                        defunc_1_op_res_9490 = x_9483;\n                        defunc_1_op_res_9491 = x_9484;\n                    } else {\n                        bool cond_9492 = x_9482 == x_9485;\n                        int32_t defunc_1_op_res_f_res_9493;\n                        int32_t defunc_1_op_res_f_res_9494;\n                        int32_t defunc_1_op_res_f_res_9495;\n                        \n                        if (cond_9492) {\n                            bool cond_9496 = slt32(x_9483, x_9486);\n                            int32_t defunc_1_op_res_f_res_t_res_9497;\n                            int32_t defunc_1_op_res_f_res_t_res_9498;\n                            int32_t defunc_1_op_res_f_res_t_res_9499;\n                            \n                            if (cond_9496) {\n                                defunc_1_op_res_f_res_t_res_9497 = x_9482;\n                                defunc_1_op_res_f_res_t_res_9498 = x_9483;\n                                defunc_1_op_res_f_res_t_res_9499 = x_9484;\n                            } else {\n                                bool cond_9500 = x_9483 == x_9486;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9501;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9502;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9503;\n                                \n                                if (cond_9500) {\n                                    bool cond_9504 = slt32(x_9484, x_9",
-                   "487);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                            x_9482;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                            x_9485;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                            x_9483;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                            x_9486;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                            x_9484;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                            x_9487;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                          ",
-                   "          defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                    defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                        x_9485;\n                                    defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                        x_9486;\n                                    defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                        x_9487;\n                                }\n                                defunc_1_op_res_f_res_t_res_9497 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9501;\n                                defunc_1_op_res_f_res_t_res_9498 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9502;\n                                defunc_1_op_res_f_res_t_res_9499 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9503;\n                            }\n                            defunc_1_op_res_f_res_9493 =\n                                defunc_1_op_res_f_res_t_res_9497;\n                            defunc_1_op_res_f_res_9494 =\n                                defunc_1_op_res_f_res_t_res_9498;\n                            defunc_1_op_res_f_res_9495 =\n                                defunc_1_op_res_f_res_t_res_9499;\n                        } else {\n                            defunc_1_op_res_f_res_9493 = x_9485;\n                            defunc_1_op_res_f_res_9494 = x_9486;\n                            defunc_1_op_res_f_res_9495 = x_9487;\n                        }\n                        defunc_1_op_res_9489 = defunc_1_op_res_f_res_9493;\n                        defunc_1_op_res_9490 = defunc_1_op_res_f_res_9494;\n                  ",
-                   "      defunc_1_op_res_9491 = defunc_1_op_res_f_res_9495;\n                    }\n                    x_9482 = defunc_1_op_res_9489;\n                    x_9483 = defunc_1_op_res_9490;\n                    x_9484 = defunc_1_op_res_9491;\n                }\n                // write result of operation\n                {\n                    ((volatile __local\n                      int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n                        x_9482;\n                    ((volatile __local\n                      int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n                        x_9483;\n                    ((volatile __local\n                      int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n                        x_9484;\n                }\n            }\n            offset_9509 *= 2;\n        }\n        while (slt32(skip_waves_9510,\n                     squot32(sext_i64_i32(segred_group_sizze_9057) +\n                             wave_sizze_9466 - 1, wave_sizze_9466))) {\n            barrier(CLK_LOCAL_MEM_FENCE);\n            offset_9509 = skip_waves_9510 * wave_sizze_9466;\n            if (slt32(local_tid_9464 + offset_9509,\n                      sext_i64_i32(segred_group_sizze_9057)) &&\n                ((local_tid_9464 - squot32(local_tid_9464, wave_sizze_9466) *\n                  wave_sizze_9466) == 0 && (squot32(local_tid_9464,\n                                                    wave_sizze_9466) & (2 *\n                                                                        skip_waves_9510 -\n                                                                        1)) ==\n                 0)) {\n                // read array element\n                {\n                    x_9485 = ((__local\n                               int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9509)];\n                    x_9486 = ((__local\n                               int32_t *) r",
-                   "ed_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9509)];\n                    x_9487 = ((__local\n                               int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9509)];\n                }\n                // apply reduction operation\n                {\n                    bool cond_9488 = slt32(x_9482, x_9485);\n                    int32_t defunc_1_op_res_9489;\n                    int32_t defunc_1_op_res_9490;\n                    int32_t defunc_1_op_res_9491;\n                    \n                    if (cond_9488) {\n                        defunc_1_op_res_9489 = x_9482;\n                        defunc_1_op_res_9490 = x_9483;\n                        defunc_1_op_res_9491 = x_9484;\n                    } else {\n                        bool cond_9492 = x_9482 == x_9485;\n                        int32_t defunc_1_op_res_f_res_9493;\n                        int32_t defunc_1_op_res_f_res_9494;\n                        int32_t defunc_1_op_res_f_res_9495;\n                        \n                        if (cond_9492) {\n                            bool cond_9496 = slt32(x_9483, x_9486);\n                            int32_t defunc_1_op_res_f_res_t_res_9497;\n                            int32_t defunc_1_op_res_f_res_t_res_9498;\n                            int32_t defunc_1_op_res_f_res_t_res_9499;\n                            \n                            if (cond_9496) {\n                                defunc_1_op_res_f_res_t_res_9497 = x_9482;\n                                defunc_1_op_res_f_res_t_res_9498 = x_9483;\n                                defunc_1_op_res_f_res_t_res_9499 = x_9484;\n                            } else {\n                                bool cond_9500 = x_9483 == x_9486;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9501;\n                                int32_t defunc_1_op_res_f_res_t_r",
-                   "es_f_res_9502;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9503;\n                                \n                                if (cond_9500) {\n                                    bool cond_9504 = slt32(x_9484, x_9487);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                            x_9482;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                            x_9485;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                            x_9483;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                            x_9486;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                    \n                                    if (cond_9504) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                            x_9484;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                ",
-                   "            x_9487;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                    defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                    defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                        x_9485;\n                                    defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                        x_9486;\n                                    defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                        x_9487;\n                                }\n                                defunc_1_op_res_f_res_t_res_9497 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9501;\n                                defunc_1_op_res_f_res_t_res_9498 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9502;\n                                defunc_1_op_res_f_res_t_res_9499 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9503;\n                            }\n                            defunc_1_op_res_f_res_9493 =\n                                defunc_1_op_res_f_res_t_res_9497;\n                            defunc_1_op_res_f_res_9494 =\n                                defunc_1_op_res_f_res_t_res_9498;\n                            defunc_1_op_res_f_res_9495 =\n                                defunc_1_op_res_f_res_t_res_9499;\n                        } else {\n                            defunc_1_op_res_f_res_9493 = x_9485;\n                            defunc_1_op_res_f_res_9494 = x_9486;\n            ",
-                   "                defunc_1_op_res_f_res_9495 = x_9487;\n                        }\n                        defunc_1_op_res_9489 = defunc_1_op_res_f_res_9493;\n                        defunc_1_op_res_9490 = defunc_1_op_res_f_res_9494;\n                        defunc_1_op_res_9491 = defunc_1_op_res_f_res_9495;\n                    }\n                    x_9482 = defunc_1_op_res_9489;\n                    x_9483 = defunc_1_op_res_9490;\n                    x_9484 = defunc_1_op_res_9491;\n                }\n                // write result of operation\n                {\n                    ((__local\n                      int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n                        x_9482;\n                    ((__local\n                      int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n                        x_9483;\n                    ((__local\n                      int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n                        x_9484;\n                }\n            }\n            skip_waves_9510 *= 2;\n        }\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // first thread saves the result in accumulator\n        {\n            if (sext_i32_i64(local_tid_9464) == (int64_t) 0) {\n                x_acc_9476 = x_9482;\n                x_acc_9477 = x_9483;\n                x_acc_9478 = x_9484;\n            }\n        }\n        // first thread keeps accumulator; others reset to neutral element\n        {\n            if (!(sext_i32_i64(local_tid_9464) == (int64_t) 0)) {\n                x_acc_9476 = 2147483647;\n                x_acc_9477 = -1;\n                x_acc_9478 = -1;\n            }\n        }\n    }\n    \n    int32_t old_counter_9511;\n    \n    // first thread in group saves group result to global memory\n    {\n        if (local_tid_9464 == 0) {\n            ((__global\n              int32_t *) segred_tmp_mem_9456)[sext_i32_i64(group_tid_9465)] =\n                x_acc_9476;\n            ((__global\n              int32_t *) segred_tmp_mem_9",
-                   "458)[sext_i32_i64(group_tid_9465)] =\n                x_acc_9477;\n            ((__global\n              int32_t *) segred_tmp_mem_9460)[sext_i32_i64(group_tid_9465)] =\n                x_acc_9478;\n            mem_fence_global();\n            old_counter_9511 = atomic_add_i32_global(&((volatile __global\n                                                        int *) counter_mem_9454)[(int64_t) 0],\n                                                     (int) 1);\n            ((__local bool *) sync_arr_mem_9468)[(int64_t) 0] =\n                old_counter_9511 == num_groups_9059 - (int64_t) 1;\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    \n    bool is_last_group_9512;\n    \n    is_last_group_9512 = ((__local bool *) sync_arr_mem_9468)[(int64_t) 0];\n    if (is_last_group_9512) {\n        if (local_tid_9464 == 0) {\n            old_counter_9511 = atomic_add_i32_global(&((volatile __global\n                                                        int *) counter_mem_9454)[(int64_t) 0],\n                                                     (int) ((int64_t) 0 -\n                                                            num_groups_9059));\n        }\n        // read in the per-group-results\n        {\n            int64_t read_per_thread_9513 = sdiv_up64(num_groups_9059,\n                                                     segred_group_sizze_9057);\n            \n            x_8821 = 2147483647;\n            x_8822 = -1;\n            x_8823 = -1;\n            for (int64_t i_9514 = 0; i_9514 < read_per_thread_9513; i_9514++) {\n                int64_t group_res_id_9515 = sext_i32_i64(local_tid_9464) *\n                        read_per_thread_9513 + i_9514;\n                int64_t index_of_group_res_9516 = group_res_id_9515;\n                \n                if (slt64(group_res_id_9515, num_groups_9059)) {\n                    x_8824 = ((__global\n                               int32_t *) segred_tmp_mem_9456)[index_of_group_res_9516];\n                    x_8825 = ((__global\n",
-                   "                               int32_t *) segred_tmp_mem_9458)[index_of_group_res_9516];\n                    x_8826 = ((__global\n                               int32_t *) segred_tmp_mem_9460)[index_of_group_res_9516];\n                    \n                    bool cond_8827 = slt32(x_8821, x_8824);\n                    int32_t defunc_1_op_res_8828;\n                    int32_t defunc_1_op_res_8829;\n                    int32_t defunc_1_op_res_8830;\n                    \n                    if (cond_8827) {\n                        defunc_1_op_res_8828 = x_8821;\n                        defunc_1_op_res_8829 = x_8822;\n                        defunc_1_op_res_8830 = x_8823;\n                    } else {\n                        bool cond_8831 = x_8821 == x_8824;\n                        int32_t defunc_1_op_res_f_res_8832;\n                        int32_t defunc_1_op_res_f_res_8833;\n                        int32_t defunc_1_op_res_f_res_8834;\n                        \n                        if (cond_8831) {\n                            bool cond_8835 = slt32(x_8822, x_8825);\n                            int32_t defunc_1_op_res_f_res_t_res_8836;\n                            int32_t defunc_1_op_res_f_res_t_res_8837;\n                            int32_t defunc_1_op_res_f_res_t_res_8838;\n                            \n                            if (cond_8835) {\n                                defunc_1_op_res_f_res_t_res_8836 = x_8821;\n                                defunc_1_op_res_f_res_t_res_8837 = x_8822;\n                                defunc_1_op_res_f_res_t_res_8838 = x_8823;\n                            } else {\n                                bool cond_8839 = x_8822 == x_8825;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8840;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8841;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_8842;\n                                \n                                if (cond",
-                   "_8839) {\n                                    bool cond_8843 = slt32(x_8823, x_8826);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8844;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8844 =\n                                            x_8821;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8844 =\n                                            x_8824;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8845;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8845 =\n                                            x_8822;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8845 =\n                                            x_8825;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_8846;\n                                    \n                                    if (cond_8843) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846 =\n                                            x_8823;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846 =\n                                            x_8826;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_8840 =\n                                 ",
-                   "       defunc_1_op_res_f_res_t_res_f_res_t_res_8844;\n                                    defunc_1_op_res_f_res_t_res_f_res_8841 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8845;\n                                    defunc_1_op_res_f_res_t_res_f_res_8842 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_8846;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_8840 =\n                                        x_8824;\n                                    defunc_1_op_res_f_res_t_res_f_res_8841 =\n                                        x_8825;\n                                    defunc_1_op_res_f_res_t_res_f_res_8842 =\n                                        x_8826;\n                                }\n                                defunc_1_op_res_f_res_t_res_8836 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8840;\n                                defunc_1_op_res_f_res_t_res_8837 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8841;\n                                defunc_1_op_res_f_res_t_res_8838 =\n                                    defunc_1_op_res_f_res_t_res_f_res_8842;\n                            }\n                            defunc_1_op_res_f_res_8832 =\n                                defunc_1_op_res_f_res_t_res_8836;\n                            defunc_1_op_res_f_res_8833 =\n                                defunc_1_op_res_f_res_t_res_8837;\n                            defunc_1_op_res_f_res_8834 =\n                                defunc_1_op_res_f_res_t_res_8838;\n                        } else {\n                            defunc_1_op_res_f_res_8832 = x_8824;\n                            defunc_1_op_res_f_res_8833 = x_8825;\n                            defunc_1_op_res_f_res_8834 = x_8826;\n                        }\n                        defunc_1_op_res_8828 = defunc_1_op_res_f_res_8832;\n              ",
-                   "          defunc_1_op_res_8829 = defunc_1_op_res_f_res_8833;\n                        defunc_1_op_res_8830 = defunc_1_op_res_f_res_8834;\n                    }\n                    x_8821 = defunc_1_op_res_8828;\n                    x_8822 = defunc_1_op_res_8829;\n                    x_8823 = defunc_1_op_res_8830;\n                }\n            }\n        }\n        ((__local int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n            x_8821;\n        ((__local int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n            x_8822;\n        ((__local int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n            x_8823;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-group results\n        {\n            int32_t offset_9517;\n            int32_t skip_waves_9518 = 1;\n            int32_t x_9482;\n            int32_t x_9483;\n            int32_t x_9484;\n            int32_t x_9485;\n            int32_t x_9486;\n            int32_t x_9487;\n            \n            offset_9517 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_9464,\n                          sext_i64_i32(segred_group_sizze_9057))) {\n                    x_9482 = ((__local\n                               int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9517)];\n                    x_9483 = ((__local\n                               int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9517)];\n                    x_9484 = ((__local\n                               int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464 +\n                                                            offset_9517)];\n                }\n            }\n            offset_9517 = 1;\n            while (slt32(offset_9517, wave_sizze_9466)) {\n                if (slt32(local_tid_9464 + offset_9517,\n     ",
-                   "                     sext_i64_i32(segred_group_sizze_9057)) &&\n                    ((local_tid_9464 - squot32(local_tid_9464,\n                                               wave_sizze_9466) *\n                      wave_sizze_9466) & (2 * offset_9517 - 1)) == 0) {\n                    // read array element\n                    {\n                        x_9485 = ((volatile __local\n                                   int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n                        x_9486 = ((volatile __local\n                                   int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n                        x_9487 = ((volatile __local\n                                   int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n                    }\n                    // apply reduction operation\n                    {\n                        bool cond_9488 = slt32(x_9482, x_9485);\n                        int32_t defunc_1_op_res_9489;\n                        int32_t defunc_1_op_res_9490;\n                        int32_t defunc_1_op_res_9491;\n                        \n                        if (cond_9488) {\n                            defunc_1_op_res_9489 = x_9482;\n                            defunc_1_op_res_9490 = x_9483;\n                            defunc_1_op_res_9491 = x_9484;\n                        } else {\n                            bool cond_9492 = x_9482 == x_9485;\n                            int32_t defunc_1_op_res_f_res_9493;\n                            int32_t defunc_1_op_res_f_res_9494;\n                            int32_t defunc_1_op_res_f_res_9495;\n                            \n                            if (cond_9492) {\n                                bool cond_9496 = slt32(x_9483, x_9486);\n ",
-                   "                               int32_t defunc_1_op_res_f_res_t_res_9497;\n                                int32_t defunc_1_op_res_f_res_t_res_9498;\n                                int32_t defunc_1_op_res_f_res_t_res_9499;\n                                \n                                if (cond_9496) {\n                                    defunc_1_op_res_f_res_t_res_9497 = x_9482;\n                                    defunc_1_op_res_f_res_t_res_9498 = x_9483;\n                                    defunc_1_op_res_f_res_t_res_9499 = x_9484;\n                                } else {\n                                    bool cond_9500 = x_9483 == x_9486;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9501;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9502;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9503;\n                                    \n                                    if (cond_9500) {\n                                        bool cond_9504 = slt32(x_9484, x_9487);\n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                        \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                                x_9482;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                                x_9485;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                          ",
-                   "              \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                                x_9483;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                                x_9486;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                        \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                                x_9484;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                                x_9487;\n                                        }\n                                        defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                        defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                        defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                            x_9485;\n                                        defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                            x_9486;\n                                        defunc_1_op_res_f_res",
-                   "_t_res_f_res_9503 =\n                                            x_9487;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_9497 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9501;\n                                    defunc_1_op_res_f_res_t_res_9498 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9502;\n                                    defunc_1_op_res_f_res_t_res_9499 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9503;\n                                }\n                                defunc_1_op_res_f_res_9493 =\n                                    defunc_1_op_res_f_res_t_res_9497;\n                                defunc_1_op_res_f_res_9494 =\n                                    defunc_1_op_res_f_res_t_res_9498;\n                                defunc_1_op_res_f_res_9495 =\n                                    defunc_1_op_res_f_res_t_res_9499;\n                            } else {\n                                defunc_1_op_res_f_res_9493 = x_9485;\n                                defunc_1_op_res_f_res_9494 = x_9486;\n                                defunc_1_op_res_f_res_9495 = x_9487;\n                            }\n                            defunc_1_op_res_9489 = defunc_1_op_res_f_res_9493;\n                            defunc_1_op_res_9490 = defunc_1_op_res_f_res_9494;\n                            defunc_1_op_res_9491 = defunc_1_op_res_f_res_9495;\n                        }\n                        x_9482 = defunc_1_op_res_9489;\n                        x_9483 = defunc_1_op_res_9490;\n                        x_9484 = defunc_1_op_res_9491;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local\n                          int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n                            x_9482;\n                        ((volatile __local\n      ",
-                   "                    int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n                            x_9483;\n                        ((volatile __local\n                          int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n                            x_9484;\n                    }\n                }\n                offset_9517 *= 2;\n            }\n            while (slt32(skip_waves_9518,\n                         squot32(sext_i64_i32(segred_group_sizze_9057) +\n                                 wave_sizze_9466 - 1, wave_sizze_9466))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_9517 = skip_waves_9518 * wave_sizze_9466;\n                if (slt32(local_tid_9464 + offset_9517,\n                          sext_i64_i32(segred_group_sizze_9057)) &&\n                    ((local_tid_9464 - squot32(local_tid_9464,\n                                               wave_sizze_9466) *\n                      wave_sizze_9466) == 0 && (squot32(local_tid_9464,\n                                                        wave_sizze_9466) & (2 *\n                                                                            skip_waves_9518 -\n                                                                            1)) ==\n                     0)) {\n                    // read array element\n                    {\n                        x_9485 = ((__local\n                                   int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n                        x_9486 = ((__local\n                                   int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n                        x_9487 = ((__local\n                                   int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464 +\n                                                                offset_9517)];\n       ",
-                   "             }\n                    // apply reduction operation\n                    {\n                        bool cond_9488 = slt32(x_9482, x_9485);\n                        int32_t defunc_1_op_res_9489;\n                        int32_t defunc_1_op_res_9490;\n                        int32_t defunc_1_op_res_9491;\n                        \n                        if (cond_9488) {\n                            defunc_1_op_res_9489 = x_9482;\n                            defunc_1_op_res_9490 = x_9483;\n                            defunc_1_op_res_9491 = x_9484;\n                        } else {\n                            bool cond_9492 = x_9482 == x_9485;\n                            int32_t defunc_1_op_res_f_res_9493;\n                            int32_t defunc_1_op_res_f_res_9494;\n                            int32_t defunc_1_op_res_f_res_9495;\n                            \n                            if (cond_9492) {\n                                bool cond_9496 = slt32(x_9483, x_9486);\n                                int32_t defunc_1_op_res_f_res_t_res_9497;\n                                int32_t defunc_1_op_res_f_res_t_res_9498;\n                                int32_t defunc_1_op_res_f_res_t_res_9499;\n                                \n                                if (cond_9496) {\n                                    defunc_1_op_res_f_res_t_res_9497 = x_9482;\n                                    defunc_1_op_res_f_res_t_res_9498 = x_9483;\n                                    defunc_1_op_res_f_res_t_res_9499 = x_9484;\n                                } else {\n                                    bool cond_9500 = x_9483 == x_9486;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9501;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9502;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_9503",
-                   ";\n                                    \n                                    if (cond_9500) {\n                                        bool cond_9504 = slt32(x_9484, x_9487);\n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                        \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                                x_9482;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505 =\n                                                x_9485;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                        \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                                x_9483;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506 =\n                                                x_9486;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                        \n                                        if (cond_9504) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9507 =\n                                                x_9484;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_",
-                   "9507 =\n                                                x_9487;\n                                        }\n                                        defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9505;\n                                        defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9506;\n                                        defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_9507;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_9501 =\n                                            x_9485;\n                                        defunc_1_op_res_f_res_t_res_f_res_9502 =\n                                            x_9486;\n                                        defunc_1_op_res_f_res_t_res_f_res_9503 =\n                                            x_9487;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_9497 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9501;\n                                    defunc_1_op_res_f_res_t_res_9498 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9502;\n                                    defunc_1_op_res_f_res_t_res_9499 =\n                                        defunc_1_op_res_f_res_t_res_f_res_9503;\n                                }\n                                defunc_1_op_res_f_res_9493 =\n                                    defunc_1_op_res_f_res_t_res_9497;\n                                defunc_1_op_res_f_res_9494 =\n                                    defunc_1_op_res_f_res_t_res_9498;\n                                defunc_1_op_res_f_res_9495 =\n                                    defunc_1_op_res_f_res_t_res_9499;\n                    ",
-                   "        } else {\n                                defunc_1_op_res_f_res_9493 = x_9485;\n                                defunc_1_op_res_f_res_9494 = x_9486;\n                                defunc_1_op_res_f_res_9495 = x_9487;\n                            }\n                            defunc_1_op_res_9489 = defunc_1_op_res_f_res_9493;\n                            defunc_1_op_res_9490 = defunc_1_op_res_f_res_9494;\n                            defunc_1_op_res_9491 = defunc_1_op_res_f_res_9495;\n                        }\n                        x_9482 = defunc_1_op_res_9489;\n                        x_9483 = defunc_1_op_res_9490;\n                        x_9484 = defunc_1_op_res_9491;\n                    }\n                    // write result of operation\n                    {\n                        ((__local\n                          int32_t *) red_arr_mem_9470)[sext_i32_i64(local_tid_9464)] =\n                            x_9482;\n                        ((__local\n                          int32_t *) red_arr_mem_9472)[sext_i32_i64(local_tid_9464)] =\n                            x_9483;\n                        ((__local\n                          int32_t *) red_arr_mem_9474)[sext_i32_i64(local_tid_9464)] =\n                            x_9484;\n                    }\n                }\n                skip_waves_9518 *= 2;\n            }\n            // and back to memory with the final result\n            {\n                if (local_tid_9464 == 0) {\n                    ((__global int32_t *) mem_9184)[(int64_t) 0] = x_9482;\n                    ((__global int32_t *) mem_9186)[(int64_t) 0] = x_9483;\n                    ((__global int32_t *) mem_9188)[(int64_t) 0] = x_9484;\n                }\n            }\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segred_group_sizze_9057\n}\n__kernel void segred_nonseg_9135(__global int *global_failure,\n                                 int failure_is_an_option, __global\n                                 int64_t *global_failure_args, __local volatile\n",
-                   "                                 int64_t *red_arr_mem_9545_backing_aligned_0,\n                                 __local volatile\n                                 int64_t *red_arr_mem_9543_backing_aligned_1,\n                                 __local volatile\n                                 int64_t *sync_arr_mem_9541_backing_aligned_2,\n                                 int64_t num_groups_9129,\n                                 int64_t num_threads_9535, __global\n                                 unsigned char *mem_9156, __global\n                                 unsigned char *mem_9158, __global\n                                 unsigned char *mem_9191, __global\n                                 unsigned char *mem_9194, __global\n                                 unsigned char *mem_9196, __global\n                                 unsigned char *counter_mem_9529, __global\n                                 unsigned char *segred_tmp_mem_9531, __global\n                                 unsigned char *segred_tmp_mem_9533)\n{\n    #define segred_group_sizze_9127 (segred_group_sizze_9126)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict red_arr_mem_9545_backing_2 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_9545_backing_aligned_0;\n    __local volatile unsigned char *restrict red_arr_mem_9543_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_9543_backing_aligned_1;\n    __local volatile unsigned char *restrict sync_arr_mem_9541_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) sync_arr_mem_9541_backing_aligned_2;\n    volatile __local bool local_failure;\n    \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n   ",
-                   " }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *red_arr_mem_9545;\n    __local unsigned char *red_arr_mem_9543;\n    __local unsigned char *sync_arr_mem_9541;\n    int32_t global_tid_9536;\n    int32_t local_tid_9537;\n    int64_t group_sizze_9540;\n    int32_t wave_sizze_9539;\n    int32_t group_tid_9538;\n    \n    global_tid_9536 = get_global_id(0);\n    local_tid_9537 = get_local_id(0);\n    group_sizze_9540 = get_local_size(0);\n    wave_sizze_9539 = LOCKSTEP_WIDTH;\n    group_tid_9538 = get_group_id(0);\n    \n    int32_t phys_tid_9135 = global_tid_9536;\n    \n    sync_arr_mem_9541 = (__local unsigned char *) sync_arr_mem_9541_backing_0;\n    red_arr_mem_9543 = (__local unsigned char *) red_arr_mem_9543_backing_1;\n    red_arr_mem_9545 = (__local unsigned char *) red_arr_mem_9545_backing_2;\n    \n    int64_t dummy_9133 = (int64_t) 0;\n    int64_t gtid_9134 = (int64_t) 0;\n    int32_t x_acc_9547;\n    int32_t x_acc_9548;\n    int64_t chunk_sizze_9549 = smin64(sdiv_up64((int64_t) 5,\n                                                sext_i32_i64(sext_i64_i32(segred_group_sizze_9127 *\n                                                num_groups_9129))),\n                                      sdiv_up64((int64_t) 5 - phys_tid_9135,\n                                                num_threads_9535));\n    int32_t x_8945;\n    int32_t x_8946;\n    int32_t x_8948;\n    int32_t x_8949;\n    \n    // neutral-initialise the accumulators\n    {\n        x_acc_9547 = 0;\n        x_acc_9548 = 0;\n    }\n    for (int64_t i_9556 = 0; i_9556 < chunk_sizze_9549; i_9556++) {\n        gtid_9134 = phys_tid_9135 + num_threads_9535 * i_9556;\n        // apply map function\n        {\n            bool y_8953 = slt64(gtid_9134, (int64_t) 6);\n            bool index_certs_8955;\n            \n            if (!y_8953) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 13) ==\n                        -1) {\n                        global_failure_args[",
-                   "0] = (int64_t) gtid_9134;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t x_8956;\n            \n            x_8956 = ((__global int32_t *) mem_9156)[gtid_9134];\n            \n            int32_t x_8957 = mul32(5, x_8956);\n            int64_t i_8958 = add64((int64_t) 1, gtid_9134);\n            bool x_8959 = sle64((int64_t) 0, i_8958);\n            bool y_8960 = slt64(i_8958, (int64_t) 6);\n            bool bounds_check_8961 = x_8959 && y_8960;\n            bool index_certs_8962;\n            \n            if (!bounds_check_8961) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 14) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_8958;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t y_8963;\n            \n            y_8963 = ((__global int32_t *) mem_9156)[i_8958];\n            \n            int32_t i_8964 = add32(x_8957, y_8963);\n            int64_t i_8965 = sext_i32_i64(i_8964);\n            bool x_8966 = sle64((int64_t) 0, i_8965);\n            bool y_8967 = slt64(i_8965, (int64_t) 25);\n            bool bounds_check_8968 = x_8966 && y_8967;\n            bool index_certs_8969;\n            \n            if (!bounds_check_8968) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 15) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_8965;\n                        global_failure_args[1] = (int64_t) (int64_t) 25;\n                        ;\n                    }\n                    local_failure = true;\n ",
-                   "                   goto error_0;\n                }\n            }\n            \n            int32_t defunc_0_f_res_8970;\n            \n            defunc_0_f_res_8970 = ((__global int32_t *) mem_9158)[i_8965];\n            \n            int32_t x_8971;\n            \n            x_8971 = ((__global int32_t *) mem_9191)[gtid_9134];\n            \n            int32_t x_8972 = mul32(5, x_8971);\n            int32_t y_8973;\n            \n            y_8973 = ((__global int32_t *) mem_9191)[i_8958];\n            \n            int32_t i_8974 = add32(x_8972, y_8973);\n            int64_t i_8975 = sext_i32_i64(i_8974);\n            bool x_8976 = sle64((int64_t) 0, i_8975);\n            bool y_8977 = slt64(i_8975, (int64_t) 25);\n            bool bounds_check_8978 = x_8976 && y_8977;\n            bool index_certs_8979;\n            \n            if (!bounds_check_8978) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 16) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_8975;\n                        global_failure_args[1] = (int64_t) (int64_t) 25;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t defunc_0_f_res_8980;\n            \n            defunc_0_f_res_8980 = ((__global int32_t *) mem_9158)[i_8975];\n            // save map-out results\n            { }\n            // load accumulator\n            {\n                x_8945 = x_acc_9547;\n                x_8948 = x_acc_9548;\n            }\n            // load new values\n            {\n                x_8946 = defunc_0_f_res_8970;\n                x_8949 = defunc_0_f_res_8980;\n            }\n            // apply reduction operator\n            {\n                int32_t defunc_1_op_res_8947 = add32(x_8945, x_8946);\n                int32_t defunc_1_op_res_8950 = add32(x_8948, x_8949);\n                \n                // store in accumu",
-                   "lator\n                {\n                    x_acc_9547 = defunc_1_op_res_8947;\n                    x_acc_9548 = defunc_1_op_res_8950;\n                }\n            }\n        }\n    }\n    // to reduce current chunk, first store our result in memory\n    {\n        x_8945 = x_acc_9547;\n        x_8948 = x_acc_9548;\n        ((__local int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n            x_8945;\n        ((__local int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n            x_8948;\n    }\n    \n  error_0:\n    barrier(CLK_LOCAL_MEM_FENCE);\n    if (local_failure)\n        return;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t offset_9557;\n    int32_t skip_waves_9558 = 1;\n    int32_t x_9550;\n    int32_t x_9551;\n    int32_t x_9552;\n    int32_t x_9553;\n    \n    offset_9557 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_9537, sext_i64_i32(segred_group_sizze_9127))) {\n            x_9550 = ((__local\n                       int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                                    offset_9557)];\n            x_9551 = ((__local\n                       int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                    offset_9557)];\n        }\n    }\n    offset_9557 = 1;\n    while (slt32(offset_9557, wave_sizze_9539)) {\n        if (slt32(local_tid_9537 + offset_9557,\n                  sext_i64_i32(segred_group_sizze_9127)) && ((local_tid_9537 -\n                                                              squot32(local_tid_9537,\n                                                                      wave_sizze_9539) *\n                                                              wave_sizze_9539) &\n                                                             (2 * offset_9557 -\n                                                              1)) == 0) {\n            // read array element\n            {\n                x_9552 = ",
-                   "((volatile __local\n                           int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                                        offset_9557)];\n                x_9553 = ((volatile __local\n                           int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                        offset_9557)];\n            }\n            // apply reduction operation\n            {\n                int32_t defunc_1_op_res_9554 = add32(x_9550, x_9552);\n                int32_t defunc_1_op_res_9555 = add32(x_9551, x_9553);\n                \n                x_9550 = defunc_1_op_res_9554;\n                x_9551 = defunc_1_op_res_9555;\n            }\n            // write result of operation\n            {\n                ((volatile __local\n                  int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n                    x_9550;\n                ((volatile __local\n                  int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n                    x_9551;\n            }\n        }\n        offset_9557 *= 2;\n    }\n    while (slt32(skip_waves_9558,\n                 squot32(sext_i64_i32(segred_group_sizze_9127) +\n                         wave_sizze_9539 - 1, wave_sizze_9539))) {\n        barrier(CLK_LOCAL_MEM_FENCE);\n        offset_9557 = skip_waves_9558 * wave_sizze_9539;\n        if (slt32(local_tid_9537 + offset_9557,\n                  sext_i64_i32(segred_group_sizze_9127)) && ((local_tid_9537 -\n                                                              squot32(local_tid_9537,\n                                                                      wave_sizze_9539) *\n                                                              wave_sizze_9539) ==\n                                                             0 &&\n                                                             (squot32(local_tid_9537,\n                                                                      wave_sizze_9539) &\n        ",
-                   "                                                      (2 *\n                                                               skip_waves_9558 -\n                                                               1)) == 0)) {\n            // read array element\n            {\n                x_9552 = ((__local\n                           int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                                        offset_9557)];\n                x_9553 = ((__local\n                           int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                        offset_9557)];\n            }\n            // apply reduction operation\n            {\n                int32_t defunc_1_op_res_9554 = add32(x_9550, x_9552);\n                int32_t defunc_1_op_res_9555 = add32(x_9551, x_9553);\n                \n                x_9550 = defunc_1_op_res_9554;\n                x_9551 = defunc_1_op_res_9555;\n            }\n            // write result of operation\n            {\n                ((__local\n                  int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n                    x_9550;\n                ((__local\n                  int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n                    x_9551;\n            }\n        }\n        skip_waves_9558 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // first thread saves the result in accumulator\n    {\n        if (sext_i32_i64(local_tid_9537) == (int64_t) 0) {\n            x_acc_9547 = x_9550;\n            x_acc_9548 = x_9551;\n        }\n    }\n    \n    int32_t old_counter_9559;\n    \n    // first thread in group saves group result to global memory\n    {\n        if (local_tid_9537 == 0) {\n            ((__global\n              int32_t *) segred_tmp_mem_9531)[sext_i32_i64(group_tid_9538)] =\n                x_acc_9547;\n            ((__global\n              int32_t *) segred_tmp_mem_9533)[sext_i32_i64(group_tid_9538)] =\n                x_acc_9548;\n",
-                   "            mem_fence_global();\n            old_counter_9559 = atomic_add_i32_global(&((volatile __global\n                                                        int *) counter_mem_9529)[(int64_t) 0],\n                                                     (int) 1);\n            ((__local bool *) sync_arr_mem_9541)[(int64_t) 0] =\n                old_counter_9559 == num_groups_9129 - (int64_t) 1;\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    \n    bool is_last_group_9560;\n    \n    is_last_group_9560 = ((__local bool *) sync_arr_mem_9541)[(int64_t) 0];\n    if (is_last_group_9560) {\n        if (local_tid_9537 == 0) {\n            old_counter_9559 = atomic_add_i32_global(&((volatile __global\n                                                        int *) counter_mem_9529)[(int64_t) 0],\n                                                     (int) ((int64_t) 0 -\n                                                            num_groups_9129));\n        }\n        // read in the per-group-results\n        {\n            int64_t read_per_thread_9561 = sdiv_up64(num_groups_9129,\n                                                     segred_group_sizze_9127);\n            \n            x_8945 = 0;\n            x_8948 = 0;\n            for (int64_t i_9562 = 0; i_9562 < read_per_thread_9561; i_9562++) {\n                int64_t group_res_id_9563 = sext_i32_i64(local_tid_9537) *\n                        read_per_thread_9561 + i_9562;\n                int64_t index_of_group_res_9564 = group_res_id_9563;\n                \n                if (slt64(group_res_id_9563, num_groups_9129)) {\n                    x_8946 = ((__global\n                               int32_t *) segred_tmp_mem_9531)[index_of_group_res_9564];\n                    x_8949 = ((__global\n                               int32_t *) segred_tmp_mem_9533)[index_of_group_res_9564];\n                    \n                    int32_t defunc_1_op_res_8947 = add32(x_8945, x_8946);\n                    int32_t defunc_1_op_res_8",
-                   "950 = add32(x_8948, x_8949);\n                    \n                    x_8945 = defunc_1_op_res_8947;\n                    x_8948 = defunc_1_op_res_8950;\n                }\n            }\n        }\n        ((__local int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n            x_8945;\n        ((__local int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n            x_8948;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-group results\n        {\n            int32_t offset_9565;\n            int32_t skip_waves_9566 = 1;\n            int32_t x_9550;\n            int32_t x_9551;\n            int32_t x_9552;\n            int32_t x_9553;\n            \n            offset_9565 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_9537,\n                          sext_i64_i32(segred_group_sizze_9127))) {\n                    x_9550 = ((__local\n                               int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                                            offset_9565)];\n                    x_9551 = ((__local\n                               int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                            offset_9565)];\n                }\n            }\n            offset_9565 = 1;\n            while (slt32(offset_9565, wave_sizze_9539)) {\n                if (slt32(local_tid_9537 + offset_9565,\n                          sext_i64_i32(segred_group_sizze_9127)) &&\n                    ((local_tid_9537 - squot32(local_tid_9537,\n                                               wave_sizze_9539) *\n                      wave_sizze_9539) & (2 * offset_9565 - 1)) == 0) {\n                    // read array element\n                    {\n                        x_9552 = ((volatile __local\n                                   int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                            ",
-                   "                    offset_9565)];\n                        x_9553 = ((volatile __local\n                                   int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                                offset_9565)];\n                    }\n                    // apply reduction operation\n                    {\n                        int32_t defunc_1_op_res_9554 = add32(x_9550, x_9552);\n                        int32_t defunc_1_op_res_9555 = add32(x_9551, x_9553);\n                        \n                        x_9550 = defunc_1_op_res_9554;\n                        x_9551 = defunc_1_op_res_9555;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local\n                          int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n                            x_9550;\n                        ((volatile __local\n                          int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n                            x_9551;\n                    }\n                }\n                offset_9565 *= 2;\n            }\n            while (slt32(skip_waves_9566,\n                         squot32(sext_i64_i32(segred_group_sizze_9127) +\n                                 wave_sizze_9539 - 1, wave_sizze_9539))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_9565 = skip_waves_9566 * wave_sizze_9539;\n                if (slt32(local_tid_9537 + offset_9565,\n                          sext_i64_i32(segred_group_sizze_9127)) &&\n                    ((local_tid_9537 - squot32(local_tid_9537,\n                                               wave_sizze_9539) *\n                      wave_sizze_9539) == 0 && (squot32(local_tid_9537,\n                                                        wave_sizze_9539) & (2 *\n                                                                            skip_waves_9566 -\n                                           ",
-                   "                                 1)) ==\n                     0)) {\n                    // read array element\n                    {\n                        x_9552 = ((__local\n                                   int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537 +\n                                                                offset_9565)];\n                        x_9553 = ((__local\n                                   int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537 +\n                                                                offset_9565)];\n                    }\n                    // apply reduction operation\n                    {\n                        int32_t defunc_1_op_res_9554 = add32(x_9550, x_9552);\n                        int32_t defunc_1_op_res_9555 = add32(x_9551, x_9553);\n                        \n                        x_9550 = defunc_1_op_res_9554;\n                        x_9551 = defunc_1_op_res_9555;\n                    }\n                    // write result of operation\n                    {\n                        ((__local\n                          int32_t *) red_arr_mem_9543)[sext_i32_i64(local_tid_9537)] =\n                            x_9550;\n                        ((__local\n                          int32_t *) red_arr_mem_9545)[sext_i32_i64(local_tid_9537)] =\n                            x_9551;\n                    }\n                }\n                skip_waves_9566 *= 2;\n            }\n            // and back to memory with the final result\n            {\n                if (local_tid_9537 == 0) {\n                    ((__global int32_t *) mem_9194)[(int64_t) 0] = x_9550;\n                    ((__global int32_t *) mem_9196)[(int64_t) 0] = x_9551;\n                }\n            }\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segred_group_sizze_9127\n}\n",
+                   "  return atomicXor((int64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\ninline int64_t atomic_xor_i64_local(volatile __local int64_t *p, int64_t x) {\n#ifdef FUTHARK_CUDA\n  return atomicXor((int64_t*)p, x);\n#else\n  return atom_xor(p, x);\n#endif\n}\n\n// End of atomics.h\n\n\n\n__kernel void builtinzhreplicate_i32zireplicate_9845(int32_t num_elems_9842,\n                                                     int32_t val_9843, __global\n                                                     unsigned char *mem_9841)\n{\n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    int32_t replicate_gtid_9845;\n    int32_t replicate_ltid_9846;\n    int32_t replicate_gid_9847;\n    \n    replicate_gtid_9845 = get_global_id(0);\n    replicate_ltid_9846 = get_local_id(0);\n    replicate_gid_9847 = get_group_id(0);\n    \n    int64_t slice_9851 = num_elems_9842;\n    int64_t rep_i_9850 = sext_i32_i64(replicate_gtid_9845);\n    int64_t remnant_9852 = sext_i32_i64(replicate_gtid_9845) - rep_i_9850;\n    \n    if (slt64(replicate_gtid_9845, num_elems_9842)) {\n        ((__global int32_t *) mem_9841)[rep_i_9850] = val_9843;\n    }\n    \n  error_0:\n    return;\n}\n__kernel void scan_stage1_9510(__global int *global_failure,\n                               int failure_is_an_option, __global\n                               int64_t *global_failure_args, __local volatile\n                               int64_t *scan_arr_mem_9778_backing_aligned_0,\n                               int32_t num_threads_9772, __global\n                               unsigned char *mem_9687)\n{\n    #define segscan_group_sizze_9505 (segscan_group_sizze_9504)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9778_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9778_backing_aligned_0;\n    volatile __local bool local_failure;\n  ",
+                   "  \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n    }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *scan_arr_mem_9778;\n    int32_t global_tid_9773;\n    int32_t local_tid_9774;\n    int64_t group_sizze_9777;\n    int32_t wave_sizze_9776;\n    int32_t group_tid_9775;\n    \n    global_tid_9773 = get_global_id(0);\n    local_tid_9774 = get_local_id(0);\n    group_sizze_9777 = get_local_size(0);\n    wave_sizze_9776 = LOCKSTEP_WIDTH;\n    group_tid_9775 = get_group_id(0);\n    \n    int32_t phys_tid_9510 = global_tid_9773;\n    \n    scan_arr_mem_9778 = (__local unsigned char *) scan_arr_mem_9778_backing_0;\n    \n    int32_t x_9251;\n    int32_t x_9252;\n    \n    x_9251 = 0;\n    for (int64_t j_9780 = 0; j_9780 < sdiv_up64((int64_t) 3,\n                                                sext_i32_i64(num_threads_9772));\n         j_9780++) {\n        int64_t chunk_offset_9781 = segscan_group_sizze_9505 * j_9780 +\n                sext_i32_i64(group_tid_9775) * (segscan_group_sizze_9505 *\n                                                sdiv_up64((int64_t) 3,\n                                                          sext_i32_i64(num_threads_9772)));\n        int64_t flat_idx_9782 = chunk_offset_9781 +\n                sext_i32_i64(local_tid_9774);\n        int64_t gtid_9509 = flat_idx_9782;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_9509, (int64_t) 3)) {\n                bool cond_9255 = gtid_9509 == (int64_t) 0;\n                int32_t defunc_0_f_res_9256;\n                \n                if (cond_9255) {\n                    defunc_0_f_res_9256 = 0;\n                } else {\n                    int64_t i_9257 = sub64(gtid_9509, (int64_t) 1);\n                    bool x_9258 = sle64((int64_t) 0, i_9257);\n                    bool y_9259 = slt64(i_9257, (int64_t) 3);\n                    bool bounds_check_9260 = x_9258 && y_9259;\n         ",
+                   "           bool index_certs_9261;\n                    \n                    if (!bounds_check_9260) {\n                        {\n                            if (atomic_cmpxchg_i32_global(global_failure, -1,\n                                                          0) == -1) {\n                                global_failure_args[0] = (int64_t) i_9257;\n                                global_failure_args[1] = (int64_t) (int64_t) 3;\n                                ;\n                            }\n                            local_failure = true;\n                            goto error_0;\n                        }\n                    }\n                    \n                    int64_t convop_x_9262 = sub64((int64_t) 3, i_9257);\n                    int32_t index_primexp_9263 = sext_i64_i32(convop_x_9262);\n                    \n                    defunc_0_f_res_9256 = index_primexp_9263;\n                }\n                // write to-scan values to parameters\n                {\n                    x_9252 = defunc_0_f_res_9256;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n            // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_9509, (int64_t) 3)) {\n                    x_9252 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                int32_t defunc_1_op_res_9253 = add32(x_9251, x_9252);\n                \n                ((__local\n                  int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)] =\n                    defunc_1_op_res_9253;\n            }\n            \n          error_0:\n            barrier(CLK_LOCAL_MEM_FENCE);\n            if (local_failure)\n                return;\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            int32_t x_9783;\n            int32_t x_9784;\n            int3",
+                   "2_t x_9786;\n            int32_t x_9787;\n            bool ltid_in_bounds_9789 = slt64(sext_i32_i64(local_tid_9774),\n                                             segscan_group_sizze_9505);\n            int32_t skip_threads_9790;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9789) {\n                    x_9784 = ((volatile __local\n                               int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)];\n                    if ((local_tid_9774 - squot32(local_tid_9774, 32) * 32) ==\n                        0) {\n                        x_9783 = x_9784;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9790 = 1;\n                while (slt32(skip_threads_9790, 32)) {\n                    bool thread_active_9791 = sle32(skip_threads_9790,\n                                                    local_tid_9774 -\n                                                    squot32(local_tid_9774,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9789;\n                    \n                    if (thread_active_9791) {\n                        // read operands\n                        {\n                            x_9783 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774) -\n                                                                     sext_i32_i64(skip_threads_9790)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9791) {\n                            int32_t defunc_1_op_res_9785 = add32(x_9783,\n                                                                 x_9784);\n                            \n                            x_9783 = defunc_1_op_res_9785;\n                        }",
+                   "\n                    }\n                    if (sle32(wave_sizze_9776, skip_threads_9790)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9791) {\n                        // write result\n                        {\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)] =\n                                x_9783;\n                            x_9784 = x_9783;\n                        }\n                    }\n                    if (sle32(wave_sizze_9776, skip_threads_9790)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9790 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9774 - squot32(local_tid_9774, 32) * 32) == 31 &&\n                    ltid_in_bounds_9789) {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9778)[sext_i32_i64(squot32(local_tid_9774,\n                                                                         32))] =\n                        x_9783;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9792;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9774, 32) == 0 &&\n                        ltid_in_bounds_9789) {\n                        x_9787 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)];\n                        if ((local_tid_9774 - squot32(local_tid_9774, 32) *\n                             32) == 0) {\n                            x_9786 = x_9787;\n         ",
+                   "               }\n                    }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9792 = 1;\n                    while (slt32(skip_threads_9792, 32)) {\n                        bool thread_active_9793 = sle32(skip_threads_9792,\n                                                        local_tid_9774 -\n                                                        squot32(local_tid_9774,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9774, 32) == 0 &&\n                              ltid_in_bounds_9789);\n                        \n                        if (thread_active_9793) {\n                            // read operands\n                            {\n                                x_9786 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774) -\n                                                                         sext_i32_i64(skip_threads_9792)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9793) {\n                                int32_t defunc_1_op_res_9788 = add32(x_9786,\n                                                                     x_9787);\n                                \n                                x_9786 = defunc_1_op_res_9788;\n                            }\n                        }\n                        if (sle32(wave_sizze_9776, skip_threads_9792)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9793) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)] =",
+                   "\n                                    x_9786;\n                                x_9787 = x_9786;\n                            }\n                        }\n                        if (sle32(wave_sizze_9776, skip_threads_9792)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9792 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9794 = squot32(local_tid_9774, 32) == 0 ||\n                 !ltid_in_bounds_9789;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9794) {\n                        x_9784 = x_9783;\n                        x_9783 = ((__local\n                                   int32_t *) scan_arr_mem_9778)[sext_i32_i64(squot32(local_tid_9774,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9794) {\n                        int32_t defunc_1_op_res_9785 = add32(x_9783, x_9784);\n                        \n                        x_9783 = defunc_1_op_res_9785;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9794) {\n                        ((__local\n                          int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)] =\n                            x_9783;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9774, 32) == 0 && ltid_in_bounds_9789) {\n                    ((__local\n                 ",
+                   "     int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)] =\n                        x_9784;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_9509, (int64_t) 3)) {\n                    int32_t tmp_9795;\n                    \n                    tmp_9795 = ((__local\n                                 int32_t *) scan_arr_mem_9778)[sext_i32_i64(local_tid_9774)];\n                    ((__global int32_t *) mem_9687)[gtid_9509] = tmp_9795;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9796 = 0;\n                bool should_load_carry_9797 = local_tid_9774 == 0 &&\n                     !crosses_segment_9796;\n                \n                if (should_load_carry_9797) {\n                    x_9251 = ((__local\n                               int32_t *) scan_arr_mem_9778)[segscan_group_sizze_9505 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9797) {\n                    x_9251 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_9505\n}\n__kernel void scan_stage1_9524(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9870_backing_aligned_0,\n                               int64_t defunc_0_f_res_9266,\n                               int32_t num_threads_9864, __global\n                               unsigned char *mem_9699, __global\n                               unsigned char *mem_9704)\n{\n    #define segscan_group_sizze_9519 (segscan_group_sizze_9518)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsi",
+                   "gned char *restrict scan_arr_mem_9870_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9870_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9870;\n    int32_t global_tid_9865;\n    int32_t local_tid_9866;\n    int64_t group_sizze_9869;\n    int32_t wave_sizze_9868;\n    int32_t group_tid_9867;\n    \n    global_tid_9865 = get_global_id(0);\n    local_tid_9866 = get_local_id(0);\n    group_sizze_9869 = get_local_size(0);\n    wave_sizze_9868 = LOCKSTEP_WIDTH;\n    group_tid_9867 = get_group_id(0);\n    \n    int32_t phys_tid_9524 = global_tid_9865;\n    \n    scan_arr_mem_9870 = (__local unsigned char *) scan_arr_mem_9870_backing_0;\n    \n    int32_t x_9287;\n    int32_t x_9288;\n    \n    x_9287 = 0;\n    for (int64_t j_9872 = 0; j_9872 < sdiv_up64(defunc_0_f_res_9266,\n                                                sext_i32_i64(num_threads_9864));\n         j_9872++) {\n        int64_t chunk_offset_9873 = segscan_group_sizze_9519 * j_9872 +\n                sext_i32_i64(group_tid_9867) * (segscan_group_sizze_9519 *\n                                                sdiv_up64(defunc_0_f_res_9266,\n                                                          sext_i32_i64(num_threads_9864)));\n        int64_t flat_idx_9874 = chunk_offset_9873 +\n                sext_i32_i64(local_tid_9866);\n        int64_t gtid_9523 = flat_idx_9874;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_9523, defunc_0_f_res_9266)) {\n                int32_t x_9290;\n                \n                x_9290 = ((__global int32_t *) mem_9699)[gtid_9523];\n                // write to-scan values to parameters\n                {\n                    x_9288 = x_9290;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n      ",
+                   "      // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_9523, defunc_0_f_res_9266)) {\n                    x_9288 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                int32_t defunc_1_op_res_9289 = add32(x_9287, x_9288);\n                \n                ((__local\n                  int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)] =\n                    defunc_1_op_res_9289;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            int32_t x_9875;\n            int32_t x_9876;\n            int32_t x_9878;\n            int32_t x_9879;\n            bool ltid_in_bounds_9881 = slt64(sext_i32_i64(local_tid_9866),\n                                             segscan_group_sizze_9519);\n            int32_t skip_threads_9882;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9881) {\n                    x_9876 = ((volatile __local\n                               int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)];\n                    if ((local_tid_9866 - squot32(local_tid_9866, 32) * 32) ==\n                        0) {\n                        x_9875 = x_9876;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9882 = 1;\n                while (slt32(skip_threads_9882, 32)) {\n                    bool thread_active_9883 = sle32(skip_threads_9882,\n                                                    local_tid_9866 -\n                                                    squot32(local_tid_9866,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9881;\n                    \n                    if (thread_active_9883) {\n                        // read operands\n                        {\n                ",
+                   "            x_9875 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866) -\n                                                                     sext_i32_i64(skip_threads_9882)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9883) {\n                            int32_t defunc_1_op_res_9877 = add32(x_9875,\n                                                                 x_9876);\n                            \n                            x_9875 = defunc_1_op_res_9877;\n                        }\n                    }\n                    if (sle32(wave_sizze_9868, skip_threads_9882)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9883) {\n                        // write result\n                        {\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)] =\n                                x_9875;\n                            x_9876 = x_9875;\n                        }\n                    }\n                    if (sle32(wave_sizze_9868, skip_threads_9882)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9882 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9866 - squot32(local_tid_9866, 32) * 32) == 31 &&\n                    ltid_in_bounds_9881) {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9870)[sext_i32_i64(squot32(local_tid_9866,\n                                                                         32))] =\n                        x_9875;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENC",
+                   "E);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9884;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9866, 32) == 0 &&\n                        ltid_in_bounds_9881) {\n                        x_9879 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)];\n                        if ((local_tid_9866 - squot32(local_tid_9866, 32) *\n                             32) == 0) {\n                            x_9878 = x_9879;\n                        }\n                    }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9884 = 1;\n                    while (slt32(skip_threads_9884, 32)) {\n                        bool thread_active_9885 = sle32(skip_threads_9884,\n                                                        local_tid_9866 -\n                                                        squot32(local_tid_9866,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9866, 32) == 0 &&\n                              ltid_in_bounds_9881);\n                        \n                        if (thread_active_9885) {\n                            // read operands\n                            {\n                                x_9878 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866) -\n                                                                         sext_i32_i64(skip_threads_9884)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9885) {\n                                int32_t defunc_1_op_res_9880 = add32(x",
+                   "_9878,\n                                                                     x_9879);\n                                \n                                x_9878 = defunc_1_op_res_9880;\n                            }\n                        }\n                        if (sle32(wave_sizze_9868, skip_threads_9884)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9885) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)] =\n                                    x_9878;\n                                x_9879 = x_9878;\n                            }\n                        }\n                        if (sle32(wave_sizze_9868, skip_threads_9884)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9884 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9886 = squot32(local_tid_9866, 32) == 0 ||\n                 !ltid_in_bounds_9881;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9886) {\n                        x_9876 = x_9875;\n                        x_9875 = ((__local\n                                   int32_t *) scan_arr_mem_9870)[sext_i32_i64(squot32(local_tid_9866,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9886) {\n                        int32_t defunc_1_op_res_9877 = add32(x_9875, x_9876);\n     ",
+                   "                   \n                        x_9875 = defunc_1_op_res_9877;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9886) {\n                        ((__local\n                          int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)] =\n                            x_9875;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9866, 32) == 0 && ltid_in_bounds_9881) {\n                    ((__local\n                      int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)] =\n                        x_9876;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_9523, defunc_0_f_res_9266)) {\n                    int32_t tmp_9887;\n                    \n                    tmp_9887 = ((__local\n                                 int32_t *) scan_arr_mem_9870)[sext_i32_i64(local_tid_9866)];\n                    ((__global int32_t *) mem_9704)[gtid_9523] = tmp_9887;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9888 = 0;\n                bool should_load_carry_9889 = local_tid_9866 == 0 &&\n                     !crosses_segment_9888;\n                \n                if (should_load_carry_9889) {\n                    x_9287 = ((__local\n                               int32_t *) scan_arr_mem_9870)[segscan_group_sizze_9519 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9889) {\n                    x_9287 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE)",
+                   ";\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_9519\n}\n__kernel void scan_stage1_9552(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9941_backing_aligned_0,\n                               __local volatile\n                               int64_t *scan_arr_mem_9939_backing_aligned_1,\n                               int32_t num_threads_9933, __global\n                               unsigned char *mem_9699, __global\n                               unsigned char *mem_9711, __global\n                               unsigned char *mem_9713)\n{\n    #define segscan_group_sizze_9547 (segscan_group_sizze_9546)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9941_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9941_backing_aligned_0;\n    __local volatile unsigned char *restrict scan_arr_mem_9939_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9939_backing_aligned_1;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9941;\n    __local unsigned char *scan_arr_mem_9939;\n    int32_t global_tid_9934;\n    int32_t local_tid_9935;\n    int64_t group_sizze_9938;\n    int32_t wave_sizze_9937;\n    int32_t group_tid_9936;\n    \n    global_tid_9934 = get_global_id(0);\n    local_tid_9935 = get_local_id(0);\n    group_sizze_9938 = get_local_size(0);\n    wave_sizze_9937 = LOCKSTEP_WIDTH;\n    group_tid_9936 = get_group_id(0);\n    \n    int32_t phys_tid_9552 = global_tid_9934;\n    \n    scan_arr_mem_9939 = (__local unsigned char *) scan_arr_mem_9939_backing_0;\n    scan_arr_mem_9941 = (__local unsigned char *) scan_arr_mem_9941_backing_1;\n    \n    bool x_9313;\n    int32_t x_9314;\n    bool x_9315;\n    int32_t x_9316;\n  ",
+                   "  \n    x_9313 = 0;\n    x_9314 = 0;\n    for (int64_t j_9943 = 0; j_9943 < sdiv_up64((int64_t) 6,\n                                                sext_i32_i64(num_threads_9933));\n         j_9943++) {\n        int64_t chunk_offset_9944 = segscan_group_sizze_9547 * j_9943 +\n                sext_i32_i64(group_tid_9936) * (segscan_group_sizze_9547 *\n                                                sdiv_up64((int64_t) 6,\n                                                          sext_i32_i64(num_threads_9933)));\n        int64_t flat_idx_9945 = chunk_offset_9944 +\n                sext_i32_i64(local_tid_9935);\n        int64_t gtid_9551 = flat_idx_9945;\n        \n        // threads in bounds read input\n        {\n            if (slt64(gtid_9551, (int64_t) 6)) {\n                int32_t x_9320;\n                \n                x_9320 = ((__global int32_t *) mem_9699)[gtid_9551];\n                \n                bool defunc_0_f_res_9322 = itob_i32_bool(x_9320);\n                \n                // write to-scan values to parameters\n                {\n                    x_9315 = defunc_0_f_res_9322;\n                    x_9316 = 1;\n                }\n                // write mapped values results to global memory\n                { }\n            }\n        }\n        // do one intra-group scan operation\n        {\n            // maybe restore some to-scan values to parameters, or read neutral\n            {\n                if (!slt64(gtid_9551, (int64_t) 6)) {\n                    x_9315 = 0;\n                    x_9316 = 0;\n                }\n            }\n            // combine with carry and write to local memory\n            {\n                bool fl_9317 = x_9313 || x_9315;\n                int32_t vl_9318;\n                \n                if (x_9315) {\n                    vl_9318 = x_9316;\n                } else {\n                    int32_t defunc_1_op_res_9319 = add32(x_9314, x_9316);\n                    \n                    vl_9318 = defunc_1_op_res_9319;\n                }\n               ",
+                   " ((__local\n                  bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)] =\n                    fl_9317;\n                ((__local\n                  int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)] =\n                    vl_9318;\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool x_9946;\n            int32_t x_9947;\n            bool x_9948;\n            int32_t x_9949;\n            bool x_9953;\n            int32_t x_9954;\n            bool x_9955;\n            int32_t x_9956;\n            bool ltid_in_bounds_9960 = slt64(sext_i32_i64(local_tid_9935),\n                                             segscan_group_sizze_9547);\n            int32_t skip_threads_9961;\n            \n            // read input for in-block scan\n            {\n                if (ltid_in_bounds_9960) {\n                    x_9948 = ((volatile __local\n                               bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)];\n                    x_9949 = ((volatile __local\n                               int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)];\n                    if ((local_tid_9935 - squot32(local_tid_9935, 32) * 32) ==\n                        0) {\n                        x_9946 = x_9948;\n                        x_9947 = x_9949;\n                    }\n                }\n            }\n            // in-block scan (hopefully no barriers needed)\n            {\n                skip_threads_9961 = 1;\n                while (slt32(skip_threads_9961, 32)) {\n                    bool thread_active_9962 = sle32(skip_threads_9961,\n                                                    local_tid_9935 -\n                                                    squot32(local_tid_9935,\n                                                            32) * 32) &&\n                         ltid_in_bounds_9960;\n                    \n                    if (thread_active_9962) {\n                        // read operands\n                        {\n         ",
+                   "                   x_9946 = ((volatile __local\n                                       bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935) -\n                                                                  sext_i32_i64(skip_threads_9961)];\n                            x_9947 = ((volatile __local\n                                       int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935) -\n                                                                     sext_i32_i64(skip_threads_9961)];\n                        }\n                    }\n                    // perform operation\n                    {\n                        if (thread_active_9962) {\n                            bool fl_9950 = x_9946 || x_9948;\n                            int32_t vl_9951;\n                            \n                            if (x_9948) {\n                                vl_9951 = x_9949;\n                            } else {\n                                int32_t defunc_1_op_res_9952 = add32(x_9947,\n                                                                     x_9949);\n                                \n                                vl_9951 = defunc_1_op_res_9952;\n                            }\n                            x_9946 = fl_9950;\n                            x_9947 = vl_9951;\n                        }\n                    }\n                    if (sle32(wave_sizze_9937, skip_threads_9961)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    if (thread_active_9962) {\n                        // write result\n                        {\n                            ((volatile __local\n                              bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)] =\n                                x_9946;\n                            x_9948 = x_9946;\n                            ((volatile __local\n                              int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)] =\n                                x",
+                   "_9947;\n                            x_9949 = x_9947;\n                        }\n                    }\n                    if (sle32(wave_sizze_9937, skip_threads_9961)) {\n                        barrier(CLK_LOCAL_MEM_FENCE);\n                    }\n                    skip_threads_9961 *= 2;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // last thread of block 'i' writes its result to offset 'i'\n            {\n                if ((local_tid_9935 - squot32(local_tid_9935, 32) * 32) == 31 &&\n                    ltid_in_bounds_9960) {\n                    ((volatile __local\n                      bool *) scan_arr_mem_9939)[sext_i32_i64(squot32(local_tid_9935,\n                                                                      32))] =\n                        x_9946;\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9941)[sext_i32_i64(squot32(local_tid_9935,\n                                                                         32))] =\n                        x_9947;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n            {\n                int32_t skip_threads_9963;\n                \n                // read input for in-block scan\n                {\n                    if (squot32(local_tid_9935, 32) == 0 &&\n                        ltid_in_bounds_9960) {\n                        x_9955 = ((volatile __local\n                                   bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)];\n                        x_9956 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)];\n                        if ((local_tid_9935 - squot32(local_tid_9935, 32) *\n                             32) == 0) {\n                            x_9953 = x_9955;\n                            x_9954 = x_9956;\n                        }\n          ",
+                   "          }\n                }\n                // in-block scan (hopefully no barriers needed)\n                {\n                    skip_threads_9963 = 1;\n                    while (slt32(skip_threads_9963, 32)) {\n                        bool thread_active_9964 = sle32(skip_threads_9963,\n                                                        local_tid_9935 -\n                                                        squot32(local_tid_9935,\n                                                                32) * 32) &&\n                             (squot32(local_tid_9935, 32) == 0 &&\n                              ltid_in_bounds_9960);\n                        \n                        if (thread_active_9964) {\n                            // read operands\n                            {\n                                x_9953 = ((volatile __local\n                                           bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935) -\n                                                                      sext_i32_i64(skip_threads_9963)];\n                                x_9954 = ((volatile __local\n                                           int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935) -\n                                                                         sext_i32_i64(skip_threads_9963)];\n                            }\n                        }\n                        // perform operation\n                        {\n                            if (thread_active_9964) {\n                                bool fl_9957 = x_9953 || x_9955;\n                                int32_t vl_9958;\n                                \n                                if (x_9955) {\n                                    vl_9958 = x_9956;\n                                } else {\n                                    int32_t defunc_1_op_res_9959 = add32(x_9954,\n                                                                         x_9956);\n                                    \n        ",
+                   "                            vl_9958 = defunc_1_op_res_9959;\n                                }\n                                x_9953 = fl_9957;\n                                x_9954 = vl_9958;\n                            }\n                        }\n                        if (sle32(wave_sizze_9937, skip_threads_9963)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        if (thread_active_9964) {\n                            // write result\n                            {\n                                ((volatile __local\n                                  bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)] =\n                                    x_9953;\n                                x_9955 = x_9953;\n                                ((volatile __local\n                                  int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)] =\n                                    x_9954;\n                                x_9956 = x_9954;\n                            }\n                        }\n                        if (sle32(wave_sizze_9937, skip_threads_9963)) {\n                            barrier(CLK_LOCAL_MEM_FENCE);\n                        }\n                        skip_threads_9963 *= 2;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            \n            bool no_carry_in_9965 = squot32(local_tid_9935, 32) == 0 ||\n                 !ltid_in_bounds_9960;\n            \n            // carry-in for every block except the first\n            {\n                // read operands\n                {\n                    if (!no_carry_in_9965) {\n                        x_9948 = x_9946;\n                        x_9949 = x_9947;\n                        x_9946 = ((__local\n                                   bool *) scan_arr_mem_9939)[sext_i32_i64(squot32(local_tid_9935,\n                                                                                   32)) -\n                 ",
+                   "                                             (int64_t) 1];\n                        x_9947 = ((__local\n                                   int32_t *) scan_arr_mem_9941)[sext_i32_i64(squot32(local_tid_9935,\n                                                                                      32)) -\n                                                                 (int64_t) 1];\n                    }\n                }\n                // perform operation\n                {\n                    if (!no_carry_in_9965) {\n                        bool fl_9950 = x_9946 || x_9948;\n                        int32_t vl_9951;\n                        \n                        if (x_9948) {\n                            vl_9951 = x_9949;\n                        } else {\n                            int32_t defunc_1_op_res_9952 = add32(x_9947,\n                                                                 x_9949);\n                            \n                            vl_9951 = defunc_1_op_res_9952;\n                        }\n                        x_9946 = fl_9950;\n                        x_9947 = vl_9951;\n                    }\n                }\n                // write final result\n                {\n                    if (!no_carry_in_9965) {\n                        ((__local\n                          bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)] =\n                            x_9946;\n                        ((__local\n                          int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)] =\n                            x_9947;\n                    }\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // restore correct values for first block\n            {\n                if (squot32(local_tid_9935, 32) == 0 && ltid_in_bounds_9960) {\n                    ((__local\n                      bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)] =\n                        x_9948;\n                    ((__local\n                      int32_",
+                   "t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)] =\n                        x_9949;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // threads in bounds write partial scan result\n            {\n                if (slt64(gtid_9551, (int64_t) 6)) {\n                    bool tmp_9966;\n                    \n                    tmp_9966 = ((__local\n                                 bool *) scan_arr_mem_9939)[sext_i32_i64(local_tid_9935)];\n                    ((__global bool *) mem_9711)[gtid_9551] = tmp_9966;\n                    \n                    int32_t tmp_9967;\n                    \n                    tmp_9967 = ((__local\n                                 int32_t *) scan_arr_mem_9941)[sext_i32_i64(local_tid_9935)];\n                    ((__global int32_t *) mem_9713)[gtid_9551] = tmp_9967;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n            // first thread reads last element as carry-in for next iteration\n            {\n                bool crosses_segment_9968 = 0;\n                bool should_load_carry_9969 = local_tid_9935 == 0 &&\n                     !crosses_segment_9968;\n                \n                if (should_load_carry_9969) {\n                    x_9313 = ((__local\n                               bool *) scan_arr_mem_9939)[segscan_group_sizze_9547 -\n                                                          (int64_t) 1];\n                    x_9314 = ((__local\n                               int32_t *) scan_arr_mem_9941)[segscan_group_sizze_9547 -\n                                                             (int64_t) 1];\n                }\n                if (!should_load_carry_9969) {\n                    x_9313 = 0;\n                    x_9314 = 0;\n                }\n            }\n            barrier(CLK_LOCAL_MEM_FENCE);\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segscan_group_sizze_9547\n}\n__kernel void scan_stage2_9510(__global int *global_failure, __local volatile\n            ",
+                   "                   int64_t *scan_arr_mem_9803_backing_aligned_0,\n                               int64_t stage1_num_groups_9771,\n                               int32_t num_threads_9772, __global\n                               unsigned char *mem_9687)\n{\n    #define segscan_group_sizze_9505 (segscan_group_sizze_9504)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9803_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9803_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9803;\n    int32_t global_tid_9798;\n    int32_t local_tid_9799;\n    int64_t group_sizze_9802;\n    int32_t wave_sizze_9801;\n    int32_t group_tid_9800;\n    \n    global_tid_9798 = get_global_id(0);\n    local_tid_9799 = get_local_id(0);\n    group_sizze_9802 = get_local_size(0);\n    wave_sizze_9801 = LOCKSTEP_WIDTH;\n    group_tid_9800 = get_group_id(0);\n    \n    int32_t phys_tid_9510 = global_tid_9798;\n    \n    scan_arr_mem_9803 = (__local unsigned char *) scan_arr_mem_9803_backing_0;\n    \n    int64_t flat_idx_9805 = (sext_i32_i64(local_tid_9799) + (int64_t) 1) *\n            (segscan_group_sizze_9505 * sdiv_up64((int64_t) 3,\n                                                  sext_i32_i64(num_threads_9772))) -\n            (int64_t) 1;\n    int64_t gtid_9509 = flat_idx_9805;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_9509, (int64_t) 3)) {\n            int32_t tmp_9806;\n            \n            tmp_9806 = ((__global int32_t *) mem_9687)[gtid_9509];\n            ((__local\n              int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] =\n                tmp_9806;\n        } else {\n            ((__local\n              int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] = 0;\n        }\n    }\n    barri",
+                   "er(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t x_9251;\n    int32_t x_9252;\n    int32_t x_9807;\n    int32_t x_9808;\n    bool ltid_in_bounds_9810 = slt64(sext_i32_i64(local_tid_9799),\n                                     stage1_num_groups_9771);\n    int32_t skip_threads_9811;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9810) {\n            x_9252 = ((volatile __local\n                       int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)];\n            if ((local_tid_9799 - squot32(local_tid_9799, 32) * 32) == 0) {\n                x_9251 = x_9252;\n            }\n        }\n    }\n    // in-block scan (hopefully no barriers needed)\n    {\n        skip_threads_9811 = 1;\n        while (slt32(skip_threads_9811, 32)) {\n            bool thread_active_9812 = sle32(skip_threads_9811, local_tid_9799 -\n                                            squot32(local_tid_9799, 32) * 32) &&\n                 ltid_in_bounds_9810;\n            \n            if (thread_active_9812) {\n                // read operands\n                {\n                    x_9251 = ((volatile __local\n                               int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799) -\n                                                             sext_i32_i64(skip_threads_9811)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9812) {\n                    int32_t defunc_1_op_res_9253 = add32(x_9251, x_9252);\n                    \n                    x_9251 = defunc_1_op_res_9253;\n                }\n            }\n            if (sle32(wave_sizze_9801, skip_threads_9811)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9812) {\n                // write result\n                {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] =\n                        x_9251;\n                    x_9252 = x_9251;\n             ",
+                   "   }\n            }\n            if (sle32(wave_sizze_9801, skip_threads_9811)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9811 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9799 - squot32(local_tid_9799, 32) * 32) == 31 &&\n            ltid_in_bounds_9810) {\n            ((volatile __local\n              int32_t *) scan_arr_mem_9803)[sext_i32_i64(squot32(local_tid_9799,\n                                                                 32))] = x_9251;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9813;\n        \n        // read input for in-block scan\n        {\n            if (squot32(local_tid_9799, 32) == 0 && ltid_in_bounds_9810) {\n                x_9808 = ((volatile __local\n                           int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)];\n                if ((local_tid_9799 - squot32(local_tid_9799, 32) * 32) == 0) {\n                    x_9807 = x_9808;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9813 = 1;\n            while (slt32(skip_threads_9813, 32)) {\n                bool thread_active_9814 = sle32(skip_threads_9813,\n                                                local_tid_9799 -\n                                                squot32(local_tid_9799, 32) *\n                                                32) && (squot32(local_tid_9799,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9810);\n                \n                if (thread_active_9814) {\n                    // read operands\n                    {\n                        x_9807 = ((volatile __local\n                                   ",
+                   "int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799) -\n                                                                 sext_i32_i64(skip_threads_9813)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9814) {\n                        int32_t defunc_1_op_res_9809 = add32(x_9807, x_9808);\n                        \n                        x_9807 = defunc_1_op_res_9809;\n                    }\n                }\n                if (sle32(wave_sizze_9801, skip_threads_9813)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9814) {\n                    // write result\n                    {\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] =\n                            x_9807;\n                        x_9808 = x_9807;\n                    }\n                }\n                if (sle32(wave_sizze_9801, skip_threads_9813)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9813 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9815 = squot32(local_tid_9799, 32) == 0 ||\n         !ltid_in_bounds_9810;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9815) {\n                x_9252 = x_9251;\n                x_9251 = ((__local\n                           int32_t *) scan_arr_mem_9803)[sext_i32_i64(squot32(local_tid_9799,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9815) {\n                int32_t defunc_1_op_res_9253 = add32(x_9251, x_9252);\n                \n                x_9251 = defunc_1_op_res_9253;",
+                   "\n            }\n        }\n        // write final result\n        {\n            if (!no_carry_in_9815) {\n                ((__local\n                  int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] =\n                    x_9251;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9799, 32) == 0 && ltid_in_bounds_9810) {\n            ((__local\n              int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)] =\n                x_9252;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_9509, (int64_t) 3)) {\n            int32_t tmp_9816;\n            \n            tmp_9816 = ((__local\n                         int32_t *) scan_arr_mem_9803)[sext_i32_i64(local_tid_9799)];\n            ((__global int32_t *) mem_9687)[gtid_9509] = tmp_9816;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9505\n}\n__kernel void scan_stage2_9524(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9895_backing_aligned_0,\n                               int64_t defunc_0_f_res_9266,\n                               int64_t stage1_num_groups_9863,\n                               int32_t num_threads_9864, __global\n                               unsigned char *mem_9704)\n{\n    #define segscan_group_sizze_9519 (segscan_group_sizze_9518)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9895_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9895_backing_aligned_0;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9895;\n    int32_t global_tid_9890;\n    int32_t local_tid_9891;\n    int64_t group_sizze_9894;\n    int32_t wave_sizze_9893;",
+                   "\n    int32_t group_tid_9892;\n    \n    global_tid_9890 = get_global_id(0);\n    local_tid_9891 = get_local_id(0);\n    group_sizze_9894 = get_local_size(0);\n    wave_sizze_9893 = LOCKSTEP_WIDTH;\n    group_tid_9892 = get_group_id(0);\n    \n    int32_t phys_tid_9524 = global_tid_9890;\n    \n    scan_arr_mem_9895 = (__local unsigned char *) scan_arr_mem_9895_backing_0;\n    \n    int64_t flat_idx_9897 = (sext_i32_i64(local_tid_9891) + (int64_t) 1) *\n            (segscan_group_sizze_9519 * sdiv_up64(defunc_0_f_res_9266,\n                                                  sext_i32_i64(num_threads_9864))) -\n            (int64_t) 1;\n    int64_t gtid_9523 = flat_idx_9897;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_9523, defunc_0_f_res_9266)) {\n            int32_t tmp_9898;\n            \n            tmp_9898 = ((__global int32_t *) mem_9704)[gtid_9523];\n            ((__local\n              int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)] =\n                tmp_9898;\n        } else {\n            ((__local\n              int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)] = 0;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t x_9287;\n    int32_t x_9288;\n    int32_t x_9899;\n    int32_t x_9900;\n    bool ltid_in_bounds_9902 = slt64(sext_i32_i64(local_tid_9891),\n                                     stage1_num_groups_9863);\n    int32_t skip_threads_9903;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9902) {\n            x_9288 = ((volatile __local\n                       int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)];\n            if ((local_tid_9891 - squot32(local_tid_9891, 32) * 32) == 0) {\n                x_9287 = x_9288;\n            }\n        }\n    }\n    // in-block scan (hopefully no barriers needed)\n    {\n        skip_threads_9903 = 1;\n        while (slt32(skip_threads_9903, 32)) {\n            bool thread_active_9904 = sle32(skip_threads_9903, local_tid_9891 -",
+                   "\n                                            squot32(local_tid_9891, 32) * 32) &&\n                 ltid_in_bounds_9902;\n            \n            if (thread_active_9904) {\n                // read operands\n                {\n                    x_9287 = ((volatile __local\n                               int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891) -\n                                                             sext_i32_i64(skip_threads_9903)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9904) {\n                    int32_t defunc_1_op_res_9289 = add32(x_9287, x_9288);\n                    \n                    x_9287 = defunc_1_op_res_9289;\n                }\n            }\n            if (sle32(wave_sizze_9893, skip_threads_9903)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9904) {\n                // write result\n                {\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)] =\n                        x_9287;\n                    x_9288 = x_9287;\n                }\n            }\n            if (sle32(wave_sizze_9893, skip_threads_9903)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9903 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9891 - squot32(local_tid_9891, 32) * 32) == 31 &&\n            ltid_in_bounds_9902) {\n            ((volatile __local\n              int32_t *) scan_arr_mem_9895)[sext_i32_i64(squot32(local_tid_9891,\n                                                                 32))] = x_9287;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9905;\n        \n        // read input for in-block scan\n       ",
+                   " {\n            if (squot32(local_tid_9891, 32) == 0 && ltid_in_bounds_9902) {\n                x_9900 = ((volatile __local\n                           int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)];\n                if ((local_tid_9891 - squot32(local_tid_9891, 32) * 32) == 0) {\n                    x_9899 = x_9900;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9905 = 1;\n            while (slt32(skip_threads_9905, 32)) {\n                bool thread_active_9906 = sle32(skip_threads_9905,\n                                                local_tid_9891 -\n                                                squot32(local_tid_9891, 32) *\n                                                32) && (squot32(local_tid_9891,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9902);\n                \n                if (thread_active_9906) {\n                    // read operands\n                    {\n                        x_9899 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891) -\n                                                                 sext_i32_i64(skip_threads_9905)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9906) {\n                        int32_t defunc_1_op_res_9901 = add32(x_9899, x_9900);\n                        \n                        x_9899 = defunc_1_op_res_9901;\n                    }\n                }\n                if (sle32(wave_sizze_9893, skip_threads_9905)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9906) {\n                    // write result\n                    {\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9895)",
+                   "[sext_i32_i64(local_tid_9891)] =\n                            x_9899;\n                        x_9900 = x_9899;\n                    }\n                }\n                if (sle32(wave_sizze_9893, skip_threads_9905)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9905 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9907 = squot32(local_tid_9891, 32) == 0 ||\n         !ltid_in_bounds_9902;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9907) {\n                x_9288 = x_9287;\n                x_9287 = ((__local\n                           int32_t *) scan_arr_mem_9895)[sext_i32_i64(squot32(local_tid_9891,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9907) {\n                int32_t defunc_1_op_res_9289 = add32(x_9287, x_9288);\n                \n                x_9287 = defunc_1_op_res_9289;\n            }\n        }\n        // write final result\n        {\n            if (!no_carry_in_9907) {\n                ((__local\n                  int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)] =\n                    x_9287;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9891, 32) == 0 && ltid_in_bounds_9902) {\n            ((__local\n              int32_t *) scan_arr_mem_9895)[sext_i32_i64(local_tid_9891)] =\n                x_9288;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_9523, defunc_0_f_res_9266)) {\n            int32_t tmp_9908;\n            \n            tmp_9908 = ((__local\n                         int32_t *) scan_arr_mem_9895",
+                   ")[sext_i32_i64(local_tid_9891)];\n            ((__global int32_t *) mem_9704)[gtid_9523] = tmp_9908;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9519\n}\n__kernel void scan_stage2_9552(__global int *global_failure, __local volatile\n                               int64_t *scan_arr_mem_9977_backing_aligned_0,\n                               __local volatile\n                               int64_t *scan_arr_mem_9975_backing_aligned_1,\n                               int64_t stage1_num_groups_9932,\n                               int32_t num_threads_9933, __global\n                               unsigned char *mem_9711, __global\n                               unsigned char *mem_9713)\n{\n    #define segscan_group_sizze_9547 (segscan_group_sizze_9546)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict scan_arr_mem_9977_backing_1 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9977_backing_aligned_0;\n    __local volatile unsigned char *restrict scan_arr_mem_9975_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) scan_arr_mem_9975_backing_aligned_1;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    __local unsigned char *scan_arr_mem_9977;\n    __local unsigned char *scan_arr_mem_9975;\n    int32_t global_tid_9970;\n    int32_t local_tid_9971;\n    int64_t group_sizze_9974;\n    int32_t wave_sizze_9973;\n    int32_t group_tid_9972;\n    \n    global_tid_9970 = get_global_id(0);\n    local_tid_9971 = get_local_id(0);\n    group_sizze_9974 = get_local_size(0);\n    wave_sizze_9973 = LOCKSTEP_WIDTH;\n    group_tid_9972 = get_group_id(0);\n    \n    int32_t phys_tid_9552 = global_tid_9970;\n    \n    scan_arr_mem_9975 = (__local unsigned char *) scan_arr_mem_9975_backing_0;\n    scan_arr_mem_9977 = (__local unsigned char *) scan_arr_mem_9",
+                   "977_backing_1;\n    \n    int64_t flat_idx_9979 = (sext_i32_i64(local_tid_9971) + (int64_t) 1) *\n            (segscan_group_sizze_9547 * sdiv_up64((int64_t) 6,\n                                                  sext_i32_i64(num_threads_9933))) -\n            (int64_t) 1;\n    int64_t gtid_9551 = flat_idx_9979;\n    \n    // threads in bound read carries; others get neutral element\n    {\n        if (slt64(gtid_9551, (int64_t) 6)) {\n            bool tmp_9980;\n            \n            tmp_9980 = ((__global bool *) mem_9711)[gtid_9551];\n            ((__local bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                tmp_9980;\n            \n            int32_t tmp_9981;\n            \n            tmp_9981 = ((__global int32_t *) mem_9713)[gtid_9551];\n            ((__local\n              int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)] =\n                tmp_9981;\n        } else {\n            ((__local bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                0;\n            ((__local\n              int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)] = 0;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool x_9313;\n    int32_t x_9314;\n    bool x_9315;\n    int32_t x_9316;\n    bool x_9982;\n    int32_t x_9983;\n    bool x_9984;\n    int32_t x_9985;\n    bool ltid_in_bounds_9989 = slt64(sext_i32_i64(local_tid_9971),\n                                     stage1_num_groups_9932);\n    int32_t skip_threads_9990;\n    \n    // read input for in-block scan\n    {\n        if (ltid_in_bounds_9989) {\n            x_9315 = ((volatile __local\n                       bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)];\n            x_9316 = ((volatile __local\n                       int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)];\n            if ((local_tid_9971 - squot32(local_tid_9971, 32) * 32) == 0) {\n                x_9313 = x_9315;\n                x_9314 = x_9316;\n            }\n        }\n    }\n    // in-block scan (hopefully no",
+                   " barriers needed)\n    {\n        skip_threads_9990 = 1;\n        while (slt32(skip_threads_9990, 32)) {\n            bool thread_active_9991 = sle32(skip_threads_9990, local_tid_9971 -\n                                            squot32(local_tid_9971, 32) * 32) &&\n                 ltid_in_bounds_9989;\n            \n            if (thread_active_9991) {\n                // read operands\n                {\n                    x_9313 = ((volatile __local\n                               bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971) -\n                                                          sext_i32_i64(skip_threads_9990)];\n                    x_9314 = ((volatile __local\n                               int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971) -\n                                                             sext_i32_i64(skip_threads_9990)];\n                }\n            }\n            // perform operation\n            {\n                if (thread_active_9991) {\n                    bool fl_9317 = x_9313 || x_9315;\n                    int32_t vl_9318;\n                    \n                    if (x_9315) {\n                        vl_9318 = x_9316;\n                    } else {\n                        int32_t defunc_1_op_res_9319 = add32(x_9314, x_9316);\n                        \n                        vl_9318 = defunc_1_op_res_9319;\n                    }\n                    x_9313 = fl_9317;\n                    x_9314 = vl_9318;\n                }\n            }\n            if (sle32(wave_sizze_9973, skip_threads_9990)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            if (thread_active_9991) {\n                // write result\n                {\n                    ((volatile __local\n                      bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                        x_9313;\n                    x_9315 = x_9313;\n                    ((volatile __local\n                      int32_t *) scan_arr_mem_9977)[sext_i32_i64(local",
+                   "_tid_9971)] =\n                        x_9314;\n                    x_9316 = x_9314;\n                }\n            }\n            if (sle32(wave_sizze_9973, skip_threads_9990)) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n            }\n            skip_threads_9990 *= 2;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // last thread of block 'i' writes its result to offset 'i'\n    {\n        if ((local_tid_9971 - squot32(local_tid_9971, 32) * 32) == 31 &&\n            ltid_in_bounds_9989) {\n            ((volatile __local\n              bool *) scan_arr_mem_9975)[sext_i32_i64(squot32(local_tid_9971,\n                                                              32))] = x_9313;\n            ((volatile __local\n              int32_t *) scan_arr_mem_9977)[sext_i32_i64(squot32(local_tid_9971,\n                                                                 32))] = x_9314;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // scan the first block, after which offset 'i' contains carry-in for block 'i+1'\n    {\n        int32_t skip_threads_9992;\n        \n        // read input for in-block scan\n        {\n            if (squot32(local_tid_9971, 32) == 0 && ltid_in_bounds_9989) {\n                x_9984 = ((volatile __local\n                           bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)];\n                x_9985 = ((volatile __local\n                           int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)];\n                if ((local_tid_9971 - squot32(local_tid_9971, 32) * 32) == 0) {\n                    x_9982 = x_9984;\n                    x_9983 = x_9985;\n                }\n            }\n        }\n        // in-block scan (hopefully no barriers needed)\n        {\n            skip_threads_9992 = 1;\n            while (slt32(skip_threads_9992, 32)) {\n                bool thread_active_9993 = sle32(skip_threads_9992,\n                                                local_tid_9971 -\n                                                squot32(local_tid_99",
+                   "71, 32) *\n                                                32) && (squot32(local_tid_9971,\n                                                                32) == 0 &&\n                                                        ltid_in_bounds_9989);\n                \n                if (thread_active_9993) {\n                    // read operands\n                    {\n                        x_9982 = ((volatile __local\n                                   bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971) -\n                                                              sext_i32_i64(skip_threads_9992)];\n                        x_9983 = ((volatile __local\n                                   int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971) -\n                                                                 sext_i32_i64(skip_threads_9992)];\n                    }\n                }\n                // perform operation\n                {\n                    if (thread_active_9993) {\n                        bool fl_9986 = x_9982 || x_9984;\n                        int32_t vl_9987;\n                        \n                        if (x_9984) {\n                            vl_9987 = x_9985;\n                        } else {\n                            int32_t defunc_1_op_res_9988 = add32(x_9983,\n                                                                 x_9985);\n                            \n                            vl_9987 = defunc_1_op_res_9988;\n                        }\n                        x_9982 = fl_9986;\n                        x_9983 = vl_9987;\n                    }\n                }\n                if (sle32(wave_sizze_9973, skip_threads_9992)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                if (thread_active_9993) {\n                    // write result\n                    {\n                        ((volatile __local\n                          bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                      ",
+                   "      x_9982;\n                        x_9984 = x_9982;\n                        ((volatile __local\n                          int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)] =\n                            x_9983;\n                        x_9985 = x_9983;\n                    }\n                }\n                if (sle32(wave_sizze_9973, skip_threads_9992)) {\n                    barrier(CLK_LOCAL_MEM_FENCE);\n                }\n                skip_threads_9992 *= 2;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    bool no_carry_in_9994 = squot32(local_tid_9971, 32) == 0 ||\n         !ltid_in_bounds_9989;\n    \n    // carry-in for every block except the first\n    {\n        // read operands\n        {\n            if (!no_carry_in_9994) {\n                x_9315 = x_9313;\n                x_9316 = x_9314;\n                x_9313 = ((__local\n                           bool *) scan_arr_mem_9975)[sext_i32_i64(squot32(local_tid_9971,\n                                                                           32)) -\n                                                      (int64_t) 1];\n                x_9314 = ((__local\n                           int32_t *) scan_arr_mem_9977)[sext_i32_i64(squot32(local_tid_9971,\n                                                                              32)) -\n                                                         (int64_t) 1];\n            }\n        }\n        // perform operation\n        {\n            if (!no_carry_in_9994) {\n                bool fl_9317 = x_9313 || x_9315;\n                int32_t vl_9318;\n                \n                if (x_9315) {\n                    vl_9318 = x_9316;\n                } else {\n                    int32_t defunc_1_op_res_9319 = add32(x_9314, x_9316);\n                    \n                    vl_9318 = defunc_1_op_res_9319;\n                }\n                x_9313 = fl_9317;\n                x_9314 = vl_9318;\n            }\n        }\n        // write final result\n        {\n            ",
+                   "if (!no_carry_in_9994) {\n                ((__local\n                  bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                    x_9313;\n                ((__local\n                  int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)] =\n                    x_9314;\n            }\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // restore correct values for first block\n    {\n        if (squot32(local_tid_9971, 32) == 0 && ltid_in_bounds_9989) {\n            ((__local bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)] =\n                x_9315;\n            ((__local\n              int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)] =\n                x_9316;\n        }\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // threads in bounds write scanned carries\n    {\n        if (slt64(gtid_9551, (int64_t) 6)) {\n            bool tmp_9995;\n            \n            tmp_9995 = ((__local\n                         bool *) scan_arr_mem_9975)[sext_i32_i64(local_tid_9971)];\n            ((__global bool *) mem_9711)[gtid_9551] = tmp_9995;\n            \n            int32_t tmp_9996;\n            \n            tmp_9996 = ((__local\n                         int32_t *) scan_arr_mem_9977)[sext_i32_i64(local_tid_9971)];\n            ((__global int32_t *) mem_9713)[gtid_9551] = tmp_9996;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9547\n}\n__kernel void scan_stage3_9510(__global int *global_failure,\n                               int64_t num_groups_9507,\n                               int32_t num_threads_9772,\n                               int32_t required_groups_9817, __global\n                               unsigned char *mem_9687)\n{\n    #define segscan_group_sizze_9505 (segscan_group_sizze_9504)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9818;\n    int32_t local_tid_9819;\n    int64_t group_sizze_9822;\n",
+                   "    int32_t wave_sizze_9821;\n    int32_t group_tid_9820;\n    \n    global_tid_9818 = get_global_id(0);\n    local_tid_9819 = get_local_id(0);\n    group_sizze_9822 = get_local_size(0);\n    wave_sizze_9821 = LOCKSTEP_WIDTH;\n    group_tid_9820 = get_group_id(0);\n    \n    int32_t phys_tid_9510 = global_tid_9818;\n    int32_t phys_group_id_9823;\n    \n    phys_group_id_9823 = get_group_id(0);\n    \n    int32_t iterations_9824 = sdiv_up32(required_groups_9817 -\n                                        phys_group_id_9823,\n                                        sext_i64_i32(num_groups_9507));\n    \n    for (int32_t i_9825 = 0; i_9825 < iterations_9824; i_9825++) {\n        int32_t virt_group_id_9826 = phys_group_id_9823 + i_9825 *\n                sext_i64_i32(num_groups_9507);\n        int64_t flat_idx_9827 = sext_i32_i64(virt_group_id_9826) *\n                segscan_group_sizze_9505 + sext_i32_i64(local_tid_9819);\n        int64_t gtid_9509 = flat_idx_9827;\n        int64_t orig_group_9828 = squot64(flat_idx_9827,\n                                          segscan_group_sizze_9505 *\n                                          sdiv_up64((int64_t) 3,\n                                                    sext_i32_i64(num_threads_9772)));\n        int64_t carry_in_flat_idx_9829 = orig_group_9828 *\n                (segscan_group_sizze_9505 * sdiv_up64((int64_t) 3,\n                                                      sext_i32_i64(num_threads_9772))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_9509, (int64_t) 3)) {\n            if (!(orig_group_9828 == (int64_t) 0 || flat_idx_9827 ==\n                  (orig_group_9828 + (int64_t) 1) * (segscan_group_sizze_9505 *\n                                                     sdiv_up64((int64_t) 3,\n                                                               sext_i32_i64(num_threads_9772))) -\n                  (int64_t) 1)) {\n                int32_t x_9251;\n                int32_t x_9252;\n                \n                x_9251 = ((__gl",
+                   "obal\n                           int32_t *) mem_9687)[carry_in_flat_idx_9829];\n                x_9252 = ((__global int32_t *) mem_9687)[gtid_9509];\n                \n                int32_t defunc_1_op_res_9253 = add32(x_9251, x_9252);\n                \n                x_9251 = defunc_1_op_res_9253;\n                ((__global int32_t *) mem_9687)[gtid_9509] = x_9251;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9505\n}\n__kernel void scan_stage3_9524(__global int *global_failure,\n                               int64_t defunc_0_f_res_9266,\n                               int64_t num_groups_9521,\n                               int32_t num_threads_9864,\n                               int32_t required_groups_9909, __global\n                               unsigned char *mem_9704)\n{\n    #define segscan_group_sizze_9519 (segscan_group_sizze_9518)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9910;\n    int32_t local_tid_9911;\n    int64_t group_sizze_9914;\n    int32_t wave_sizze_9913;\n    int32_t group_tid_9912;\n    \n    global_tid_9910 = get_global_id(0);\n    local_tid_9911 = get_local_id(0);\n    group_sizze_9914 = get_local_size(0);\n    wave_sizze_9913 = LOCKSTEP_WIDTH;\n    group_tid_9912 = get_group_id(0);\n    \n    int32_t phys_tid_9524 = global_tid_9910;\n    int32_t phys_group_id_9915;\n    \n    phys_group_id_9915 = get_group_id(0);\n    \n    int32_t iterations_9916 = sdiv_up32(required_groups_9909 -\n                                        phys_group_id_9915,\n                                        sext_i64_i32(num_groups_9521));\n    \n    for (int32_t i_9917 = 0; i_9917 < iterations_9916; i_9917++) {\n        int32_t virt_group_id_9918 = phys_group_id_9915 + i_9917 *\n                sext_i64_i32(num_groups_9521);\n        int64_t flat_idx_9919 = sext_i3",
+                   "2_i64(virt_group_id_9918) *\n                segscan_group_sizze_9519 + sext_i32_i64(local_tid_9911);\n        int64_t gtid_9523 = flat_idx_9919;\n        int64_t orig_group_9920 = squot64(flat_idx_9919,\n                                          segscan_group_sizze_9519 *\n                                          sdiv_up64(defunc_0_f_res_9266,\n                                                    sext_i32_i64(num_threads_9864)));\n        int64_t carry_in_flat_idx_9921 = orig_group_9920 *\n                (segscan_group_sizze_9519 * sdiv_up64(defunc_0_f_res_9266,\n                                                      sext_i32_i64(num_threads_9864))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_9523, defunc_0_f_res_9266)) {\n            if (!(orig_group_9920 == (int64_t) 0 || flat_idx_9919 ==\n                  (orig_group_9920 + (int64_t) 1) * (segscan_group_sizze_9519 *\n                                                     sdiv_up64(defunc_0_f_res_9266,\n                                                               sext_i32_i64(num_threads_9864))) -\n                  (int64_t) 1)) {\n                int32_t x_9287;\n                int32_t x_9288;\n                \n                x_9287 = ((__global\n                           int32_t *) mem_9704)[carry_in_flat_idx_9921];\n                x_9288 = ((__global int32_t *) mem_9704)[gtid_9523];\n                \n                int32_t defunc_1_op_res_9289 = add32(x_9287, x_9288);\n                \n                x_9287 = defunc_1_op_res_9289;\n                ((__global int32_t *) mem_9704)[gtid_9523] = x_9287;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9519\n}\n__kernel void scan_stage3_9552(__global int *global_failure,\n                               int64_t num_groups_9549,\n                               int32_t num_threads_9933,\n                               int32_t required_groups_9997, __global\n            ",
+                   "                   unsigned char *mem_9711, __global\n                               unsigned char *mem_9713)\n{\n    #define segscan_group_sizze_9547 (segscan_group_sizze_9546)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9998;\n    int32_t local_tid_9999;\n    int64_t group_sizze_10002;\n    int32_t wave_sizze_10001;\n    int32_t group_tid_10000;\n    \n    global_tid_9998 = get_global_id(0);\n    local_tid_9999 = get_local_id(0);\n    group_sizze_10002 = get_local_size(0);\n    wave_sizze_10001 = LOCKSTEP_WIDTH;\n    group_tid_10000 = get_group_id(0);\n    \n    int32_t phys_tid_9552 = global_tid_9998;\n    int32_t phys_group_id_10003;\n    \n    phys_group_id_10003 = get_group_id(0);\n    \n    int32_t iterations_10004 = sdiv_up32(required_groups_9997 -\n                                         phys_group_id_10003,\n                                         sext_i64_i32(num_groups_9549));\n    \n    for (int32_t i_10005 = 0; i_10005 < iterations_10004; i_10005++) {\n        int32_t virt_group_id_10006 = phys_group_id_10003 + i_10005 *\n                sext_i64_i32(num_groups_9549);\n        int64_t flat_idx_10007 = sext_i32_i64(virt_group_id_10006) *\n                segscan_group_sizze_9547 + sext_i32_i64(local_tid_9999);\n        int64_t gtid_9551 = flat_idx_10007;\n        int64_t orig_group_10008 = squot64(flat_idx_10007,\n                                           segscan_group_sizze_9547 *\n                                           sdiv_up64((int64_t) 6,\n                                                     sext_i32_i64(num_threads_9933)));\n        int64_t carry_in_flat_idx_10009 = orig_group_10008 *\n                (segscan_group_sizze_9547 * sdiv_up64((int64_t) 6,\n                                                      sext_i32_i64(num_threads_9933))) -\n                (int64_t) 1;\n        \n        if (slt64(gtid_9551, (int64_t) 6)) {\n            if (!(orig_grou",
+                   "p_10008 == (int64_t) 0 || flat_idx_10007 ==\n                  (orig_group_10008 + (int64_t) 1) * (segscan_group_sizze_9547 *\n                                                      sdiv_up64((int64_t) 6,\n                                                                sext_i32_i64(num_threads_9933))) -\n                  (int64_t) 1)) {\n                bool x_9313;\n                int32_t x_9314;\n                bool x_9315;\n                int32_t x_9316;\n                \n                x_9313 = ((__global bool *) mem_9711)[carry_in_flat_idx_10009];\n                x_9314 = ((__global\n                           int32_t *) mem_9713)[carry_in_flat_idx_10009];\n                x_9315 = ((__global bool *) mem_9711)[gtid_9551];\n                x_9316 = ((__global int32_t *) mem_9713)[gtid_9551];\n                \n                bool fl_9317 = x_9313 || x_9315;\n                int32_t vl_9318;\n                \n                if (x_9315) {\n                    vl_9318 = x_9316;\n                } else {\n                    int32_t defunc_1_op_res_9319 = add32(x_9314, x_9316);\n                    \n                    vl_9318 = defunc_1_op_res_9319;\n                }\n                x_9313 = fl_9317;\n                x_9314 = vl_9318;\n                ((__global bool *) mem_9711)[gtid_9551] = x_9313;\n                ((__global int32_t *) mem_9713)[gtid_9551] = x_9314;\n            }\n        }\n        barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    }\n    \n  error_0:\n    return;\n    #undef segscan_group_sizze_9547\n}\n__kernel void segmap_9512(__global int *global_failure,\n                          int failure_is_an_option, __global\n                          int64_t *global_failure_args,\n                          int64_t defunc_0_f_res_9266, __global\n                          unsigned char *mem_9687, __global\n                          unsigned char *mem_9699)\n{\n    #define segmap_group_sizze_9515 (segmap_group_sizze_9514)\n    \n    const int block_dim0 = 0;\n    const int block_",
+                   "dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9854;\n    int32_t local_tid_9855;\n    int64_t group_sizze_9858;\n    int32_t wave_sizze_9857;\n    int32_t group_tid_9856;\n    \n    global_tid_9854 = get_global_id(0);\n    local_tid_9855 = get_local_id(0);\n    group_sizze_9858 = get_local_size(0);\n    wave_sizze_9857 = LOCKSTEP_WIDTH;\n    group_tid_9856 = get_group_id(0);\n    \n    int32_t phys_tid_9512 = global_tid_9854;\n    int64_t global_tid_9859 = sext_i32_i64(group_tid_9856) *\n            segmap_group_sizze_9515 + sext_i32_i64(local_tid_9855);\n    int64_t slice_9860 = (int64_t) 3;\n    int64_t write_i_9511 = global_tid_9859;\n    int64_t remnant_9861 = global_tid_9859 - write_i_9511;\n    \n    if (slt64(write_i_9511, (int64_t) 3)) {\n        int64_t x_9271 = sub64((int64_t) 3, write_i_9511);\n        int64_t i_9272 = sub64(x_9271, (int64_t) 1);\n        bool x_9273 = sle64((int64_t) 0, i_9272);\n        bool y_9274 = slt64(i_9272, (int64_t) 3);\n        bool bounds_check_9275 = x_9273 && y_9274;\n        bool index_certs_9276;\n        \n        if (!bounds_check_9275) {\n            {\n                if (atomic_cmpxchg_i32_global(global_failure, -1, 1) == -1) {\n                    global_failure_args[0] = (int64_t) i_9272;\n                    global_failure_args[1] = (int64_t) (int64_t) 3;\n                    ;\n                }\n                return;\n            }\n        }\n        \n        int32_t index_primexp_9277 = sext_i64_i32(x_9271);\n        bool cond_9278 = index_primexp_9277 == 0;\n        int32_t defunc_1_f_res_9279;\n        \n        if (cond_9278) {\n            defunc_1_f_res_9279 = -1;\n        } else {\n            int32_t x_9270;\n            \n            x_9270 = ((__global int32_t *) mem_9687)[write_i_9511];\n            defunc_1_f_res_9279 = x_9270;\n        }\n        \n        int64_t defunc_0_f_res_9280 = sext_i32_i64(defunc_1_f_res_9279);\n        \n        if (sle64((int64_t) 0, defunc_0_f_res_",
+                   "9280) &&\n            slt64(defunc_0_f_res_9280, defunc_0_f_res_9266)) {\n            ((__global int32_t *) mem_9699)[defunc_0_f_res_9280] = 1;\n        }\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9515\n}\n__kernel void segmap_9541(__global int *global_failure,\n                          int64_t defunc_0_f_res_9266, __global\n                          unsigned char *mem_9704, __global\n                          unsigned char *mem_9708)\n{\n    #define segmap_group_sizze_9537 (segmap_group_sizze_9528)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_9923;\n    int32_t local_tid_9924;\n    int64_t group_sizze_9927;\n    int32_t wave_sizze_9926;\n    int32_t group_tid_9925;\n    \n    global_tid_9923 = get_global_id(0);\n    local_tid_9924 = get_local_id(0);\n    group_sizze_9927 = get_local_size(0);\n    wave_sizze_9926 = LOCKSTEP_WIDTH;\n    group_tid_9925 = get_group_id(0);\n    \n    int32_t phys_tid_9541 = global_tid_9923;\n    int64_t global_tid_9928 = sext_i32_i64(group_tid_9925) *\n            segmap_group_sizze_9537 + sext_i32_i64(local_tid_9924);\n    int64_t slice_9929 = defunc_0_f_res_9266;\n    int64_t gtid_9540 = global_tid_9928;\n    int64_t remnant_9930 = global_tid_9928 - gtid_9540;\n    \n    if (slt64(gtid_9540, defunc_0_f_res_9266)) {\n        int32_t x_9542;\n        \n        x_9542 = ((__global int32_t *) mem_9704)[gtid_9540];\n        \n        int32_t defunc_0_f_res_9544 = sub32(x_9542, 1);\n        \n        ((__global int32_t *) mem_9708)[gtid_9540] = defunc_0_f_res_9544;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9537\n}\n__kernel void segmap_9571(__global int *global_failure, __global\n                          unsigned char *mem_9713, __global\n                          unsigned char *mem_9716)\n{\n    #define segmap_group_sizze_9567 (segmap_group_sizze_9556)\n    \n    const int block_dim0 = 0;\n    const int block_di",
+                   "m1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_10011;\n    int32_t local_tid_10012;\n    int64_t group_sizze_10015;\n    int32_t wave_sizze_10014;\n    int32_t group_tid_10013;\n    \n    global_tid_10011 = get_global_id(0);\n    local_tid_10012 = get_local_id(0);\n    group_sizze_10015 = get_local_size(0);\n    wave_sizze_10014 = LOCKSTEP_WIDTH;\n    group_tid_10013 = get_group_id(0);\n    \n    int32_t phys_tid_9571 = global_tid_10011;\n    int64_t global_tid_10016 = sext_i32_i64(group_tid_10013) *\n            segmap_group_sizze_9567 + sext_i32_i64(local_tid_10012);\n    int64_t slice_10017 = (int64_t) 6;\n    int64_t gtid_9570 = global_tid_10016;\n    int64_t remnant_10018 = global_tid_10016 - gtid_9570;\n    \n    if (slt64(gtid_9570, (int64_t) 6)) {\n        int32_t x_9573;\n        \n        x_9573 = ((__global int32_t *) mem_9713)[gtid_9570];\n        \n        int32_t defunc_0_f_res_9576 = sub32(x_9573, 1);\n        \n        ((__global int32_t *) mem_9716)[gtid_9570] = defunc_0_f_res_9576;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9567\n}\n__kernel void segmap_9624(__global int *global_failure,\n                          int failure_is_an_option, __global\n                          int64_t *global_failure_args,\n                          int32_t defunc_2_reduce_res_9340, int32_t minI_9441,\n                          int64_t ctx_param_ext_9689,\n                          int64_t ctx_param_ext_9690, __global\n                          unsigned char *mem_param_9692, __global\n                          unsigned char *mem_9726)\n{\n    #define segmap_group_sizze_9620 (segmap_group_sizze_9592)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    \n    if (*global_failure >= 0)\n        return;\n    \n    int32_t global_tid_10085;\n    int32_t local_tid_10086;\n    int64_t group_sizze_10089;\n    int32_t wave_sizze_10088;\n    int32_t group_tid_10087;\n    \n    global_tid_",
+                   "10085 = get_global_id(0);\n    local_tid_10086 = get_local_id(0);\n    group_sizze_10089 = get_local_size(0);\n    wave_sizze_10088 = LOCKSTEP_WIDTH;\n    group_tid_10087 = get_group_id(0);\n    \n    int32_t phys_tid_9624 = global_tid_10085;\n    int64_t global_tid_10090 = sext_i32_i64(group_tid_10087) *\n            segmap_group_sizze_9620 + sext_i32_i64(local_tid_10086);\n    int64_t slice_10091 = (int64_t) 6;\n    int64_t gtid_9623 = global_tid_10090;\n    int64_t remnant_10092 = global_tid_10090 - gtid_9623;\n    \n    if (slt64(gtid_9623, (int64_t) 6)) {\n        int32_t defunc_0_f_res_9626 = sext_i64_i32(gtid_9623);\n        bool cond_9627 = slt32(defunc_0_f_res_9626, minI_9441);\n        bool cond_f_res_9628 = slt32(defunc_2_reduce_res_9340,\n                                     defunc_0_f_res_9626);\n        bool x_9629 = !cond_9627;\n        bool y_9630 = cond_f_res_9628 && x_9629;\n        bool cond_9631 = cond_9627 || y_9630;\n        int32_t defunc_0_f_res_9632;\n        \n        if (cond_9631) {\n            int64_t ind_9633 = sext_i32_i64(defunc_0_f_res_9626);\n            bool x_9634 = sle64((int64_t) 0, ind_9633);\n            bool y_9635 = slt64(ind_9633, (int64_t) 6);\n            bool bounds_check_9636 = x_9634 && y_9635;\n            bool index_certs_9637;\n            \n            if (!bounds_check_9636) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 11) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) ind_9633;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    return;\n                }\n            }\n            \n            int32_t defunc_0_f_res_t_res_9638;\n            \n            defunc_0_f_res_t_res_9638 = ((__global\n                                          int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                                     ind_9633 *\n          ",
+                   "                                                           ctx_param_ext_9690];\n            defunc_0_f_res_9632 = defunc_0_f_res_t_res_9638;\n        } else {\n            int32_t y_9639 = sub32(defunc_0_f_res_9626, minI_9441);\n            int32_t i_9640 = sub32(defunc_2_reduce_res_9340, y_9639);\n            int64_t i_9641 = sext_i32_i64(i_9640);\n            bool x_9642 = sle64((int64_t) 0, i_9641);\n            bool y_9643 = slt64(i_9641, (int64_t) 6);\n            bool bounds_check_9644 = x_9642 && y_9643;\n            bool index_certs_9645;\n            \n            if (!bounds_check_9644) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 12) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_9641;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    return;\n                }\n            }\n            \n            int32_t defunc_0_f_res_f_res_9646;\n            \n            defunc_0_f_res_f_res_9646 = ((__global\n                                          int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                                     i_9641 *\n                                                                     ctx_param_ext_9690];\n            defunc_0_f_res_9632 = defunc_0_f_res_f_res_9646;\n        }\n        ((__global int32_t *) mem_9726)[gtid_9623] = defunc_0_f_res_9632;\n    }\n    \n  error_0:\n    return;\n    #undef segmap_group_sizze_9620\n}\n__kernel void segred_nonseg_9588(__global int *global_failure,\n                                 int failure_is_an_option, __global\n                                 int64_t *global_failure_args, __local volatile\n                                 int64_t *red_arr_mem_10039_backing_aligned_0,\n                                 __local volatile\n                                 int64_t *red_arr_mem_10037_backing_aligned_1,\n               ",
+                   "                  __local volatile\n                                 int64_t *red_arr_mem_10035_backing_aligned_2,\n                                 __local volatile\n                                 int64_t *sync_arr_mem_10033_backing_aligned_3,\n                                 int64_t defunc_0_f_res_9266,\n                                 int64_t num_groups_9581,\n                                 int64_t ctx_param_ext_9689,\n                                 int64_t ctx_param_ext_9690, __global\n                                 unsigned char *mem_9684, __global\n                                 unsigned char *mem_param_9692, __global\n                                 unsigned char *mem_9708, __global\n                                 unsigned char *mem_9716, __global\n                                 unsigned char *mem_9719, __global\n                                 unsigned char *mem_9721, __global\n                                 unsigned char *mem_9723, __global\n                                 unsigned char *counter_mem_10019, __global\n                                 unsigned char *segred_tmp_mem_10021, __global\n                                 unsigned char *segred_tmp_mem_10023, __global\n                                 unsigned char *segred_tmp_mem_10025)\n{\n    #define segred_group_sizze_9579 (segred_group_sizze_9578)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict red_arr_mem_10039_backing_3 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_10039_backing_aligned_0;\n    __local volatile unsigned char *restrict red_arr_mem_10037_backing_2 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_10037_backing_aligned_1;\n    __local volatile unsigned char *restrict red_arr_mem_10035_backing_1 =\n                                   (__local volatile\n   ",
+                   "                                 unsigned char *) red_arr_mem_10035_backing_aligned_2;\n    __local volatile unsigned char *restrict sync_arr_mem_10033_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) sync_arr_mem_10033_backing_aligned_3;\n    volatile __local bool local_failure;\n    \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n    }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *red_arr_mem_10039;\n    __local unsigned char *red_arr_mem_10037;\n    __local unsigned char *red_arr_mem_10035;\n    __local unsigned char *sync_arr_mem_10033;\n    int32_t global_tid_10028;\n    int32_t local_tid_10029;\n    int64_t group_sizze_10032;\n    int32_t wave_sizze_10031;\n    int32_t group_tid_10030;\n    \n    global_tid_10028 = get_global_id(0);\n    local_tid_10029 = get_local_id(0);\n    group_sizze_10032 = get_local_size(0);\n    wave_sizze_10031 = LOCKSTEP_WIDTH;\n    group_tid_10030 = get_group_id(0);\n    \n    int32_t phys_tid_9588 = global_tid_10028;\n    \n    sync_arr_mem_10033 = (__local unsigned char *) sync_arr_mem_10033_backing_0;\n    red_arr_mem_10035 = (__local unsigned char *) red_arr_mem_10035_backing_1;\n    red_arr_mem_10037 = (__local unsigned char *) red_arr_mem_10037_backing_2;\n    red_arr_mem_10039 = (__local unsigned char *) red_arr_mem_10039_backing_3;\n    \n    int64_t dummy_9586 = (int64_t) 0;\n    int64_t gtid_9587 = (int64_t) 0;\n    int32_t x_acc_10041;\n    int32_t x_acc_10042;\n    int32_t x_acc_10043;\n    int64_t chunk_sizze_10044;\n    int64_t starting_point_10045 = phys_tid_9588 * sdiv_up64((int64_t) 6,\n                                                             sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                                                             num_groups_9581)));\n    int64_t remaining_elements_10046 = (int64_t) 6 - starting_point_10045;\n    \n   ",
+                   " if (sle64(remaining_elements_10046, (int64_t) 0) || sle64((int64_t) 6,\n                                                              starting_point_10045)) {\n        chunk_sizze_10044 = (int64_t) 0;\n    } else {\n        if (slt64((int64_t) 6, (phys_tid_9588 + (int64_t) 1) *\n                  sdiv_up64((int64_t) 6,\n                            sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                            num_groups_9581))))) {\n            chunk_sizze_10044 = (int64_t) 6 - phys_tid_9588 *\n                sdiv_up64((int64_t) 6,\n                          sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                          num_groups_9581)));\n        } else {\n            chunk_sizze_10044 = sdiv_up64((int64_t) 6,\n                                          sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                                          num_groups_9581)));\n        }\n    }\n    \n    int32_t x_9341;\n    int32_t x_9342;\n    int32_t x_9343;\n    int32_t x_9344;\n    int32_t x_9345;\n    int32_t x_9346;\n    \n    // neutral-initialise the accumulators\n    {\n        x_acc_10041 = 2147483647;\n        x_acc_10042 = -1;\n        x_acc_10043 = -1;\n    }\n    for (int64_t i_10073 = 0; i_10073 < sdiv_up64((int64_t) 6,\n                                                  sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                                                  num_groups_9581)));\n         i_10073++) {\n        gtid_9587 = sext_i32_i64(local_tid_10029) + (squot64(phys_tid_9588,\n                                                             segred_group_sizze_9579) *\n                                                     sdiv_up64((int64_t) 6,\n                                                               sext_i32_i64(sext_i64_i32(segred_group_sizze_9579 *\n                                                               num_groups_9581))) +\n                                                     i_10073) *\n            segred_group_sizze_9579;\n        if (slt",
+                   "64(gtid_9587, (int64_t) 6)) {\n            // apply map function\n            {\n                bool y_9369 = slt64(gtid_9587, defunc_0_f_res_9266);\n                bool index_certs_9371;\n                \n                if (!y_9369) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 2) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) gtid_9587;\n                            global_failure_args[1] =\n                                (int64_t) defunc_0_f_res_9266;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t i_9372;\n                \n                i_9372 = ((__global int32_t *) mem_9708)[gtid_9587];\n                \n                int64_t i_9373 = sext_i32_i64(i_9372);\n                bool x_9374 = sle64((int64_t) 0, i_9373);\n                bool y_9375 = slt64(i_9373, (int64_t) 6);\n                bool bounds_check_9376 = x_9374 && y_9375;\n                bool index_certs_9377;\n                \n                if (!bounds_check_9376) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 3) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9373;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t iCity_9378;\n                \n                iCity_9378 = ((__global\n                               int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                          i_9373 *\n                                                          ctx",
+                   "_param_ext_9690];\n                \n                int32_t i_9379 = add32(1, i_9372);\n                int64_t i_9380 = sext_i32_i64(i_9379);\n                bool x_9381 = sle64((int64_t) 0, i_9380);\n                bool y_9382 = slt64(i_9380, (int64_t) 6);\n                bool bounds_check_9383 = x_9381 && y_9382;\n                bool index_certs_9384;\n                \n                if (!bounds_check_9383) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 4) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9380;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t iCityp1_9385;\n                \n                iCityp1_9385 = ((__global\n                                 int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                            i_9380 *\n                                                            ctx_param_ext_9690];\n                \n                int32_t x_9389;\n                \n                x_9389 = ((__global int32_t *) mem_9716)[gtid_9587];\n                \n                int32_t x_9390 = add32(i_9372, x_9389);\n                int32_t j_9391 = add32(2, x_9390);\n                int64_t j_9392 = sext_i32_i64(j_9391);\n                bool x_9393 = sle64((int64_t) 0, j_9392);\n                bool y_9394 = slt64(j_9392, (int64_t) 6);\n                bool bounds_check_9395 = x_9393 && y_9394;\n                bool index_certs_9396;\n                \n                if (!bounds_check_9395) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 5) ==\n                            -1) {\n                            global_failure_args[0] = (i",
+                   "nt64_t) j_9392;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t jCity_9397;\n                \n                jCity_9397 = ((__global\n                               int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                          j_9392 *\n                                                          ctx_param_ext_9690];\n                \n                int32_t i_9398 = add32(3, x_9390);\n                int64_t i_9399 = sext_i32_i64(i_9398);\n                bool x_9400 = sle64((int64_t) 0, i_9399);\n                bool y_9401 = slt64(i_9399, (int64_t) 6);\n                bool bounds_check_9402 = x_9400 && y_9401;\n                bool index_certs_9403;\n                \n                if (!bounds_check_9402) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 6) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9399;\n                            global_failure_args[1] = (int64_t) (int64_t) 6;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t jCityp1_9404;\n                \n                jCityp1_9404 = ((__global\n                                 int32_t *) mem_param_9692)[ctx_param_ext_9689 +\n                                                            i_9399 *\n                                                            ctx_param_ext_9690];\n                \n                int32_t x_9405 = mul32(5, iCity_9378);\n                int32_t i_9406 = add32(jCity_9397, x_9405);\n                int64_t i_9407 = sext_i32_i64(i_9406);\n  ",
+                   "              bool x_9408 = sle64((int64_t) 0, i_9407);\n                bool y_9409 = slt64(i_9407, (int64_t) 25);\n                bool bounds_check_9410 = x_9408 && y_9409;\n                bool index_certs_9411;\n                \n                if (!bounds_check_9410) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 7) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9407;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t x_9412;\n                \n                x_9412 = ((__global int32_t *) mem_9684)[i_9407];\n                \n                int32_t x_9413 = mul32(5, iCityp1_9385);\n                int32_t i_9414 = add32(jCityp1_9404, x_9413);\n                int64_t i_9415 = sext_i32_i64(i_9414);\n                bool x_9416 = sle64((int64_t) 0, i_9415);\n                bool y_9417 = slt64(i_9415, (int64_t) 25);\n                bool bounds_check_9418 = x_9416 && y_9417;\n                bool index_certs_9419;\n                \n                if (!bounds_check_9418) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 8) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9415;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t y_9420;\n                \n                y_9420 = ((__global int32_t *) mem_9684)[i_9415];\n                \n                int32_t x_9421 = add32(x_9412, y_9420)",
+                   ";\n                int32_t i_9422 = add32(iCityp1_9385, x_9405);\n                int64_t i_9423 = sext_i32_i64(i_9422);\n                bool x_9424 = sle64((int64_t) 0, i_9423);\n                bool y_9425 = slt64(i_9423, (int64_t) 25);\n                bool bounds_check_9426 = x_9424 && y_9425;\n                bool index_certs_9427;\n                \n                if (!bounds_check_9426) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 9) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9423;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t x_9428;\n                \n                x_9428 = ((__global int32_t *) mem_9684)[i_9423];\n                \n                int32_t x_9429 = mul32(5, jCity_9397);\n                int32_t i_9430 = add32(jCityp1_9404, x_9429);\n                int64_t i_9431 = sext_i32_i64(i_9430);\n                bool x_9432 = sle64((int64_t) 0, i_9431);\n                bool y_9433 = slt64(i_9431, (int64_t) 25);\n                bool bounds_check_9434 = x_9432 && y_9433;\n                bool index_certs_9435;\n                \n                if (!bounds_check_9434) {\n                    {\n                        if (atomic_cmpxchg_i32_global(global_failure, -1, 10) ==\n                            -1) {\n                            global_failure_args[0] = (int64_t) i_9431;\n                            global_failure_args[1] = (int64_t) (int64_t) 25;\n                            ;\n                        }\n                        local_failure = true;\n                        goto error_0;\n                    }\n                }\n                \n                int32_t y_9436;\n                \n                y",
+                   "_9436 = ((__global int32_t *) mem_9684)[i_9431];\n                \n                int32_t y_9437 = add32(x_9428, y_9436);\n                int32_t defunc_0_f_res_9438 = sub32(x_9421, y_9437);\n                \n                // save map-out results\n                { }\n                // load accumulator\n                {\n                    x_9341 = x_acc_10041;\n                    x_9342 = x_acc_10042;\n                    x_9343 = x_acc_10043;\n                }\n                // load new values\n                {\n                    x_9344 = defunc_0_f_res_9438;\n                    x_9345 = i_9372;\n                    x_9346 = j_9391;\n                }\n                // apply reduction operator\n                {\n                    bool cond_9347 = slt32(x_9341, x_9344);\n                    int32_t defunc_1_op_res_9348;\n                    int32_t defunc_1_op_res_9349;\n                    int32_t defunc_1_op_res_9350;\n                    \n                    if (cond_9347) {\n                        defunc_1_op_res_9348 = x_9341;\n                        defunc_1_op_res_9349 = x_9342;\n                        defunc_1_op_res_9350 = x_9343;\n                    } else {\n                        bool cond_9351 = x_9341 == x_9344;\n                        int32_t defunc_1_op_res_f_res_9352;\n                        int32_t defunc_1_op_res_f_res_9353;\n                        int32_t defunc_1_op_res_f_res_9354;\n                        \n                        if (cond_9351) {\n                            bool cond_9355 = slt32(x_9342, x_9345);\n                            int32_t defunc_1_op_res_f_res_t_res_9356;\n                            int32_t defunc_1_op_res_f_res_t_res_9357;\n                            int32_t defunc_1_op_res_f_res_t_res_9358;\n                            \n                            if (cond_9355) {\n                                defunc_1_op_res_f_res_t_res_9356 = x_9341;\n                                defunc_1_op_res_f_res_t_res_9357 = x_9342;\n        ",
+                   "                        defunc_1_op_res_f_res_t_res_9358 = x_9343;\n                            } else {\n                                bool cond_9359 = x_9342 == x_9345;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9360;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9361;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9362;\n                                \n                                if (cond_9359) {\n                                    bool cond_9363 = slt32(x_9343, x_9346);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9364;\n                                    \n                                    if (cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9364 =\n                                            x_9341;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9364 =\n                                            x_9344;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9365;\n                                    \n                                    if (cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365 =\n                                            x_9342;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365 =\n                                            x_9345;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9366;\n                                    \n                                    if (",
+                   "cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366 =\n                                            x_9343;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366 =\n                                            x_9346;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_9360 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9364;\n                                    defunc_1_op_res_f_res_t_res_f_res_9361 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365;\n                                    defunc_1_op_res_f_res_t_res_f_res_9362 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_9360 =\n                                        x_9344;\n                                    defunc_1_op_res_f_res_t_res_f_res_9361 =\n                                        x_9345;\n                                    defunc_1_op_res_f_res_t_res_f_res_9362 =\n                                        x_9346;\n                                }\n                                defunc_1_op_res_f_res_t_res_9356 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9360;\n                                defunc_1_op_res_f_res_t_res_9357 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9361;\n                                defunc_1_op_res_f_res_t_res_9358 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9362;\n                            }\n                            defunc_1_op_res_f_res_9352 =\n                                defunc_1_op_res_f_res_t_res_9356;\n                            defunc_1_op_res_f_res_9353 =\n                                defunc_1_op_res_",
+                   "f_res_t_res_9357;\n                            defunc_1_op_res_f_res_9354 =\n                                defunc_1_op_res_f_res_t_res_9358;\n                        } else {\n                            defunc_1_op_res_f_res_9352 = x_9344;\n                            defunc_1_op_res_f_res_9353 = x_9345;\n                            defunc_1_op_res_f_res_9354 = x_9346;\n                        }\n                        defunc_1_op_res_9348 = defunc_1_op_res_f_res_9352;\n                        defunc_1_op_res_9349 = defunc_1_op_res_f_res_9353;\n                        defunc_1_op_res_9350 = defunc_1_op_res_f_res_9354;\n                    }\n                    // store in accumulator\n                    {\n                        x_acc_10041 = defunc_1_op_res_9348;\n                        x_acc_10042 = defunc_1_op_res_9349;\n                        x_acc_10043 = defunc_1_op_res_9350;\n                    }\n                }\n            }\n        }\n        // to reduce current chunk, first store our result in memory\n        {\n            x_9341 = x_acc_10041;\n            x_9342 = x_acc_10042;\n            x_9343 = x_acc_10043;\n            ((__local\n              int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n                x_9341;\n            ((__local\n              int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n                x_9342;\n            ((__local\n              int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n                x_9343;\n        }\n        \n      error_0:\n        barrier(CLK_LOCAL_MEM_FENCE);\n        if (local_failure)\n            return;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        \n        int32_t offset_10074;\n        int32_t skip_waves_10075 = 1;\n        int32_t x_10047;\n        int32_t x_10048;\n        int32_t x_10049;\n        int32_t x_10050;\n        int32_t x_10051;\n        int32_t x_10052;\n        \n        offset_10074 = 0;\n        // participating threads read initial accumulator\n        {\n           ",
+                   " if (slt32(local_tid_10029, sext_i64_i32(segred_group_sizze_9579))) {\n                x_10047 = ((__local\n                            int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                          offset_10074)];\n                x_10048 = ((__local\n                            int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                          offset_10074)];\n                x_10049 = ((__local\n                            int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                          offset_10074)];\n            }\n        }\n        offset_10074 = 1;\n        while (slt32(offset_10074, wave_sizze_10031)) {\n            if (slt32(local_tid_10029 + offset_10074,\n                      sext_i64_i32(segred_group_sizze_9579)) &&\n                ((local_tid_10029 - squot32(local_tid_10029, wave_sizze_10031) *\n                  wave_sizze_10031) & (2 * offset_10074 - 1)) == 0) {\n                // read array element\n                {\n                    x_10050 = ((volatile __local\n                                int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                    x_10051 = ((volatile __local\n                                int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                    x_10052 = ((volatile __local\n                                int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                }\n                // apply reduction operation\n                {\n                    bool cond_10053 = slt32(x_10047, x_10050);\n                    int32_t defunc_1_op_res_10054;\n                    int32_t defunc_1_op_res_100",
+                   "55;\n                    int32_t defunc_1_op_res_10056;\n                    \n                    if (cond_10053) {\n                        defunc_1_op_res_10054 = x_10047;\n                        defunc_1_op_res_10055 = x_10048;\n                        defunc_1_op_res_10056 = x_10049;\n                    } else {\n                        bool cond_10057 = x_10047 == x_10050;\n                        int32_t defunc_1_op_res_f_res_10058;\n                        int32_t defunc_1_op_res_f_res_10059;\n                        int32_t defunc_1_op_res_f_res_10060;\n                        \n                        if (cond_10057) {\n                            bool cond_10061 = slt32(x_10048, x_10051);\n                            int32_t defunc_1_op_res_f_res_t_res_10062;\n                            int32_t defunc_1_op_res_f_res_t_res_10063;\n                            int32_t defunc_1_op_res_f_res_t_res_10064;\n                            \n                            if (cond_10061) {\n                                defunc_1_op_res_f_res_t_res_10062 = x_10047;\n                                defunc_1_op_res_f_res_t_res_10063 = x_10048;\n                                defunc_1_op_res_f_res_t_res_10064 = x_10049;\n                            } else {\n                                bool cond_10065 = x_10048 == x_10051;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10066;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10067;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10068;\n                                \n                                if (cond_10065) {\n                                    bool cond_10069 = slt32(x_10049, x_10052);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_re",
+                   "s_f_res_t_res_f_res_t_res_10070 =\n                                            x_10047;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                            x_10050;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                            x_10048;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                            x_10051;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                            x_10049;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                            x_10052;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                    defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                    defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                        d",
+                   "efunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                        x_10050;\n                                    defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                        x_10051;\n                                    defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                        x_10052;\n                                }\n                                defunc_1_op_res_f_res_t_res_10062 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10066;\n                                defunc_1_op_res_f_res_t_res_10063 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10067;\n                                defunc_1_op_res_f_res_t_res_10064 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10068;\n                            }\n                            defunc_1_op_res_f_res_10058 =\n                                defunc_1_op_res_f_res_t_res_10062;\n                            defunc_1_op_res_f_res_10059 =\n                                defunc_1_op_res_f_res_t_res_10063;\n                            defunc_1_op_res_f_res_10060 =\n                                defunc_1_op_res_f_res_t_res_10064;\n                        } else {\n                            defunc_1_op_res_f_res_10058 = x_10050;\n                            defunc_1_op_res_f_res_10059 = x_10051;\n                            defunc_1_op_res_f_res_10060 = x_10052;\n                        }\n                        defunc_1_op_res_10054 = defunc_1_op_res_f_res_10058;\n                        defunc_1_op_res_10055 = defunc_1_op_res_f_res_10059;\n                        defunc_1_op_res_10056 = defunc_1_op_res_f_res_10060;\n                    }\n                    x_10047 = defunc_1_op_res_10054;\n                    x_10048 = defunc_1_op_res_10055;\n                    x_10049 = defunc_1_",
+                   "op_res_10056;\n                }\n                // write result of operation\n                {\n                    ((volatile __local\n                      int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n                        x_10047;\n                    ((volatile __local\n                      int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n                        x_10048;\n                    ((volatile __local\n                      int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n                        x_10049;\n                }\n            }\n            offset_10074 *= 2;\n        }\n        while (slt32(skip_waves_10075,\n                     squot32(sext_i64_i32(segred_group_sizze_9579) +\n                             wave_sizze_10031 - 1, wave_sizze_10031))) {\n            barrier(CLK_LOCAL_MEM_FENCE);\n            offset_10074 = skip_waves_10075 * wave_sizze_10031;\n            if (slt32(local_tid_10029 + offset_10074,\n                      sext_i64_i32(segred_group_sizze_9579)) &&\n                ((local_tid_10029 - squot32(local_tid_10029, wave_sizze_10031) *\n                  wave_sizze_10031) == 0 && (squot32(local_tid_10029,\n                                                     wave_sizze_10031) & (2 *\n                                                                          skip_waves_10075 -\n                                                                          1)) ==\n                 0)) {\n                // read array element\n                {\n                    x_10050 = ((__local\n                                int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                    x_10051 = ((__local\n                                int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                    x_10052 = ((__local\n            ",
+                   "                    int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10074)];\n                }\n                // apply reduction operation\n                {\n                    bool cond_10053 = slt32(x_10047, x_10050);\n                    int32_t defunc_1_op_res_10054;\n                    int32_t defunc_1_op_res_10055;\n                    int32_t defunc_1_op_res_10056;\n                    \n                    if (cond_10053) {\n                        defunc_1_op_res_10054 = x_10047;\n                        defunc_1_op_res_10055 = x_10048;\n                        defunc_1_op_res_10056 = x_10049;\n                    } else {\n                        bool cond_10057 = x_10047 == x_10050;\n                        int32_t defunc_1_op_res_f_res_10058;\n                        int32_t defunc_1_op_res_f_res_10059;\n                        int32_t defunc_1_op_res_f_res_10060;\n                        \n                        if (cond_10057) {\n                            bool cond_10061 = slt32(x_10048, x_10051);\n                            int32_t defunc_1_op_res_f_res_t_res_10062;\n                            int32_t defunc_1_op_res_f_res_t_res_10063;\n                            int32_t defunc_1_op_res_f_res_t_res_10064;\n                            \n                            if (cond_10061) {\n                                defunc_1_op_res_f_res_t_res_10062 = x_10047;\n                                defunc_1_op_res_f_res_t_res_10063 = x_10048;\n                                defunc_1_op_res_f_res_t_res_10064 = x_10049;\n                            } else {\n                                bool cond_10065 = x_10048 == x_10051;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10066;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10067;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_10068;\n                                \n",
+                   "                                if (cond_10065) {\n                                    bool cond_10069 = slt32(x_10049, x_10052);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                            x_10047;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                            x_10050;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                            x_10048;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                            x_10051;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                    \n                                    if (cond_10069) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                            x_10049;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                            x_10052;\n                                    }\n                                    defunc_1_op_",
+                   "res_f_res_t_res_f_res_10066 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                    defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                    defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                        x_10050;\n                                    defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                        x_10051;\n                                    defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                        x_10052;\n                                }\n                                defunc_1_op_res_f_res_t_res_10062 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10066;\n                                defunc_1_op_res_f_res_t_res_10063 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10067;\n                                defunc_1_op_res_f_res_t_res_10064 =\n                                    defunc_1_op_res_f_res_t_res_f_res_10068;\n                            }\n                            defunc_1_op_res_f_res_10058 =\n                                defunc_1_op_res_f_res_t_res_10062;\n                            defunc_1_op_res_f_res_10059 =\n                                defunc_1_op_res_f_res_t_res_10063;\n                            defunc_1_op_res_f_res_10060 =\n                                defunc_1_op_res_f_res_t_res_10064;\n                        } else {\n                            defunc_1_op_res_f_res_10058 = x_10050;\n                            defunc_1_op_res_f_res_10059 = x_10051;\n                            defunc_1_op_res_f_res_10060 = x_10052;\n                       ",
+                   " }\n                        defunc_1_op_res_10054 = defunc_1_op_res_f_res_10058;\n                        defunc_1_op_res_10055 = defunc_1_op_res_f_res_10059;\n                        defunc_1_op_res_10056 = defunc_1_op_res_f_res_10060;\n                    }\n                    x_10047 = defunc_1_op_res_10054;\n                    x_10048 = defunc_1_op_res_10055;\n                    x_10049 = defunc_1_op_res_10056;\n                }\n                // write result of operation\n                {\n                    ((__local\n                      int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n                        x_10047;\n                    ((__local\n                      int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n                        x_10048;\n                    ((__local\n                      int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n                        x_10049;\n                }\n            }\n            skip_waves_10075 *= 2;\n        }\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // first thread saves the result in accumulator\n        {\n            if (sext_i32_i64(local_tid_10029) == (int64_t) 0) {\n                x_acc_10041 = x_10047;\n                x_acc_10042 = x_10048;\n                x_acc_10043 = x_10049;\n            }\n        }\n        // first thread keeps accumulator; others reset to neutral element\n        {\n            if (!(sext_i32_i64(local_tid_10029) == (int64_t) 0)) {\n                x_acc_10041 = 2147483647;\n                x_acc_10042 = -1;\n                x_acc_10043 = -1;\n            }\n        }\n    }\n    \n    int32_t old_counter_10076;\n    \n    // first thread in group saves group result to global memory\n    {\n        if (local_tid_10029 == 0) {\n            ((__global\n              int32_t *) segred_tmp_mem_10021)[sext_i32_i64(group_tid_10030)] =\n                x_acc_10041;\n            ((__global\n              int32_t *) segred_tmp_mem_10023)[sext_i32_i64(group_tid_10030)] =",
+                   "\n                x_acc_10042;\n            ((__global\n              int32_t *) segred_tmp_mem_10025)[sext_i32_i64(group_tid_10030)] =\n                x_acc_10043;\n            mem_fence_global();\n            old_counter_10076 = atomic_add_i32_global(&((volatile __global\n                                                         int *) counter_mem_10019)[(int64_t) 0],\n                                                      (int) 1);\n            ((__local bool *) sync_arr_mem_10033)[(int64_t) 0] =\n                old_counter_10076 == num_groups_9581 - (int64_t) 1;\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    \n    bool is_last_group_10077;\n    \n    is_last_group_10077 = ((__local bool *) sync_arr_mem_10033)[(int64_t) 0];\n    if (is_last_group_10077) {\n        if (local_tid_10029 == 0) {\n            old_counter_10076 = atomic_add_i32_global(&((volatile __global\n                                                         int *) counter_mem_10019)[(int64_t) 0],\n                                                      (int) ((int64_t) 0 -\n                                                             num_groups_9581));\n        }\n        // read in the per-group-results\n        {\n            int64_t read_per_thread_10078 = sdiv_up64(num_groups_9581,\n                                                      segred_group_sizze_9579);\n            \n            x_9341 = 2147483647;\n            x_9342 = -1;\n            x_9343 = -1;\n            for (int64_t i_10079 = 0; i_10079 < read_per_thread_10078;\n                 i_10079++) {\n                int64_t group_res_id_10080 = sext_i32_i64(local_tid_10029) *\n                        read_per_thread_10078 + i_10079;\n                int64_t index_of_group_res_10081 = group_res_id_10080;\n                \n                if (slt64(group_res_id_10080, num_groups_9581)) {\n                    x_9344 = ((__global\n                               int32_t *) segred_tmp_mem_10021)[index_of_group_res_10081];\n                    x_93",
+                   "45 = ((__global\n                               int32_t *) segred_tmp_mem_10023)[index_of_group_res_10081];\n                    x_9346 = ((__global\n                               int32_t *) segred_tmp_mem_10025)[index_of_group_res_10081];\n                    \n                    bool cond_9347 = slt32(x_9341, x_9344);\n                    int32_t defunc_1_op_res_9348;\n                    int32_t defunc_1_op_res_9349;\n                    int32_t defunc_1_op_res_9350;\n                    \n                    if (cond_9347) {\n                        defunc_1_op_res_9348 = x_9341;\n                        defunc_1_op_res_9349 = x_9342;\n                        defunc_1_op_res_9350 = x_9343;\n                    } else {\n                        bool cond_9351 = x_9341 == x_9344;\n                        int32_t defunc_1_op_res_f_res_9352;\n                        int32_t defunc_1_op_res_f_res_9353;\n                        int32_t defunc_1_op_res_f_res_9354;\n                        \n                        if (cond_9351) {\n                            bool cond_9355 = slt32(x_9342, x_9345);\n                            int32_t defunc_1_op_res_f_res_t_res_9356;\n                            int32_t defunc_1_op_res_f_res_t_res_9357;\n                            int32_t defunc_1_op_res_f_res_t_res_9358;\n                            \n                            if (cond_9355) {\n                                defunc_1_op_res_f_res_t_res_9356 = x_9341;\n                                defunc_1_op_res_f_res_t_res_9357 = x_9342;\n                                defunc_1_op_res_f_res_t_res_9358 = x_9343;\n                            } else {\n                                bool cond_9359 = x_9342 == x_9345;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9360;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9361;\n                                int32_t defunc_1_op_res_f_res_t_res_f_res_9362;\n                                \n                    ",
+                   "            if (cond_9359) {\n                                    bool cond_9363 = slt32(x_9343, x_9346);\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9364;\n                                    \n                                    if (cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9364 =\n                                            x_9341;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9364 =\n                                            x_9344;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9365;\n                                    \n                                    if (cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365 =\n                                            x_9342;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365 =\n                                            x_9345;\n                                    }\n                                    \n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_t_res_9366;\n                                    \n                                    if (cond_9363) {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366 =\n                                            x_9343;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366 =\n                                            x_9346;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_f_res_9360 =\n             ",
+                   "                           defunc_1_op_res_f_res_t_res_f_res_t_res_9364;\n                                    defunc_1_op_res_f_res_t_res_f_res_9361 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9365;\n                                    defunc_1_op_res_f_res_t_res_f_res_9362 =\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_9366;\n                                } else {\n                                    defunc_1_op_res_f_res_t_res_f_res_9360 =\n                                        x_9344;\n                                    defunc_1_op_res_f_res_t_res_f_res_9361 =\n                                        x_9345;\n                                    defunc_1_op_res_f_res_t_res_f_res_9362 =\n                                        x_9346;\n                                }\n                                defunc_1_op_res_f_res_t_res_9356 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9360;\n                                defunc_1_op_res_f_res_t_res_9357 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9361;\n                                defunc_1_op_res_f_res_t_res_9358 =\n                                    defunc_1_op_res_f_res_t_res_f_res_9362;\n                            }\n                            defunc_1_op_res_f_res_9352 =\n                                defunc_1_op_res_f_res_t_res_9356;\n                            defunc_1_op_res_f_res_9353 =\n                                defunc_1_op_res_f_res_t_res_9357;\n                            defunc_1_op_res_f_res_9354 =\n                                defunc_1_op_res_f_res_t_res_9358;\n                        } else {\n                            defunc_1_op_res_f_res_9352 = x_9344;\n                            defunc_1_op_res_f_res_9353 = x_9345;\n                            defunc_1_op_res_f_res_9354 = x_9346;\n                        }\n                        defunc_1_op_res_9348 = defunc_1_op_res_f_res_",
+                   "9352;\n                        defunc_1_op_res_9349 = defunc_1_op_res_f_res_9353;\n                        defunc_1_op_res_9350 = defunc_1_op_res_f_res_9354;\n                    }\n                    x_9341 = defunc_1_op_res_9348;\n                    x_9342 = defunc_1_op_res_9349;\n                    x_9343 = defunc_1_op_res_9350;\n                }\n            }\n        }\n        ((__local int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n            x_9341;\n        ((__local int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n            x_9342;\n        ((__local int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n            x_9343;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-group results\n        {\n            int32_t offset_10082;\n            int32_t skip_waves_10083 = 1;\n            int32_t x_10047;\n            int32_t x_10048;\n            int32_t x_10049;\n            int32_t x_10050;\n            int32_t x_10051;\n            int32_t x_10052;\n            \n            offset_10082 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_10029,\n                          sext_i64_i32(segred_group_sizze_9579))) {\n                    x_10047 = ((__local\n                                int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10082)];\n                    x_10048 = ((__local\n                                int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10082)];\n                    x_10049 = ((__local\n                                int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                              offset_10082)];\n                }\n            }\n            offset_10082 = 1;\n            while (slt32(offset_10082, wave_sizze_10031)) {\n ",
+                   "               if (slt32(local_tid_10029 + offset_10082,\n                          sext_i64_i32(segred_group_sizze_9579)) &&\n                    ((local_tid_10029 - squot32(local_tid_10029,\n                                                wave_sizze_10031) *\n                      wave_sizze_10031) & (2 * offset_10082 - 1)) == 0) {\n                    // read array element\n                    {\n                        x_10050 = ((volatile __local\n                                    int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                        x_10051 = ((volatile __local\n                                    int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                        x_10052 = ((volatile __local\n                                    int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                    }\n                    // apply reduction operation\n                    {\n                        bool cond_10053 = slt32(x_10047, x_10050);\n                        int32_t defunc_1_op_res_10054;\n                        int32_t defunc_1_op_res_10055;\n                        int32_t defunc_1_op_res_10056;\n                        \n                        if (cond_10053) {\n                            defunc_1_op_res_10054 = x_10047;\n                            defunc_1_op_res_10055 = x_10048;\n                            defunc_1_op_res_10056 = x_10049;\n                        } else {\n                            bool cond_10057 = x_10047 == x_10050;\n                            int32_t defunc_1_op_res_f_res_10058;\n                            int32_t defunc_1_op_res_f_res_10059;\n                            int32_t defunc_1_op_res_f_res_10060;\n                            \n          ",
+                   "                  if (cond_10057) {\n                                bool cond_10061 = slt32(x_10048, x_10051);\n                                int32_t defunc_1_op_res_f_res_t_res_10062;\n                                int32_t defunc_1_op_res_f_res_t_res_10063;\n                                int32_t defunc_1_op_res_f_res_t_res_10064;\n                                \n                                if (cond_10061) {\n                                    defunc_1_op_res_f_res_t_res_10062 = x_10047;\n                                    defunc_1_op_res_f_res_t_res_10063 = x_10048;\n                                    defunc_1_op_res_f_res_t_res_10064 = x_10049;\n                                } else {\n                                    bool cond_10065 = x_10048 == x_10051;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10066;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10067;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10068;\n                                    \n                                    if (cond_10065) {\n                                        bool cond_10069 = slt32(x_10049,\n                                                                x_10052);\n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                        \n                                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                                x_10047;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                                x_10050;\n                                        }",
+                   "\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                        \n                                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                                x_10048;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                                x_10051;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                        \n                                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                                x_10049;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                                x_10052;\n                                        }\n                                        defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                        defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                        defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_10066 =\n                         ",
+                   "                   x_10050;\n                                        defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                            x_10051;\n                                        defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                            x_10052;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_10062 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10066;\n                                    defunc_1_op_res_f_res_t_res_10063 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10067;\n                                    defunc_1_op_res_f_res_t_res_10064 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10068;\n                                }\n                                defunc_1_op_res_f_res_10058 =\n                                    defunc_1_op_res_f_res_t_res_10062;\n                                defunc_1_op_res_f_res_10059 =\n                                    defunc_1_op_res_f_res_t_res_10063;\n                                defunc_1_op_res_f_res_10060 =\n                                    defunc_1_op_res_f_res_t_res_10064;\n                            } else {\n                                defunc_1_op_res_f_res_10058 = x_10050;\n                                defunc_1_op_res_f_res_10059 = x_10051;\n                                defunc_1_op_res_f_res_10060 = x_10052;\n                            }\n                            defunc_1_op_res_10054 = defunc_1_op_res_f_res_10058;\n                            defunc_1_op_res_10055 = defunc_1_op_res_f_res_10059;\n                            defunc_1_op_res_10056 = defunc_1_op_res_f_res_10060;\n                        }\n                        x_10047 = defunc_1_op_res_10054;\n                        x_10048 = defunc_1_op_res_10055;\n                        x_10049 = defunc_1_op_res_10056;\n                    }\n                    // write r",
+                   "esult of operation\n                    {\n                        ((volatile __local\n                          int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n                            x_10047;\n                        ((volatile __local\n                          int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n                            x_10048;\n                        ((volatile __local\n                          int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n                            x_10049;\n                    }\n                }\n                offset_10082 *= 2;\n            }\n            while (slt32(skip_waves_10083,\n                         squot32(sext_i64_i32(segred_group_sizze_9579) +\n                                 wave_sizze_10031 - 1, wave_sizze_10031))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_10082 = skip_waves_10083 * wave_sizze_10031;\n                if (slt32(local_tid_10029 + offset_10082,\n                          sext_i64_i32(segred_group_sizze_9579)) &&\n                    ((local_tid_10029 - squot32(local_tid_10029,\n                                                wave_sizze_10031) *\n                      wave_sizze_10031) == 0 && (squot32(local_tid_10029,\n                                                         wave_sizze_10031) &\n                                                 (2 * skip_waves_10083 - 1)) ==\n                     0)) {\n                    // read array element\n                    {\n                        x_10050 = ((__local\n                                    int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                        x_10051 = ((__local\n                                    int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                        x_100",
+                   "52 = ((__local\n                                    int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029 +\n                                                                  offset_10082)];\n                    }\n                    // apply reduction operation\n                    {\n                        bool cond_10053 = slt32(x_10047, x_10050);\n                        int32_t defunc_1_op_res_10054;\n                        int32_t defunc_1_op_res_10055;\n                        int32_t defunc_1_op_res_10056;\n                        \n                        if (cond_10053) {\n                            defunc_1_op_res_10054 = x_10047;\n                            defunc_1_op_res_10055 = x_10048;\n                            defunc_1_op_res_10056 = x_10049;\n                        } else {\n                            bool cond_10057 = x_10047 == x_10050;\n                            int32_t defunc_1_op_res_f_res_10058;\n                            int32_t defunc_1_op_res_f_res_10059;\n                            int32_t defunc_1_op_res_f_res_10060;\n                            \n                            if (cond_10057) {\n                                bool cond_10061 = slt32(x_10048, x_10051);\n                                int32_t defunc_1_op_res_f_res_t_res_10062;\n                                int32_t defunc_1_op_res_f_res_t_res_10063;\n                                int32_t defunc_1_op_res_f_res_t_res_10064;\n                                \n                                if (cond_10061) {\n                                    defunc_1_op_res_f_res_t_res_10062 = x_10047;\n                                    defunc_1_op_res_f_res_t_res_10063 = x_10048;\n                                    defunc_1_op_res_f_res_t_res_10064 = x_10049;\n                                } else {\n                                    bool cond_10065 = x_10048 == x_10051;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10066;\n",
+                   "                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10067;\n                                    int32_t\n                                    defunc_1_op_res_f_res_t_res_f_res_10068;\n                                    \n                                    if (cond_10065) {\n                                        bool cond_10069 = slt32(x_10049,\n                                                                x_10052);\n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                        \n                                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                                x_10047;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070 =\n                                                x_10050;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                        \n                                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                                x_10048;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071 =\n                                                x_10051;\n                                        }\n                                        \n                                        int32_t\n                                        defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                        \n                ",
+                   "                        if (cond_10069) {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                                x_10049;\n                                        } else {\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072 =\n                                                x_10052;\n                                        }\n                                        defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10070;\n                                        defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10071;\n                                        defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                            defunc_1_op_res_f_res_t_res_f_res_t_res_10072;\n                                    } else {\n                                        defunc_1_op_res_f_res_t_res_f_res_10066 =\n                                            x_10050;\n                                        defunc_1_op_res_f_res_t_res_f_res_10067 =\n                                            x_10051;\n                                        defunc_1_op_res_f_res_t_res_f_res_10068 =\n                                            x_10052;\n                                    }\n                                    defunc_1_op_res_f_res_t_res_10062 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10066;\n                                    defunc_1_op_res_f_res_t_res_10063 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10067;\n                                    defunc_1_op_res_f_res_t_res_10064 =\n                                        defunc_1_op_res_f_res_t_res_f_res_10068;\n                                }\n                                defunc_1_op_res_f_res_10058 =\n       ",
+                   "                             defunc_1_op_res_f_res_t_res_10062;\n                                defunc_1_op_res_f_res_10059 =\n                                    defunc_1_op_res_f_res_t_res_10063;\n                                defunc_1_op_res_f_res_10060 =\n                                    defunc_1_op_res_f_res_t_res_10064;\n                            } else {\n                                defunc_1_op_res_f_res_10058 = x_10050;\n                                defunc_1_op_res_f_res_10059 = x_10051;\n                                defunc_1_op_res_f_res_10060 = x_10052;\n                            }\n                            defunc_1_op_res_10054 = defunc_1_op_res_f_res_10058;\n                            defunc_1_op_res_10055 = defunc_1_op_res_f_res_10059;\n                            defunc_1_op_res_10056 = defunc_1_op_res_f_res_10060;\n                        }\n                        x_10047 = defunc_1_op_res_10054;\n                        x_10048 = defunc_1_op_res_10055;\n                        x_10049 = defunc_1_op_res_10056;\n                    }\n                    // write result of operation\n                    {\n                        ((__local\n                          int32_t *) red_arr_mem_10035)[sext_i32_i64(local_tid_10029)] =\n                            x_10047;\n                        ((__local\n                          int32_t *) red_arr_mem_10037)[sext_i32_i64(local_tid_10029)] =\n                            x_10048;\n                        ((__local\n                          int32_t *) red_arr_mem_10039)[sext_i32_i64(local_tid_10029)] =\n                            x_10049;\n                    }\n                }\n                skip_waves_10083 *= 2;\n            }\n            // and back to memory with the final result\n            {\n                if (local_tid_10029 == 0) {\n                    ((__global int32_t *) mem_9719)[(int64_t) 0] = x_10047;\n                    ((__global int32_t *) mem_9721)[(int64_t) 0] = x_10048;\n                  ",
+                   "  ((__global int32_t *) mem_9723)[(int64_t) 0] = x_10049;\n                }\n            }\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segred_group_sizze_9579\n}\n__kernel void segred_nonseg_9657(__global int *global_failure,\n                                 int failure_is_an_option, __global\n                                 int64_t *global_failure_args, __local volatile\n                                 int64_t *red_arr_mem_10110_backing_aligned_0,\n                                 __local volatile\n                                 int64_t *red_arr_mem_10108_backing_aligned_1,\n                                 __local volatile\n                                 int64_t *sync_arr_mem_10106_backing_aligned_2,\n                                 int64_t num_groups_9651, int64_t ext_9734,\n                                 int64_t ext_9735, int64_t num_threads_10100,\n                                 __global unsigned char *mem_9682, __global\n                                 unsigned char *mem_9684, __global\n                                 unsigned char *ext_mem_9732, __global\n                                 unsigned char *mem_9739, __global\n                                 unsigned char *mem_9741, __global\n                                 unsigned char *counter_mem_10094, __global\n                                 unsigned char *segred_tmp_mem_10096, __global\n                                 unsigned char *segred_tmp_mem_10098)\n{\n    #define segred_group_sizze_9649 (segred_group_sizze_9648)\n    \n    const int block_dim0 = 0;\n    const int block_dim1 = 1;\n    const int block_dim2 = 2;\n    __local volatile unsigned char *restrict red_arr_mem_10110_backing_2 =\n                                   (__local volatile\n                                    unsigned char *) red_arr_mem_10110_backing_aligned_0;\n    __local volatile unsigned char *restrict red_arr_mem_10108_backing_1 =\n                                   (__local volatile\n                                    unsigned cha",
+                   "r *) red_arr_mem_10108_backing_aligned_1;\n    __local volatile unsigned char *restrict sync_arr_mem_10106_backing_0 =\n                                   (__local volatile\n                                    unsigned char *) sync_arr_mem_10106_backing_aligned_2;\n    volatile __local bool local_failure;\n    \n    if (failure_is_an_option) {\n        int failed = *global_failure >= 0;\n        \n        if (failed)\n            return;\n    }\n    local_failure = false;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    __local unsigned char *red_arr_mem_10110;\n    __local unsigned char *red_arr_mem_10108;\n    __local unsigned char *sync_arr_mem_10106;\n    int32_t global_tid_10101;\n    int32_t local_tid_10102;\n    int64_t group_sizze_10105;\n    int32_t wave_sizze_10104;\n    int32_t group_tid_10103;\n    \n    global_tid_10101 = get_global_id(0);\n    local_tid_10102 = get_local_id(0);\n    group_sizze_10105 = get_local_size(0);\n    wave_sizze_10104 = LOCKSTEP_WIDTH;\n    group_tid_10103 = get_group_id(0);\n    \n    int32_t phys_tid_9657 = global_tid_10101;\n    \n    sync_arr_mem_10106 = (__local unsigned char *) sync_arr_mem_10106_backing_0;\n    red_arr_mem_10108 = (__local unsigned char *) red_arr_mem_10108_backing_1;\n    red_arr_mem_10110 = (__local unsigned char *) red_arr_mem_10110_backing_2;\n    \n    int64_t dummy_9655 = (int64_t) 0;\n    int64_t gtid_9656 = (int64_t) 0;\n    int32_t x_acc_10112;\n    int32_t x_acc_10113;\n    int64_t chunk_sizze_10114 = smin64(sdiv_up64((int64_t) 5,\n                                                 sext_i32_i64(sext_i64_i32(segred_group_sizze_9649 *\n                                                 num_groups_9651))),\n                                       sdiv_up64((int64_t) 5 - phys_tid_9657,\n                                                 num_threads_10100));\n    int32_t x_9467;\n    int32_t x_9468;\n    int32_t x_9470;\n    int32_t x_9471;\n    \n    // neutral-initialise the accumulators\n    {\n        x_acc_10112 = 0;\n        x_acc_10113 = 0;\n    }\n    for",
+                   " (int64_t i_10121 = 0; i_10121 < chunk_sizze_10114; i_10121++) {\n        gtid_9656 = phys_tid_9657 + num_threads_10100 * i_10121;\n        // apply map function\n        {\n            bool y_9475 = slt64(gtid_9656, (int64_t) 6);\n            bool index_certs_9477;\n            \n            if (!y_9475) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 13) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) gtid_9656;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t x_9478;\n            \n            x_9478 = ((__global int32_t *) mem_9682)[gtid_9656];\n            \n            int32_t x_9479 = mul32(5, x_9478);\n            int64_t i_9480 = add64((int64_t) 1, gtid_9656);\n            bool x_9481 = sle64((int64_t) 0, i_9480);\n            bool y_9482 = slt64(i_9480, (int64_t) 6);\n            bool bounds_check_9483 = x_9481 && y_9482;\n            bool index_certs_9484;\n            \n            if (!bounds_check_9483) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 14) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_9480;\n                        global_failure_args[1] = (int64_t) (int64_t) 6;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t y_9485;\n            \n            y_9485 = ((__global int32_t *) mem_9682)[i_9480];\n            \n            int32_t i_9486 = add32(x_9479, y_9485);\n            int64_t i_9487 = sext_i32_i64(i_9486);\n            bool x_9488 = sle64((int64_t) 0, i_9487);\n            bool y_9489 = slt64(i_9487, (int64_t) 25);\n            bool bounds_ch",
+                   "eck_9490 = x_9488 && y_9489;\n            bool index_certs_9491;\n            \n            if (!bounds_check_9490) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 15) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_9487;\n                        global_failure_args[1] = (int64_t) (int64_t) 25;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t defunc_0_f_res_9492;\n            \n            defunc_0_f_res_9492 = ((__global int32_t *) mem_9684)[i_9487];\n            \n            int32_t x_9493;\n            \n            x_9493 = ((__global int32_t *) ext_mem_9732)[ext_9735 + gtid_9656 *\n                                                         ext_9734];\n            \n            int32_t x_9494 = mul32(5, x_9493);\n            int32_t y_9495;\n            \n            y_9495 = ((__global int32_t *) ext_mem_9732)[ext_9735 + i_9480 *\n                                                         ext_9734];\n            \n            int32_t i_9496 = add32(x_9494, y_9495);\n            int64_t i_9497 = sext_i32_i64(i_9496);\n            bool x_9498 = sle64((int64_t) 0, i_9497);\n            bool y_9499 = slt64(i_9497, (int64_t) 25);\n            bool bounds_check_9500 = x_9498 && y_9499;\n            bool index_certs_9501;\n            \n            if (!bounds_check_9500) {\n                {\n                    if (atomic_cmpxchg_i32_global(global_failure, -1, 16) ==\n                        -1) {\n                        global_failure_args[0] = (int64_t) i_9497;\n                        global_failure_args[1] = (int64_t) (int64_t) 25;\n                        ;\n                    }\n                    local_failure = true;\n                    goto error_0;\n                }\n            }\n            \n            int32_t defunc_0_f_res_9502;\n            \n            defunc_0",
+                   "_f_res_9502 = ((__global int32_t *) mem_9684)[i_9497];\n            // save map-out results\n            { }\n            // load accumulator\n            {\n                x_9467 = x_acc_10112;\n                x_9470 = x_acc_10113;\n            }\n            // load new values\n            {\n                x_9468 = defunc_0_f_res_9492;\n                x_9471 = defunc_0_f_res_9502;\n            }\n            // apply reduction operator\n            {\n                int32_t defunc_1_op_res_9469 = add32(x_9467, x_9468);\n                int32_t defunc_1_op_res_9472 = add32(x_9470, x_9471);\n                \n                // store in accumulator\n                {\n                    x_acc_10112 = defunc_1_op_res_9469;\n                    x_acc_10113 = defunc_1_op_res_9472;\n                }\n            }\n        }\n    }\n    // to reduce current chunk, first store our result in memory\n    {\n        x_9467 = x_acc_10112;\n        x_9470 = x_acc_10113;\n        ((__local int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n            x_9467;\n        ((__local int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102)] =\n            x_9470;\n    }\n    \n  error_0:\n    barrier(CLK_LOCAL_MEM_FENCE);\n    if (local_failure)\n        return;\n    barrier(CLK_LOCAL_MEM_FENCE);\n    \n    int32_t offset_10122;\n    int32_t skip_waves_10123 = 1;\n    int32_t x_10115;\n    int32_t x_10116;\n    int32_t x_10117;\n    int32_t x_10118;\n    \n    offset_10122 = 0;\n    // participating threads read initial accumulator\n    {\n        if (slt32(local_tid_10102, sext_i64_i32(segred_group_sizze_9649))) {\n            x_10115 = ((__local\n                        int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                      offset_10122)];\n            x_10116 = ((__local\n                        int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                      offset_10122)];\n        }\n    }\n    offset_1",
+                   "0122 = 1;\n    while (slt32(offset_10122, wave_sizze_10104)) {\n        if (slt32(local_tid_10102 + offset_10122,\n                  sext_i64_i32(segred_group_sizze_9649)) && ((local_tid_10102 -\n                                                              squot32(local_tid_10102,\n                                                                      wave_sizze_10104) *\n                                                              wave_sizze_10104) &\n                                                             (2 * offset_10122 -\n                                                              1)) == 0) {\n            // read array element\n            {\n                x_10117 = ((volatile __local\n                            int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                          offset_10122)];\n                x_10118 = ((volatile __local\n                            int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                          offset_10122)];\n            }\n            // apply reduction operation\n            {\n                int32_t defunc_1_op_res_10119 = add32(x_10115, x_10117);\n                int32_t defunc_1_op_res_10120 = add32(x_10116, x_10118);\n                \n                x_10115 = defunc_1_op_res_10119;\n                x_10116 = defunc_1_op_res_10120;\n            }\n            // write result of operation\n            {\n                ((volatile __local\n                  int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n                    x_10115;\n                ((volatile __local\n                  int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102)] =\n                    x_10116;\n            }\n        }\n        offset_10122 *= 2;\n    }\n    while (slt32(skip_waves_10123,\n                 squot32(sext_i64_i32(segred_group_sizze_9649) +\n                         wave_sizze_10104 - 1, wave_sizze_10104))) {\n        barrier",
+                   "(CLK_LOCAL_MEM_FENCE);\n        offset_10122 = skip_waves_10123 * wave_sizze_10104;\n        if (slt32(local_tid_10102 + offset_10122,\n                  sext_i64_i32(segred_group_sizze_9649)) && ((local_tid_10102 -\n                                                              squot32(local_tid_10102,\n                                                                      wave_sizze_10104) *\n                                                              wave_sizze_10104) ==\n                                                             0 &&\n                                                             (squot32(local_tid_10102,\n                                                                      wave_sizze_10104) &\n                                                              (2 *\n                                                               skip_waves_10123 -\n                                                               1)) == 0)) {\n            // read array element\n            {\n                x_10117 = ((__local\n                            int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                          offset_10122)];\n                x_10118 = ((__local\n                            int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                          offset_10122)];\n            }\n            // apply reduction operation\n            {\n                int32_t defunc_1_op_res_10119 = add32(x_10115, x_10117);\n                int32_t defunc_1_op_res_10120 = add32(x_10116, x_10118);\n                \n                x_10115 = defunc_1_op_res_10119;\n                x_10116 = defunc_1_op_res_10120;\n            }\n            // write result of operation\n            {\n                ((__local\n                  int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n                    x_10115;\n                ((__local\n                  int32_t *) red_arr_mem_10110)[sext",
+                   "_i32_i64(local_tid_10102)] =\n                    x_10116;\n            }\n        }\n        skip_waves_10123 *= 2;\n    }\n    barrier(CLK_LOCAL_MEM_FENCE);\n    // first thread saves the result in accumulator\n    {\n        if (sext_i32_i64(local_tid_10102) == (int64_t) 0) {\n            x_acc_10112 = x_10115;\n            x_acc_10113 = x_10116;\n        }\n    }\n    \n    int32_t old_counter_10124;\n    \n    // first thread in group saves group result to global memory\n    {\n        if (local_tid_10102 == 0) {\n            ((__global\n              int32_t *) segred_tmp_mem_10096)[sext_i32_i64(group_tid_10103)] =\n                x_acc_10112;\n            ((__global\n              int32_t *) segred_tmp_mem_10098)[sext_i32_i64(group_tid_10103)] =\n                x_acc_10113;\n            mem_fence_global();\n            old_counter_10124 = atomic_add_i32_global(&((volatile __global\n                                                         int *) counter_mem_10094)[(int64_t) 0],\n                                                      (int) 1);\n            ((__local bool *) sync_arr_mem_10106)[(int64_t) 0] =\n                old_counter_10124 == num_groups_9651 - (int64_t) 1;\n        }\n    }\n    barrier(CLK_GLOBAL_MEM_FENCE | CLK_LOCAL_MEM_FENCE);\n    \n    bool is_last_group_10125;\n    \n    is_last_group_10125 = ((__local bool *) sync_arr_mem_10106)[(int64_t) 0];\n    if (is_last_group_10125) {\n        if (local_tid_10102 == 0) {\n            old_counter_10124 = atomic_add_i32_global(&((volatile __global\n                                                         int *) counter_mem_10094)[(int64_t) 0],\n                                                      (int) ((int64_t) 0 -\n                                                             num_groups_9651));\n        }\n        // read in the per-group-results\n        {\n            int64_t read_per_thread_10126 = sdiv_up64(num_groups_9651,\n                                                      segred_group_sizze_9649);\n            \n            x_9467 =",
+                   " 0;\n            x_9470 = 0;\n            for (int64_t i_10127 = 0; i_10127 < read_per_thread_10126;\n                 i_10127++) {\n                int64_t group_res_id_10128 = sext_i32_i64(local_tid_10102) *\n                        read_per_thread_10126 + i_10127;\n                int64_t index_of_group_res_10129 = group_res_id_10128;\n                \n                if (slt64(group_res_id_10128, num_groups_9651)) {\n                    x_9468 = ((__global\n                               int32_t *) segred_tmp_mem_10096)[index_of_group_res_10129];\n                    x_9471 = ((__global\n                               int32_t *) segred_tmp_mem_10098)[index_of_group_res_10129];\n                    \n                    int32_t defunc_1_op_res_9469 = add32(x_9467, x_9468);\n                    int32_t defunc_1_op_res_9472 = add32(x_9470, x_9471);\n                    \n                    x_9467 = defunc_1_op_res_9469;\n                    x_9470 = defunc_1_op_res_9472;\n                }\n            }\n        }\n        ((__local int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n            x_9467;\n        ((__local int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102)] =\n            x_9470;\n        barrier(CLK_LOCAL_MEM_FENCE);\n        // reduce the per-group results\n        {\n            int32_t offset_10130;\n            int32_t skip_waves_10131 = 1;\n            int32_t x_10115;\n            int32_t x_10116;\n            int32_t x_10117;\n            int32_t x_10118;\n            \n            offset_10130 = 0;\n            // participating threads read initial accumulator\n            {\n                if (slt32(local_tid_10102,\n                          sext_i64_i32(segred_group_sizze_9649))) {\n                    x_10115 = ((__local\n                                int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                              offset_10130)];\n                    x_10116 = ((__local\n                        ",
+                   "        int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                              offset_10130)];\n                }\n            }\n            offset_10130 = 1;\n            while (slt32(offset_10130, wave_sizze_10104)) {\n                if (slt32(local_tid_10102 + offset_10130,\n                          sext_i64_i32(segred_group_sizze_9649)) &&\n                    ((local_tid_10102 - squot32(local_tid_10102,\n                                                wave_sizze_10104) *\n                      wave_sizze_10104) & (2 * offset_10130 - 1)) == 0) {\n                    // read array element\n                    {\n                        x_10117 = ((volatile __local\n                                    int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                                  offset_10130)];\n                        x_10118 = ((volatile __local\n                                    int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                                  offset_10130)];\n                    }\n                    // apply reduction operation\n                    {\n                        int32_t defunc_1_op_res_10119 = add32(x_10115, x_10117);\n                        int32_t defunc_1_op_res_10120 = add32(x_10116, x_10118);\n                        \n                        x_10115 = defunc_1_op_res_10119;\n                        x_10116 = defunc_1_op_res_10120;\n                    }\n                    // write result of operation\n                    {\n                        ((volatile __local\n                          int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n                            x_10115;\n                        ((volatile __local\n                          int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102)] =\n                            x_10116;\n                    }\n                }\n     ",
+                   "           offset_10130 *= 2;\n            }\n            while (slt32(skip_waves_10131,\n                         squot32(sext_i64_i32(segred_group_sizze_9649) +\n                                 wave_sizze_10104 - 1, wave_sizze_10104))) {\n                barrier(CLK_LOCAL_MEM_FENCE);\n                offset_10130 = skip_waves_10131 * wave_sizze_10104;\n                if (slt32(local_tid_10102 + offset_10130,\n                          sext_i64_i32(segred_group_sizze_9649)) &&\n                    ((local_tid_10102 - squot32(local_tid_10102,\n                                                wave_sizze_10104) *\n                      wave_sizze_10104) == 0 && (squot32(local_tid_10102,\n                                                         wave_sizze_10104) &\n                                                 (2 * skip_waves_10131 - 1)) ==\n                     0)) {\n                    // read array element\n                    {\n                        x_10117 = ((__local\n                                    int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102 +\n                                                                  offset_10130)];\n                        x_10118 = ((__local\n                                    int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102 +\n                                                                  offset_10130)];\n                    }\n                    // apply reduction operation\n                    {\n                        int32_t defunc_1_op_res_10119 = add32(x_10115, x_10117);\n                        int32_t defunc_1_op_res_10120 = add32(x_10116, x_10118);\n                        \n                        x_10115 = defunc_1_op_res_10119;\n                        x_10116 = defunc_1_op_res_10120;\n                    }\n                    // write result of operation\n                    {\n                        ((__local\n                          int32_t *) red_arr_mem_10108)[sext_i32_i64(local_tid_10102)] =\n            ",
+                   "                x_10115;\n                        ((__local\n                          int32_t *) red_arr_mem_10110)[sext_i32_i64(local_tid_10102)] =\n                            x_10116;\n                    }\n                }\n                skip_waves_10131 *= 2;\n            }\n            // and back to memory with the final result\n            {\n                if (local_tid_10102 == 0) {\n                    ((__global int32_t *) mem_9739)[(int64_t) 0] = x_10115;\n                    ((__global int32_t *) mem_9741)[(int64_t) 0] = x_10116;\n                }\n            }\n        }\n    }\n    \n  error_1:\n    return;\n    #undef segred_group_sizze_9649\n}\n",
                    NULL};
 static const char *tuning_param_names[] =
-                  {"builtin#replicate_i32.group_size_9280",
-                   "segmap_group_size_8992", "segmap_group_size_9006",
-                   "segmap_group_size_9034", "segmap_group_size_9070",
-                   "segred_group_size_9056", "segred_group_size_9126",
-                   "segred_num_groups_9058", "segred_num_groups_9128",
-                   "segscan_group_size_8982", "segscan_group_size_8996",
-                   "segscan_group_size_9024", "segscan_num_groups_8984",
-                   "segscan_num_groups_8998", "segscan_num_groups_9026"};
+                  {"builtin#replicate_i32.group_size_9848",
+                   "segmap_group_size_9514", "segmap_group_size_9528",
+                   "segmap_group_size_9556", "segmap_group_size_9592",
+                   "segred_group_size_9578", "segred_group_size_9648",
+                   "segred_num_groups_9580", "segred_num_groups_9650",
+                   "segscan_group_size_9504", "segscan_group_size_9518",
+                   "segscan_group_size_9546", "segscan_num_groups_9506",
+                   "segscan_num_groups_9520", "segscan_num_groups_9548"};
 static const char *tuning_param_vars[] =
-                  {"builtinzhreplicate_i32zigroup_sizze_9280",
-                   "segmap_group_sizze_8992", "segmap_group_sizze_9006",
-                   "segmap_group_sizze_9034", "segmap_group_sizze_9070",
-                   "segred_group_sizze_9056", "segred_group_sizze_9126",
-                   "segred_num_groups_9058", "segred_num_groups_9128",
-                   "segscan_group_sizze_8982", "segscan_group_sizze_8996",
-                   "segscan_group_sizze_9024", "segscan_num_groups_8984",
-                   "segscan_num_groups_8998", "segscan_num_groups_9026"};
+                  {"builtinzhreplicate_i32zigroup_sizze_9848",
+                   "segmap_group_sizze_9514", "segmap_group_sizze_9528",
+                   "segmap_group_sizze_9556", "segmap_group_sizze_9592",
+                   "segred_group_sizze_9578", "segred_group_sizze_9648",
+                   "segred_num_groups_9580", "segred_num_groups_9650",
+                   "segscan_group_sizze_9504", "segscan_group_sizze_9518",
+                   "segscan_group_sizze_9546", "segscan_num_groups_9506",
+                   "segscan_num_groups_9520", "segscan_num_groups_9548"};
 static const char *tuning_param_classes[] = {"group_size", "group_size",
                                              "group_size", "group_size",
                                              "group_size", "group_size",
@@ -5584,21 +5586,21 @@ static const char *tuning_param_classes[] = {"group_size", "group_size",
                                              "num_groups", "num_groups",
                                              "num_groups"};
 struct tuning_params {
-    int64_t *builtinzhreplicate_i32zigroup_sizze_9280;
-    int64_t *segmap_group_sizze_8992;
-    int64_t *segmap_group_sizze_9006;
-    int64_t *segmap_group_sizze_9034;
-    int64_t *segmap_group_sizze_9070;
-    int64_t *segred_group_sizze_9056;
-    int64_t *segred_group_sizze_9126;
-    int64_t *segred_num_groups_9058;
-    int64_t *segred_num_groups_9128;
-    int64_t *segscan_group_sizze_8982;
-    int64_t *segscan_group_sizze_8996;
-    int64_t *segscan_group_sizze_9024;
-    int64_t *segscan_num_groups_8984;
-    int64_t *segscan_num_groups_8998;
-    int64_t *segscan_num_groups_9026;
+    int64_t *builtinzhreplicate_i32zigroup_sizze_9848;
+    int64_t *segmap_group_sizze_9514;
+    int64_t *segmap_group_sizze_9528;
+    int64_t *segmap_group_sizze_9556;
+    int64_t *segmap_group_sizze_9592;
+    int64_t *segred_group_sizze_9578;
+    int64_t *segred_group_sizze_9648;
+    int64_t *segred_num_groups_9580;
+    int64_t *segred_num_groups_9650;
+    int64_t *segscan_group_sizze_9504;
+    int64_t *segscan_group_sizze_9518;
+    int64_t *segscan_group_sizze_9546;
+    int64_t *segscan_num_groups_9506;
+    int64_t *segscan_num_groups_9520;
+    int64_t *segscan_num_groups_9548;
 };
 struct futhark_context_config {
     int in_use;
@@ -5781,33 +5783,34 @@ struct futhark_context {
     int64_t peak_mem_usage_default;
     int64_t cur_mem_usage_default;
     struct {
-        int32_t defunc_2_reduce_res_8818;
-        struct memblock_device mem_9191;
-        int32_t defunc_0_f_res_8943;
-        int32_t defunc_0_f_res_8944;
+        int64_t ext_9735;
+        struct memblock_device ext_mem_9732;
+        int32_t twoOptAlg_res_9246;
+        int32_t defunc_0_f_res_9465;
+        int32_t defunc_0_f_res_9466;
     } constants;
-    struct memblock_device static_array_9210;
-    struct memblock_device static_array_9211;
-    struct memblock_device counter_mem_9454;
-    struct memblock_device counter_mem_9529;
+    struct memblock_device static_array_9767;
+    struct memblock_device static_array_9768;
+    struct memblock_device counter_mem_10019;
+    struct memblock_device counter_mem_10094;
     int total_runs;
     long total_runtime;
-    cl_kernel builtinzhreplicate_i32zireplicate_9277;
-    cl_kernel scan_stage1_8988;
-    cl_kernel scan_stage1_9002;
-    cl_kernel scan_stage1_9030;
-    cl_kernel scan_stage2_8988;
-    cl_kernel scan_stage2_9002;
-    cl_kernel scan_stage2_9030;
-    cl_kernel scan_stage3_8988;
-    cl_kernel scan_stage3_9002;
-    cl_kernel scan_stage3_9030;
-    cl_kernel segmap_8990;
-    cl_kernel segmap_9019;
-    cl_kernel segmap_9049;
-    cl_kernel segmap_9102;
-    cl_kernel segred_nonseg_9066;
-    cl_kernel segred_nonseg_9135;
+    cl_kernel builtinzhreplicate_i32zireplicate_9845;
+    cl_kernel scan_stage1_9510;
+    cl_kernel scan_stage1_9524;
+    cl_kernel scan_stage1_9552;
+    cl_kernel scan_stage2_9510;
+    cl_kernel scan_stage2_9524;
+    cl_kernel scan_stage2_9552;
+    cl_kernel scan_stage3_9510;
+    cl_kernel scan_stage3_9524;
+    cl_kernel scan_stage3_9552;
+    cl_kernel segmap_9512;
+    cl_kernel segmap_9541;
+    cl_kernel segmap_9571;
+    cl_kernel segmap_9624;
+    cl_kernel segred_nonseg_9588;
+    cl_kernel segred_nonseg_9657;
     int64_t copy_dev_to_dev_total_runtime;
     int copy_dev_to_dev_runs;
     int64_t copy_dev_to_host_total_runtime;
@@ -5818,38 +5821,38 @@ struct futhark_context {
     int copy_scalar_to_dev_runs;
     int64_t copy_scalar_from_dev_total_runtime;
     int copy_scalar_from_dev_runs;
-    int64_t builtinzhreplicate_i32zireplicate_9277_total_runtime;
-    int builtinzhreplicate_i32zireplicate_9277_runs;
-    int64_t scan_stage1_8988_total_runtime;
-    int scan_stage1_8988_runs;
-    int64_t scan_stage1_9002_total_runtime;
-    int scan_stage1_9002_runs;
-    int64_t scan_stage1_9030_total_runtime;
-    int scan_stage1_9030_runs;
-    int64_t scan_stage2_8988_total_runtime;
-    int scan_stage2_8988_runs;
-    int64_t scan_stage2_9002_total_runtime;
-    int scan_stage2_9002_runs;
-    int64_t scan_stage2_9030_total_runtime;
-    int scan_stage2_9030_runs;
-    int64_t scan_stage3_8988_total_runtime;
-    int scan_stage3_8988_runs;
-    int64_t scan_stage3_9002_total_runtime;
-    int scan_stage3_9002_runs;
-    int64_t scan_stage3_9030_total_runtime;
-    int scan_stage3_9030_runs;
-    int64_t segmap_8990_total_runtime;
-    int segmap_8990_runs;
-    int64_t segmap_9019_total_runtime;
-    int segmap_9019_runs;
-    int64_t segmap_9049_total_runtime;
-    int segmap_9049_runs;
-    int64_t segmap_9102_total_runtime;
-    int segmap_9102_runs;
-    int64_t segred_nonseg_9066_total_runtime;
-    int segred_nonseg_9066_runs;
-    int64_t segred_nonseg_9135_total_runtime;
-    int segred_nonseg_9135_runs;
+    int64_t builtinzhreplicate_i32zireplicate_9845_total_runtime;
+    int builtinzhreplicate_i32zireplicate_9845_runs;
+    int64_t scan_stage1_9510_total_runtime;
+    int scan_stage1_9510_runs;
+    int64_t scan_stage1_9524_total_runtime;
+    int scan_stage1_9524_runs;
+    int64_t scan_stage1_9552_total_runtime;
+    int scan_stage1_9552_runs;
+    int64_t scan_stage2_9510_total_runtime;
+    int scan_stage2_9510_runs;
+    int64_t scan_stage2_9524_total_runtime;
+    int scan_stage2_9524_runs;
+    int64_t scan_stage2_9552_total_runtime;
+    int scan_stage2_9552_runs;
+    int64_t scan_stage3_9510_total_runtime;
+    int scan_stage3_9510_runs;
+    int64_t scan_stage3_9524_total_runtime;
+    int scan_stage3_9524_runs;
+    int64_t scan_stage3_9552_total_runtime;
+    int scan_stage3_9552_runs;
+    int64_t segmap_9512_total_runtime;
+    int segmap_9512_runs;
+    int64_t segmap_9541_total_runtime;
+    int segmap_9541_runs;
+    int64_t segmap_9571_total_runtime;
+    int segmap_9571_runs;
+    int64_t segmap_9624_total_runtime;
+    int segmap_9624_runs;
+    int64_t segred_nonseg_9588_total_runtime;
+    int segred_nonseg_9588_runs;
+    int64_t segred_nonseg_9657_total_runtime;
+    int segred_nonseg_9657_runs;
     cl_mem global_failure;
     cl_mem global_failure_args;
     struct opencl_context opencl;
@@ -5980,38 +5983,38 @@ static void init_context_early(struct futhark_context_config *cfg,
     ctx->copy_scalar_to_dev_runs = 0;
     ctx->copy_scalar_from_dev_total_runtime = 0;
     ctx->copy_scalar_from_dev_runs = 0;
-    ctx->builtinzhreplicate_i32zireplicate_9277_total_runtime = 0;
-    ctx->builtinzhreplicate_i32zireplicate_9277_runs = 0;
-    ctx->scan_stage1_8988_total_runtime = 0;
-    ctx->scan_stage1_8988_runs = 0;
-    ctx->scan_stage1_9002_total_runtime = 0;
-    ctx->scan_stage1_9002_runs = 0;
-    ctx->scan_stage1_9030_total_runtime = 0;
-    ctx->scan_stage1_9030_runs = 0;
-    ctx->scan_stage2_8988_total_runtime = 0;
-    ctx->scan_stage2_8988_runs = 0;
-    ctx->scan_stage2_9002_total_runtime = 0;
-    ctx->scan_stage2_9002_runs = 0;
-    ctx->scan_stage2_9030_total_runtime = 0;
-    ctx->scan_stage2_9030_runs = 0;
-    ctx->scan_stage3_8988_total_runtime = 0;
-    ctx->scan_stage3_8988_runs = 0;
-    ctx->scan_stage3_9002_total_runtime = 0;
-    ctx->scan_stage3_9002_runs = 0;
-    ctx->scan_stage3_9030_total_runtime = 0;
-    ctx->scan_stage3_9030_runs = 0;
-    ctx->segmap_8990_total_runtime = 0;
-    ctx->segmap_8990_runs = 0;
-    ctx->segmap_9019_total_runtime = 0;
-    ctx->segmap_9019_runs = 0;
-    ctx->segmap_9049_total_runtime = 0;
-    ctx->segmap_9049_runs = 0;
-    ctx->segmap_9102_total_runtime = 0;
-    ctx->segmap_9102_runs = 0;
-    ctx->segred_nonseg_9066_total_runtime = 0;
-    ctx->segred_nonseg_9066_runs = 0;
-    ctx->segred_nonseg_9135_total_runtime = 0;
-    ctx->segred_nonseg_9135_runs = 0;
+    ctx->builtinzhreplicate_i32zireplicate_9845_total_runtime = 0;
+    ctx->builtinzhreplicate_i32zireplicate_9845_runs = 0;
+    ctx->scan_stage1_9510_total_runtime = 0;
+    ctx->scan_stage1_9510_runs = 0;
+    ctx->scan_stage1_9524_total_runtime = 0;
+    ctx->scan_stage1_9524_runs = 0;
+    ctx->scan_stage1_9552_total_runtime = 0;
+    ctx->scan_stage1_9552_runs = 0;
+    ctx->scan_stage2_9510_total_runtime = 0;
+    ctx->scan_stage2_9510_runs = 0;
+    ctx->scan_stage2_9524_total_runtime = 0;
+    ctx->scan_stage2_9524_runs = 0;
+    ctx->scan_stage2_9552_total_runtime = 0;
+    ctx->scan_stage2_9552_runs = 0;
+    ctx->scan_stage3_9510_total_runtime = 0;
+    ctx->scan_stage3_9510_runs = 0;
+    ctx->scan_stage3_9524_total_runtime = 0;
+    ctx->scan_stage3_9524_runs = 0;
+    ctx->scan_stage3_9552_total_runtime = 0;
+    ctx->scan_stage3_9552_runs = 0;
+    ctx->segmap_9512_total_runtime = 0;
+    ctx->segmap_9512_runs = 0;
+    ctx->segmap_9541_total_runtime = 0;
+    ctx->segmap_9541_runs = 0;
+    ctx->segmap_9571_total_runtime = 0;
+    ctx->segmap_9571_runs = 0;
+    ctx->segmap_9624_total_runtime = 0;
+    ctx->segmap_9624_runs = 0;
+    ctx->segred_nonseg_9588_total_runtime = 0;
+    ctx->segred_nonseg_9588_runs = 0;
+    ctx->segred_nonseg_9657_total_runtime = 0;
+    ctx->segred_nonseg_9657_runs = 0;
 }
 static int init_context_late(struct futhark_context_config *cfg,
                              struct futhark_context *ctx, cl_program prog)
@@ -6030,175 +6033,175 @@ static int init_context_late(struct futhark_context_config *cfg,
                                               &error);
     OPENCL_SUCCEED_OR_RETURN(error);
     {
-        ctx->builtinzhreplicate_i32zireplicate_9277 = clCreateKernel(prog,
-                                                                     "builtinzhreplicate_i32zireplicate_9277",
+        ctx->builtinzhreplicate_i32zireplicate_9845 = clCreateKernel(prog,
+                                                                     "builtinzhreplicate_i32zireplicate_9845",
                                                                      &error);
         OPENCL_SUCCEED_FATAL(error);
         if (ctx->debugging)
             fprintf(ctx->log, "Created kernel %s.\n",
-                    "builtin#replicate_i32.replicate_9277");
+                    "builtin#replicate_i32.replicate_9845");
     }
     {
-        ctx->scan_stage1_8988 = clCreateKernel(prog, "scan_stage1_8988",
+        ctx->scan_stage1_9510 = clCreateKernel(prog, "scan_stage1_9510",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_8988, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9510, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_8988, 2,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9510, 2,
                                             sizeof(cl_mem),
                                             &ctx->global_failure_args));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_8988");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_9510");
     }
     {
-        ctx->scan_stage1_9002 = clCreateKernel(prog, "scan_stage1_9002",
+        ctx->scan_stage1_9524 = clCreateKernel(prog, "scan_stage1_9524",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9002, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9524, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_9002");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_9524");
     }
     {
-        ctx->scan_stage1_9030 = clCreateKernel(prog, "scan_stage1_9030",
+        ctx->scan_stage1_9552 = clCreateKernel(prog, "scan_stage1_9552",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9030, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage1_9552, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_9030");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage1_9552");
     }
     {
-        ctx->scan_stage2_8988 = clCreateKernel(prog, "scan_stage2_8988",
+        ctx->scan_stage2_9510 = clCreateKernel(prog, "scan_stage2_9510",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_8988, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_9510, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_8988");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_9510");
     }
     {
-        ctx->scan_stage2_9002 = clCreateKernel(prog, "scan_stage2_9002",
+        ctx->scan_stage2_9524 = clCreateKernel(prog, "scan_stage2_9524",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_9002, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_9524, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_9002");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_9524");
     }
     {
-        ctx->scan_stage2_9030 = clCreateKernel(prog, "scan_stage2_9030",
+        ctx->scan_stage2_9552 = clCreateKernel(prog, "scan_stage2_9552",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_9030, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage2_9552, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_9030");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage2_9552");
     }
     {
-        ctx->scan_stage3_8988 = clCreateKernel(prog, "scan_stage3_8988",
+        ctx->scan_stage3_9510 = clCreateKernel(prog, "scan_stage3_9510",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_8988, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_9510, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_8988");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_9510");
     }
     {
-        ctx->scan_stage3_9002 = clCreateKernel(prog, "scan_stage3_9002",
+        ctx->scan_stage3_9524 = clCreateKernel(prog, "scan_stage3_9524",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_9002, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_9524, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_9002");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_9524");
     }
     {
-        ctx->scan_stage3_9030 = clCreateKernel(prog, "scan_stage3_9030",
+        ctx->scan_stage3_9552 = clCreateKernel(prog, "scan_stage3_9552",
                                                &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_9030, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->scan_stage3_9552, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_9030");
+            fprintf(ctx->log, "Created kernel %s.\n", "scan_stage3_9552");
     }
     {
-        ctx->segmap_8990 = clCreateKernel(prog, "segmap_8990", &error);
+        ctx->segmap_9512 = clCreateKernel(prog, "segmap_9512", &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_8990, 0, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9512, 0, sizeof(cl_mem),
                                             &ctx->global_failure));
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_8990, 2, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9512, 2, sizeof(cl_mem),
                                             &ctx->global_failure_args));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segmap_8990");
+            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9512");
     }
     {
-        ctx->segmap_9019 = clCreateKernel(prog, "segmap_9019", &error);
+        ctx->segmap_9541 = clCreateKernel(prog, "segmap_9541", &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9019, 0, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9541, 0, sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9019");
+            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9541");
     }
     {
-        ctx->segmap_9049 = clCreateKernel(prog, "segmap_9049", &error);
+        ctx->segmap_9571 = clCreateKernel(prog, "segmap_9571", &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9049, 0, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9571, 0, sizeof(cl_mem),
                                             &ctx->global_failure));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9049");
+            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9571");
     }
     {
-        ctx->segmap_9102 = clCreateKernel(prog, "segmap_9102", &error);
+        ctx->segmap_9624 = clCreateKernel(prog, "segmap_9624", &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9102, 0, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9624, 0, sizeof(cl_mem),
                                             &ctx->global_failure));
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9102, 2, sizeof(cl_mem),
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segmap_9624, 2, sizeof(cl_mem),
                                             &ctx->global_failure_args));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9102");
+            fprintf(ctx->log, "Created kernel %s.\n", "segmap_9624");
     }
     {
-        ctx->segred_nonseg_9066 = clCreateKernel(prog, "segred_nonseg_9066",
+        ctx->segred_nonseg_9588 = clCreateKernel(prog, "segred_nonseg_9588",
                                                  &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9066, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9588, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9066, 2,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9588, 2,
                                             sizeof(cl_mem),
                                             &ctx->global_failure_args));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segred_nonseg_9066");
+            fprintf(ctx->log, "Created kernel %s.\n", "segred_nonseg_9588");
     }
     {
-        ctx->segred_nonseg_9135 = clCreateKernel(prog, "segred_nonseg_9135",
+        ctx->segred_nonseg_9657 = clCreateKernel(prog, "segred_nonseg_9657",
                                                  &error);
         OPENCL_SUCCEED_FATAL(error);
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9135, 0,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9657, 0,
                                             sizeof(cl_mem),
                                             &ctx->global_failure));
-        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9135, 2,
+        OPENCL_SUCCEED_FATAL(clSetKernelArg(ctx->segred_nonseg_9657, 2,
                                             sizeof(cl_mem),
                                             &ctx->global_failure_args));
         if (ctx->debugging)
-            fprintf(ctx->log, "Created kernel %s.\n", "segred_nonseg_9135");
+            fprintf(ctx->log, "Created kernel %s.\n", "segred_nonseg_9657");
     }
     {
         cl_int success;
         
-        ctx->static_array_9210.references = NULL;
-        ctx->static_array_9210.size = 0;
-        ctx->static_array_9210.mem = clCreateBuffer(ctx->opencl.ctx,
+        ctx->static_array_9767.references = NULL;
+        ctx->static_array_9767.size = 0;
+        ctx->static_array_9767.mem = clCreateBuffer(ctx->opencl.ctx,
                                                     CL_MEM_READ_WRITE, (6 >
                                                                         0 ? 6 : 1) *
                                                     sizeof(int32_t), NULL,
@@ -6206,18 +6209,18 @@ static int init_context_late(struct futhark_context_config *cfg,
         OPENCL_SUCCEED_OR_RETURN(success);
         if (6 > 0)
             OPENCL_SUCCEED_OR_RETURN(clEnqueueWriteBuffer(ctx->opencl.queue,
-                                                          ctx->static_array_9210.mem,
+                                                          ctx->static_array_9767.mem,
                                                           CL_TRUE, 0, 6 *
                                                           sizeof(int32_t),
-                                                          static_array_realtype_9567,
+                                                          static_array_realtype_10132,
                                                           0, NULL, NULL));
     }
     {
         cl_int success;
         
-        ctx->static_array_9211.references = NULL;
-        ctx->static_array_9211.size = 0;
-        ctx->static_array_9211.mem = clCreateBuffer(ctx->opencl.ctx,
+        ctx->static_array_9768.references = NULL;
+        ctx->static_array_9768.size = 0;
+        ctx->static_array_9768.mem = clCreateBuffer(ctx->opencl.ctx,
                                                     CL_MEM_READ_WRITE, (25 >
                                                                         0 ? 25 : 1) *
                                                     sizeof(int32_t), NULL,
@@ -6225,66 +6228,66 @@ static int init_context_late(struct futhark_context_config *cfg,
         OPENCL_SUCCEED_OR_RETURN(success);
         if (25 > 0)
             OPENCL_SUCCEED_OR_RETURN(clEnqueueWriteBuffer(ctx->opencl.queue,
-                                                          ctx->static_array_9211.mem,
+                                                          ctx->static_array_9768.mem,
                                                           CL_TRUE, 0, 25 *
                                                           sizeof(int32_t),
-                                                          static_array_realtype_9568,
+                                                          static_array_realtype_10133,
                                                           0, NULL, NULL));
     }
     {
         cl_int success;
         
-        ctx->counter_mem_9454.references = NULL;
-        ctx->counter_mem_9454.size = 0;
-        ctx->counter_mem_9454.mem = clCreateBuffer(ctx->opencl.ctx,
-                                                   CL_MEM_READ_WRITE, (10 >
-                                                                       0 ? 10 : 1) *
-                                                   sizeof(int32_t), NULL,
-                                                   &success);
+        ctx->counter_mem_10019.references = NULL;
+        ctx->counter_mem_10019.size = 0;
+        ctx->counter_mem_10019.mem = clCreateBuffer(ctx->opencl.ctx,
+                                                    CL_MEM_READ_WRITE, (10 >
+                                                                        0 ? 10 : 1) *
+                                                    sizeof(int32_t), NULL,
+                                                    &success);
         OPENCL_SUCCEED_OR_RETURN(success);
         if (10 > 0)
             OPENCL_SUCCEED_OR_RETURN(clEnqueueWriteBuffer(ctx->opencl.queue,
-                                                          ctx->counter_mem_9454.mem,
+                                                          ctx->counter_mem_10019.mem,
                                                           CL_TRUE, 0, 10 *
                                                           sizeof(int32_t),
-                                                          counter_mem_realtype_9630,
+                                                          counter_mem_realtype_10195,
                                                           0, NULL, NULL));
     }
     {
         cl_int success;
         
-        ctx->counter_mem_9529.references = NULL;
-        ctx->counter_mem_9529.size = 0;
-        ctx->counter_mem_9529.mem = clCreateBuffer(ctx->opencl.ctx,
-                                                   CL_MEM_READ_WRITE, (10 >
-                                                                       0 ? 10 : 1) *
-                                                   sizeof(int32_t), NULL,
-                                                   &success);
+        ctx->counter_mem_10094.references = NULL;
+        ctx->counter_mem_10094.size = 0;
+        ctx->counter_mem_10094.mem = clCreateBuffer(ctx->opencl.ctx,
+                                                    CL_MEM_READ_WRITE, (10 >
+                                                                        0 ? 10 : 1) *
+                                                    sizeof(int32_t), NULL,
+                                                    &success);
         OPENCL_SUCCEED_OR_RETURN(success);
         if (10 > 0)
             OPENCL_SUCCEED_OR_RETURN(clEnqueueWriteBuffer(ctx->opencl.queue,
-                                                          ctx->counter_mem_9529.mem,
+                                                          ctx->counter_mem_10094.mem,
                                                           CL_TRUE, 0, 10 *
                                                           sizeof(int32_t),
-                                                          counter_mem_realtype_9644,
+                                                          counter_mem_realtype_10209,
                                                           0, NULL, NULL));
     }
-    ctx->tuning_params.builtinzhreplicate_i32zigroup_sizze_9280 =
+    ctx->tuning_params.builtinzhreplicate_i32zigroup_sizze_9848 =
         &cfg->tuning_params[0];
-    ctx->tuning_params.segmap_group_sizze_8992 = &cfg->tuning_params[1];
-    ctx->tuning_params.segmap_group_sizze_9006 = &cfg->tuning_params[2];
-    ctx->tuning_params.segmap_group_sizze_9034 = &cfg->tuning_params[3];
-    ctx->tuning_params.segmap_group_sizze_9070 = &cfg->tuning_params[4];
-    ctx->tuning_params.segred_group_sizze_9056 = &cfg->tuning_params[5];
-    ctx->tuning_params.segred_group_sizze_9126 = &cfg->tuning_params[6];
-    ctx->tuning_params.segred_num_groups_9058 = &cfg->tuning_params[7];
-    ctx->tuning_params.segred_num_groups_9128 = &cfg->tuning_params[8];
-    ctx->tuning_params.segscan_group_sizze_8982 = &cfg->tuning_params[9];
-    ctx->tuning_params.segscan_group_sizze_8996 = &cfg->tuning_params[10];
-    ctx->tuning_params.segscan_group_sizze_9024 = &cfg->tuning_params[11];
-    ctx->tuning_params.segscan_num_groups_8984 = &cfg->tuning_params[12];
-    ctx->tuning_params.segscan_num_groups_8998 = &cfg->tuning_params[13];
-    ctx->tuning_params.segscan_num_groups_9026 = &cfg->tuning_params[14];
+    ctx->tuning_params.segmap_group_sizze_9514 = &cfg->tuning_params[1];
+    ctx->tuning_params.segmap_group_sizze_9528 = &cfg->tuning_params[2];
+    ctx->tuning_params.segmap_group_sizze_9556 = &cfg->tuning_params[3];
+    ctx->tuning_params.segmap_group_sizze_9592 = &cfg->tuning_params[4];
+    ctx->tuning_params.segred_group_sizze_9578 = &cfg->tuning_params[5];
+    ctx->tuning_params.segred_group_sizze_9648 = &cfg->tuning_params[6];
+    ctx->tuning_params.segred_num_groups_9580 = &cfg->tuning_params[7];
+    ctx->tuning_params.segred_num_groups_9650 = &cfg->tuning_params[8];
+    ctx->tuning_params.segscan_group_sizze_9504 = &cfg->tuning_params[9];
+    ctx->tuning_params.segscan_group_sizze_9518 = &cfg->tuning_params[10];
+    ctx->tuning_params.segscan_group_sizze_9546 = &cfg->tuning_params[11];
+    ctx->tuning_params.segscan_num_groups_9506 = &cfg->tuning_params[12];
+    ctx->tuning_params.segscan_num_groups_9520 = &cfg->tuning_params[13];
+    ctx->tuning_params.segscan_num_groups_9548 = &cfg->tuning_params[14];
     init_constants(ctx);
     // Clear the free list of any deallocations that occurred while initialising constants.
     OPENCL_SUCCEED_OR_RETURN(opencl_free_all(&ctx->opencl));
@@ -6343,22 +6346,22 @@ void futhark_context_free(struct futhark_context *ctx)
 {
     free_constants(ctx);
     free_lock(&ctx->lock);
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->builtinzhreplicate_i32zireplicate_9277));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_8988));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_9002));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_9030));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_8988));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_9002));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_9030));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_8988));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_9002));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_9030));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_8990));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9019));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9049));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9102));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segred_nonseg_9066));
-    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segred_nonseg_9135));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->builtinzhreplicate_i32zireplicate_9845));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_9510));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_9524));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage1_9552));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_9510));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_9524));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage2_9552));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_9510));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_9524));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->scan_stage3_9552));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9512));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9541));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9571));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segmap_9624));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segred_nonseg_9588));
+    OPENCL_SUCCEED_FATAL(clReleaseKernel(ctx->segred_nonseg_9657));
     OPENCL_SUCCEED_FATAL(clReleaseMemObject(ctx->global_failure));
     OPENCL_SUCCEED_FATAL(clReleaseMemObject(ctx->global_failure_args));
     teardown_opencl(&ctx->opencl);
@@ -6407,7 +6410,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 0:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:6:35-46\n   #1  TSP.fut:5:19-7:32\n   #2  TSP.fut:50:19-50\n   #3  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:6:35-46\n   #1  TSP.fut:5:19-7:32\n   #2  TSP.fut:50:19-50\n   #3  TSP.fut:87:25-53\n   #4  TSP.fut:91:62-70\n   #5  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6415,7 +6418,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 1:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:48:24-40\n   #1  TSP.fut:47:19-49:34\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:48:24-40\n   #1  TSP.fut:47:19-49:34\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6423,7 +6426,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 2:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:54:33-41\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:54:33-41\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6431,7 +6434,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 3:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:55:37-43\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:55:37-43\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6439,7 +6442,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 4:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:56:39-47\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:56:39-47\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6447,7 +6450,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 5:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:58:37-43\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:58:37-43\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6455,7 +6458,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 6:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:59:39-47\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:59:39-47\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6463,7 +6466,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 7:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:60:31-58\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:60:31-58\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6471,7 +6474,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 8:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:61:29-60\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:61:29-60\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6479,7 +6482,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 9:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:62:30-59\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:62:30-59\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6487,7 +6490,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 10:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:63:29-58\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:100:23-53\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:63:29-58\n   #1  TSP.fut:53:21-64:40\n   #2  TSP.fut:87:25-53\n   #3  TSP.fut:91:62-70\n   #4  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6495,7 +6498,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 11:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:73:13-21\n   #1  /prelude/functional.fut:9:42-44\n   #2  TSP.fut:70:5-76:5\n   #3  TSP.fut:101:21-57\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:73:13-21\n   #1  /prelude/functional.fut:9:42-44\n   #2  TSP.fut:70:5-76:5\n   #3  TSP.fut:89:38-68\n   #4  TSP.fut:91:62-70\n   #5  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6503,7 +6506,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 12:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:75:13-34\n   #1  /prelude/functional.fut:9:42-44\n   #2  TSP.fut:70:5-76:5\n   #3  TSP.fut:101:21-57\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:75:13-34\n   #1  /prelude/functional.fut:9:42-44\n   #2  TSP.fut:70:5-76:5\n   #3  TSP.fut:89:38-68\n   #4  TSP.fut:91:62-70\n   #5  TSP.fut:103:19-45\n",
                               args[0], args[1]);
                 break;
             }
@@ -6511,7 +6514,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 13:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:27-33\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:98:19-33\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:27-33\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:102:19-33\n",
                               args[0], args[1]);
                 break;
             }
@@ -6519,7 +6522,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 14:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:52-60\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:98:19-33\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:52-60\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:102:19-33\n",
                               args[0], args[1]);
                 break;
             }
@@ -6527,7 +6530,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 15:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:21-61\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:98:19-33\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:21-61\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:102:19-33\n",
                               args[0], args[1]);
                 break;
             }
@@ -6535,7 +6538,7 @@ int futhark_context_sync(struct futhark_context *ctx)
           case 16:
             {
                 ctx->error =
-                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:21-61\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:102:19-38\n",
+                    msgprintf("Index [%lld] out of bounds for array of shape [%lld].\n-> #0  TSP.fut:79:21-61\n   #1  TSP.fut:79:9-80:26\n   #2  TSP.fut:106:19-38\n",
                               args[0], args[1]);
                 break;
             }
@@ -6781,146 +6784,146 @@ char *futhark_context_report(struct futhark_context *ctx)
         ctx->total_runtime += ctx->copy_scalar_from_dev_total_runtime;
         ctx->total_runs += ctx->copy_scalar_from_dev_runs;
         str_builder(&builder,
-                    "builtin#replicate_i32.replicate_9277 ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->builtinzhreplicate_i32zireplicate_9277_runs,
-                    (long) ctx->builtinzhreplicate_i32zireplicate_9277_total_runtime /
-                    (ctx->builtinzhreplicate_i32zireplicate_9277_runs !=
-                     0 ? ctx->builtinzhreplicate_i32zireplicate_9277_runs : 1),
-                    (long) ctx->builtinzhreplicate_i32zireplicate_9277_total_runtime);
+                    "builtin#replicate_i32.replicate_9845 ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->builtinzhreplicate_i32zireplicate_9845_runs,
+                    (long) ctx->builtinzhreplicate_i32zireplicate_9845_total_runtime /
+                    (ctx->builtinzhreplicate_i32zireplicate_9845_runs !=
+                     0 ? ctx->builtinzhreplicate_i32zireplicate_9845_runs : 1),
+                    (long) ctx->builtinzhreplicate_i32zireplicate_9845_total_runtime);
         ctx->total_runtime +=
-            ctx->builtinzhreplicate_i32zireplicate_9277_total_runtime;
-        ctx->total_runs += ctx->builtinzhreplicate_i32zireplicate_9277_runs;
+            ctx->builtinzhreplicate_i32zireplicate_9845_total_runtime;
+        ctx->total_runs += ctx->builtinzhreplicate_i32zireplicate_9845_runs;
         str_builder(&builder,
-                    "scan_stage1_8988                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage1_8988_runs,
-                    (long) ctx->scan_stage1_8988_total_runtime /
-                    (ctx->scan_stage1_8988_runs !=
-                     0 ? ctx->scan_stage1_8988_runs : 1),
-                    (long) ctx->scan_stage1_8988_total_runtime);
-        ctx->total_runtime += ctx->scan_stage1_8988_total_runtime;
-        ctx->total_runs += ctx->scan_stage1_8988_runs;
+                    "scan_stage1_9510                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage1_9510_runs,
+                    (long) ctx->scan_stage1_9510_total_runtime /
+                    (ctx->scan_stage1_9510_runs !=
+                     0 ? ctx->scan_stage1_9510_runs : 1),
+                    (long) ctx->scan_stage1_9510_total_runtime);
+        ctx->total_runtime += ctx->scan_stage1_9510_total_runtime;
+        ctx->total_runs += ctx->scan_stage1_9510_runs;
         str_builder(&builder,
-                    "scan_stage1_9002                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage1_9002_runs,
-                    (long) ctx->scan_stage1_9002_total_runtime /
-                    (ctx->scan_stage1_9002_runs !=
-                     0 ? ctx->scan_stage1_9002_runs : 1),
-                    (long) ctx->scan_stage1_9002_total_runtime);
-        ctx->total_runtime += ctx->scan_stage1_9002_total_runtime;
-        ctx->total_runs += ctx->scan_stage1_9002_runs;
+                    "scan_stage1_9524                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage1_9524_runs,
+                    (long) ctx->scan_stage1_9524_total_runtime /
+                    (ctx->scan_stage1_9524_runs !=
+                     0 ? ctx->scan_stage1_9524_runs : 1),
+                    (long) ctx->scan_stage1_9524_total_runtime);
+        ctx->total_runtime += ctx->scan_stage1_9524_total_runtime;
+        ctx->total_runs += ctx->scan_stage1_9524_runs;
         str_builder(&builder,
-                    "scan_stage1_9030                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage1_9030_runs,
-                    (long) ctx->scan_stage1_9030_total_runtime /
-                    (ctx->scan_stage1_9030_runs !=
-                     0 ? ctx->scan_stage1_9030_runs : 1),
-                    (long) ctx->scan_stage1_9030_total_runtime);
-        ctx->total_runtime += ctx->scan_stage1_9030_total_runtime;
-        ctx->total_runs += ctx->scan_stage1_9030_runs;
+                    "scan_stage1_9552                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage1_9552_runs,
+                    (long) ctx->scan_stage1_9552_total_runtime /
+                    (ctx->scan_stage1_9552_runs !=
+                     0 ? ctx->scan_stage1_9552_runs : 1),
+                    (long) ctx->scan_stage1_9552_total_runtime);
+        ctx->total_runtime += ctx->scan_stage1_9552_total_runtime;
+        ctx->total_runs += ctx->scan_stage1_9552_runs;
         str_builder(&builder,
-                    "scan_stage2_8988                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage2_8988_runs,
-                    (long) ctx->scan_stage2_8988_total_runtime /
-                    (ctx->scan_stage2_8988_runs !=
-                     0 ? ctx->scan_stage2_8988_runs : 1),
-                    (long) ctx->scan_stage2_8988_total_runtime);
-        ctx->total_runtime += ctx->scan_stage2_8988_total_runtime;
-        ctx->total_runs += ctx->scan_stage2_8988_runs;
+                    "scan_stage2_9510                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage2_9510_runs,
+                    (long) ctx->scan_stage2_9510_total_runtime /
+                    (ctx->scan_stage2_9510_runs !=
+                     0 ? ctx->scan_stage2_9510_runs : 1),
+                    (long) ctx->scan_stage2_9510_total_runtime);
+        ctx->total_runtime += ctx->scan_stage2_9510_total_runtime;
+        ctx->total_runs += ctx->scan_stage2_9510_runs;
         str_builder(&builder,
-                    "scan_stage2_9002                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage2_9002_runs,
-                    (long) ctx->scan_stage2_9002_total_runtime /
-                    (ctx->scan_stage2_9002_runs !=
-                     0 ? ctx->scan_stage2_9002_runs : 1),
-                    (long) ctx->scan_stage2_9002_total_runtime);
-        ctx->total_runtime += ctx->scan_stage2_9002_total_runtime;
-        ctx->total_runs += ctx->scan_stage2_9002_runs;
+                    "scan_stage2_9524                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage2_9524_runs,
+                    (long) ctx->scan_stage2_9524_total_runtime /
+                    (ctx->scan_stage2_9524_runs !=
+                     0 ? ctx->scan_stage2_9524_runs : 1),
+                    (long) ctx->scan_stage2_9524_total_runtime);
+        ctx->total_runtime += ctx->scan_stage2_9524_total_runtime;
+        ctx->total_runs += ctx->scan_stage2_9524_runs;
         str_builder(&builder,
-                    "scan_stage2_9030                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage2_9030_runs,
-                    (long) ctx->scan_stage2_9030_total_runtime /
-                    (ctx->scan_stage2_9030_runs !=
-                     0 ? ctx->scan_stage2_9030_runs : 1),
-                    (long) ctx->scan_stage2_9030_total_runtime);
-        ctx->total_runtime += ctx->scan_stage2_9030_total_runtime;
-        ctx->total_runs += ctx->scan_stage2_9030_runs;
+                    "scan_stage2_9552                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage2_9552_runs,
+                    (long) ctx->scan_stage2_9552_total_runtime /
+                    (ctx->scan_stage2_9552_runs !=
+                     0 ? ctx->scan_stage2_9552_runs : 1),
+                    (long) ctx->scan_stage2_9552_total_runtime);
+        ctx->total_runtime += ctx->scan_stage2_9552_total_runtime;
+        ctx->total_runs += ctx->scan_stage2_9552_runs;
         str_builder(&builder,
-                    "scan_stage3_8988                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage3_8988_runs,
-                    (long) ctx->scan_stage3_8988_total_runtime /
-                    (ctx->scan_stage3_8988_runs !=
-                     0 ? ctx->scan_stage3_8988_runs : 1),
-                    (long) ctx->scan_stage3_8988_total_runtime);
-        ctx->total_runtime += ctx->scan_stage3_8988_total_runtime;
-        ctx->total_runs += ctx->scan_stage3_8988_runs;
+                    "scan_stage3_9510                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage3_9510_runs,
+                    (long) ctx->scan_stage3_9510_total_runtime /
+                    (ctx->scan_stage3_9510_runs !=
+                     0 ? ctx->scan_stage3_9510_runs : 1),
+                    (long) ctx->scan_stage3_9510_total_runtime);
+        ctx->total_runtime += ctx->scan_stage3_9510_total_runtime;
+        ctx->total_runs += ctx->scan_stage3_9510_runs;
         str_builder(&builder,
-                    "scan_stage3_9002                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage3_9002_runs,
-                    (long) ctx->scan_stage3_9002_total_runtime /
-                    (ctx->scan_stage3_9002_runs !=
-                     0 ? ctx->scan_stage3_9002_runs : 1),
-                    (long) ctx->scan_stage3_9002_total_runtime);
-        ctx->total_runtime += ctx->scan_stage3_9002_total_runtime;
-        ctx->total_runs += ctx->scan_stage3_9002_runs;
+                    "scan_stage3_9524                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage3_9524_runs,
+                    (long) ctx->scan_stage3_9524_total_runtime /
+                    (ctx->scan_stage3_9524_runs !=
+                     0 ? ctx->scan_stage3_9524_runs : 1),
+                    (long) ctx->scan_stage3_9524_total_runtime);
+        ctx->total_runtime += ctx->scan_stage3_9524_total_runtime;
+        ctx->total_runs += ctx->scan_stage3_9524_runs;
         str_builder(&builder,
-                    "scan_stage3_9030                     ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->scan_stage3_9030_runs,
-                    (long) ctx->scan_stage3_9030_total_runtime /
-                    (ctx->scan_stage3_9030_runs !=
-                     0 ? ctx->scan_stage3_9030_runs : 1),
-                    (long) ctx->scan_stage3_9030_total_runtime);
-        ctx->total_runtime += ctx->scan_stage3_9030_total_runtime;
-        ctx->total_runs += ctx->scan_stage3_9030_runs;
+                    "scan_stage3_9552                     ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->scan_stage3_9552_runs,
+                    (long) ctx->scan_stage3_9552_total_runtime /
+                    (ctx->scan_stage3_9552_runs !=
+                     0 ? ctx->scan_stage3_9552_runs : 1),
+                    (long) ctx->scan_stage3_9552_total_runtime);
+        ctx->total_runtime += ctx->scan_stage3_9552_total_runtime;
+        ctx->total_runs += ctx->scan_stage3_9552_runs;
         str_builder(&builder,
-                    "segmap_8990                          ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segmap_8990_runs,
-                    (long) ctx->segmap_8990_total_runtime /
-                    (ctx->segmap_8990_runs != 0 ? ctx->segmap_8990_runs : 1),
-                    (long) ctx->segmap_8990_total_runtime);
-        ctx->total_runtime += ctx->segmap_8990_total_runtime;
-        ctx->total_runs += ctx->segmap_8990_runs;
+                    "segmap_9512                          ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segmap_9512_runs,
+                    (long) ctx->segmap_9512_total_runtime /
+                    (ctx->segmap_9512_runs != 0 ? ctx->segmap_9512_runs : 1),
+                    (long) ctx->segmap_9512_total_runtime);
+        ctx->total_runtime += ctx->segmap_9512_total_runtime;
+        ctx->total_runs += ctx->segmap_9512_runs;
         str_builder(&builder,
-                    "segmap_9019                          ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segmap_9019_runs,
-                    (long) ctx->segmap_9019_total_runtime /
-                    (ctx->segmap_9019_runs != 0 ? ctx->segmap_9019_runs : 1),
-                    (long) ctx->segmap_9019_total_runtime);
-        ctx->total_runtime += ctx->segmap_9019_total_runtime;
-        ctx->total_runs += ctx->segmap_9019_runs;
+                    "segmap_9541                          ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segmap_9541_runs,
+                    (long) ctx->segmap_9541_total_runtime /
+                    (ctx->segmap_9541_runs != 0 ? ctx->segmap_9541_runs : 1),
+                    (long) ctx->segmap_9541_total_runtime);
+        ctx->total_runtime += ctx->segmap_9541_total_runtime;
+        ctx->total_runs += ctx->segmap_9541_runs;
         str_builder(&builder,
-                    "segmap_9049                          ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segmap_9049_runs,
-                    (long) ctx->segmap_9049_total_runtime /
-                    (ctx->segmap_9049_runs != 0 ? ctx->segmap_9049_runs : 1),
-                    (long) ctx->segmap_9049_total_runtime);
-        ctx->total_runtime += ctx->segmap_9049_total_runtime;
-        ctx->total_runs += ctx->segmap_9049_runs;
+                    "segmap_9571                          ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segmap_9571_runs,
+                    (long) ctx->segmap_9571_total_runtime /
+                    (ctx->segmap_9571_runs != 0 ? ctx->segmap_9571_runs : 1),
+                    (long) ctx->segmap_9571_total_runtime);
+        ctx->total_runtime += ctx->segmap_9571_total_runtime;
+        ctx->total_runs += ctx->segmap_9571_runs;
         str_builder(&builder,
-                    "segmap_9102                          ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segmap_9102_runs,
-                    (long) ctx->segmap_9102_total_runtime /
-                    (ctx->segmap_9102_runs != 0 ? ctx->segmap_9102_runs : 1),
-                    (long) ctx->segmap_9102_total_runtime);
-        ctx->total_runtime += ctx->segmap_9102_total_runtime;
-        ctx->total_runs += ctx->segmap_9102_runs;
+                    "segmap_9624                          ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segmap_9624_runs,
+                    (long) ctx->segmap_9624_total_runtime /
+                    (ctx->segmap_9624_runs != 0 ? ctx->segmap_9624_runs : 1),
+                    (long) ctx->segmap_9624_total_runtime);
+        ctx->total_runtime += ctx->segmap_9624_total_runtime;
+        ctx->total_runs += ctx->segmap_9624_runs;
         str_builder(&builder,
-                    "segred_nonseg_9066                   ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segred_nonseg_9066_runs,
-                    (long) ctx->segred_nonseg_9066_total_runtime /
-                    (ctx->segred_nonseg_9066_runs !=
-                     0 ? ctx->segred_nonseg_9066_runs : 1),
-                    (long) ctx->segred_nonseg_9066_total_runtime);
-        ctx->total_runtime += ctx->segred_nonseg_9066_total_runtime;
-        ctx->total_runs += ctx->segred_nonseg_9066_runs;
+                    "segred_nonseg_9588                   ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segred_nonseg_9588_runs,
+                    (long) ctx->segred_nonseg_9588_total_runtime /
+                    (ctx->segred_nonseg_9588_runs !=
+                     0 ? ctx->segred_nonseg_9588_runs : 1),
+                    (long) ctx->segred_nonseg_9588_total_runtime);
+        ctx->total_runtime += ctx->segred_nonseg_9588_total_runtime;
+        ctx->total_runs += ctx->segred_nonseg_9588_runs;
         str_builder(&builder,
-                    "segred_nonseg_9135                   ran %5d times; avg: %8ldus; total: %8ldus\n",
-                    ctx->segred_nonseg_9135_runs,
-                    (long) ctx->segred_nonseg_9135_total_runtime /
-                    (ctx->segred_nonseg_9135_runs !=
-                     0 ? ctx->segred_nonseg_9135_runs : 1),
-                    (long) ctx->segred_nonseg_9135_total_runtime);
-        ctx->total_runtime += ctx->segred_nonseg_9135_total_runtime;
-        ctx->total_runs += ctx->segred_nonseg_9135_runs;
+                    "segred_nonseg_9657                   ran %5d times; avg: %8ldus; total: %8ldus\n",
+                    ctx->segred_nonseg_9657_runs,
+                    (long) ctx->segred_nonseg_9657_total_runtime /
+                    (ctx->segred_nonseg_9657_runs !=
+                     0 ? ctx->segred_nonseg_9657_runs : 1),
+                    (long) ctx->segred_nonseg_9657_total_runtime);
+        ctx->total_runtime += ctx->segred_nonseg_9657_total_runtime;
+        ctx->total_runs += ctx->segred_nonseg_9657_runs;
         str_builder(&builder, "%d operations with cumulative runtime: %6ldus\n",
                     ctx->total_runs, ctx->total_runtime);
     }
@@ -6957,14 +6960,14 @@ int futhark_context_clear_caches(struct futhark_context *ctx)
 }
 
 static int futrts_builtinzhreplicate_i32(struct futhark_context *ctx,
-                                         struct memblock_device mem_9273,
-                                         int32_t num_elems_9274,
-                                         int32_t val_9275);
+                                         struct memblock_device mem_9841,
+                                         int32_t num_elems_9842,
+                                         int32_t val_9843);
 static int futrts_entry_main(struct futhark_context *ctx,
-                             struct memblock_device *mem_out_p_9657,
-                             int32_t *out_prim_out_9658,
-                             int32_t *out_prim_out_9659,
-                             int32_t *out_prim_out_9660);
+                             struct memblock_device *mem_out_p_10222,
+                             int32_t *out_prim_out_10223,
+                             int32_t *out_prim_out_10224,
+                             int32_t *out_prim_out_10225);
 
 static int init_constants(struct futhark_context *ctx)
 {
@@ -6972,98 +6975,115 @@ static int init_constants(struct futhark_context *ctx)
     
     int err = 0;
     
-    #define defunc_2_reduce_res_8818 (ctx->constants.defunc_2_reduce_res_8818)
-    #define mem_9191 (ctx->constants.mem_9191)
-    #define defunc_0_f_res_8943 (ctx->constants.defunc_0_f_res_8943)
-    #define defunc_0_f_res_8944 (ctx->constants.defunc_0_f_res_8944)
+    #define ext_9735 (ctx->constants.ext_9735)
+    #define ext_mem_9732 (ctx->constants.ext_mem_9732)
+    #define twoOptAlg_res_9246 (ctx->constants.twoOptAlg_res_9246)
+    #define defunc_0_f_res_9465 (ctx->constants.defunc_0_f_res_9465)
+    #define defunc_0_f_res_9466 (ctx->constants.defunc_0_f_res_9466)
     
-    struct memblock_device segred_tmp_mem_9533;
+    struct memblock_device segred_tmp_mem_10098;
     
-    segred_tmp_mem_9533.references = NULL;
+    segred_tmp_mem_10098.references = NULL;
     
-    struct memblock_device segred_tmp_mem_9531;
+    struct memblock_device segred_tmp_mem_10096;
     
-    segred_tmp_mem_9531.references = NULL;
+    segred_tmp_mem_10096.references = NULL;
     
-    struct memblock_device mem_9196;
+    struct memblock_device mem_9741;
     
-    mem_9196.references = NULL;
+    mem_9741.references = NULL;
     
-    struct memblock_device mem_9194;
+    struct memblock_device mem_9739;
     
-    mem_9194.references = NULL;
+    mem_9739.references = NULL;
     
-    struct memblock_device segred_tmp_mem_9460;
+    struct memblock_device mem_param_tmp_9837;
     
-    segred_tmp_mem_9460.references = NULL;
+    mem_param_tmp_9837.references = NULL;
     
-    struct memblock_device segred_tmp_mem_9458;
+    struct memblock_device mem_9726;
     
-    segred_tmp_mem_9458.references = NULL;
+    mem_9726.references = NULL;
     
-    struct memblock_device segred_tmp_mem_9456;
+    struct memblock_device ext_mem_9727;
     
-    segred_tmp_mem_9456.references = NULL;
+    ext_mem_9727.references = NULL;
     
-    struct memblock_device mem_9188;
+    struct memblock_device segred_tmp_mem_10025;
     
-    mem_9188.references = NULL;
+    segred_tmp_mem_10025.references = NULL;
     
-    struct memblock_device mem_9186;
+    struct memblock_device segred_tmp_mem_10023;
     
-    mem_9186.references = NULL;
+    segred_tmp_mem_10023.references = NULL;
     
-    struct memblock_device mem_9184;
+    struct memblock_device segred_tmp_mem_10021;
     
-    mem_9184.references = NULL;
+    segred_tmp_mem_10021.references = NULL;
     
-    struct memblock_device mem_9181;
+    struct memblock_device mem_param_9692;
     
-    mem_9181.references = NULL;
+    mem_param_9692.references = NULL;
     
-    struct memblock_device mem_9178;
+    struct memblock_device mem_9723;
     
-    mem_9178.references = NULL;
+    mem_9723.references = NULL;
     
-    struct memblock_device mem_9176;
+    struct memblock_device mem_9721;
     
-    mem_9176.references = NULL;
+    mem_9721.references = NULL;
     
-    struct memblock_device mem_9173;
+    struct memblock_device mem_9719;
     
-    mem_9173.references = NULL;
+    mem_9719.references = NULL;
     
-    struct memblock_device mem_9169;
+    struct memblock_device mem_9716;
     
-    mem_9169.references = NULL;
+    mem_9716.references = NULL;
     
-    struct memblock_device mem_9164;
+    struct memblock_device mem_9713;
     
-    mem_9164.references = NULL;
+    mem_9713.references = NULL;
     
-    struct memblock_device mem_9161;
+    struct memblock_device mem_9711;
     
-    mem_9161.references = NULL;
+    mem_9711.references = NULL;
     
-    struct memblock_device mem_9158;
+    struct memblock_device mem_9708;
     
-    mem_9158.references = NULL;
+    mem_9708.references = NULL;
     
-    struct memblock_device mem_9156;
+    struct memblock_device mem_9704;
     
-    mem_9156.references = NULL;
-    mem_9191.references = NULL;
-    if (memblock_alloc_device(ctx, &mem_9156, (int64_t) 24, "mem_9156")) {
+    mem_9704.references = NULL;
+    
+    struct memblock_device mem_9699;
+    
+    mem_9699.references = NULL;
+    
+    struct memblock_device mem_9687;
+    
+    mem_9687.references = NULL;
+    
+    struct memblock_device mem_9684;
+    
+    mem_9684.references = NULL;
+    
+    struct memblock_device mem_9682;
+    
+    mem_9682.references = NULL;
+    ext_mem_9732.references = NULL;
+    if (memblock_alloc_device(ctx, &mem_9682, (int64_t) 24, "mem_9682")) {
         err = 1;
         goto cleanup;
     }
     
-    struct memblock_device static_array_9210 = ctx->static_array_9210;
+    struct memblock_device static_array_9767 = ctx->static_array_9767;
     
     if ((int64_t) 24 > 0) {
         OPENCL_SUCCEED_OR_RETURN(clEnqueueCopyBuffer(ctx->opencl.queue,
-                                                     static_array_9210.mem,
-                                                     mem_9156.mem,
+                                                     static_array_9767.mem,
+                                                     mem_9682.mem,
                                                      (size_t) (int64_t) 0,
                                                      (size_t) (int64_t) 0,
                                                      (size_t) (int64_t) 24, 0,
@@ -7075,17 +7095,17 @@ static int init_constants(struct futhark_context *ctx)
         if (ctx->debugging)
             OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
     }
-    if (memblock_alloc_device(ctx, &mem_9158, (int64_t) 100, "mem_9158")) {
+    if (memblock_alloc_device(ctx, &mem_9684, (int64_t) 100, "mem_9684")) {
         err = 1;
         goto cleanup;
     }
     
-    struct memblock_device static_array_9211 = ctx->static_array_9211;
+    struct memblock_device static_array_9768 = ctx->static_array_9768;
     
     if ((int64_t) 100 > 0) {
         OPENCL_SUCCEED_OR_RETURN(clEnqueueCopyBuffer(ctx->opencl.queue,
-                                                     static_array_9211.mem,
-                                                     mem_9158.mem,
+                                                     static_array_9768.mem,
+                                                     mem_9684.mem,
                                                      (size_t) (int64_t) 0,
                                                      (size_t) (int64_t) 0,
                                                      (size_t) (int64_t) 100, 0,
@@ -7098,19 +7118,19 @@ static int init_constants(struct futhark_context *ctx)
             OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
     }
     
-    int64_t segscan_group_sizze_8983;
+    int64_t segscan_group_sizze_9505;
     
-    segscan_group_sizze_8983 = *ctx->tuning_params.segscan_group_sizze_8982;
+    segscan_group_sizze_9505 = *ctx->tuning_params.segscan_group_sizze_9504;
     
-    int64_t num_groups_8985;
-    int32_t max_num_groups_9212;
+    int64_t num_groups_9507;
+    int32_t max_num_groups_9769;
     
-    max_num_groups_9212 = *ctx->tuning_params.segscan_num_groups_8984;
-    num_groups_8985 = sext_i64_i32(smax64((int64_t) 1,
+    max_num_groups_9769 = *ctx->tuning_params.segscan_num_groups_9506;
+    num_groups_9507 = sext_i64_i32(smax64((int64_t) 1,
                                           smin64(sdiv_up64((int64_t) 3,
-                                                           segscan_group_sizze_8983),
-                                                 sext_i32_i64(max_num_groups_9212))));
-    if (memblock_alloc_device(ctx, &mem_9161, (int64_t) 12, "mem_9161")) {
+                                                           segscan_group_sizze_9505),
+                                                 sext_i32_i64(max_num_groups_9769))));
+    if (memblock_alloc_device(ctx, &mem_9687, (int64_t) 12, "mem_9687")) {
         err = 1;
         goto cleanup;
     }
@@ -7118,1330 +7138,1468 @@ static int init_constants(struct futhark_context *ctx)
         if (ctx->debugging)
             fprintf(ctx->log, "%s\n", "\n# SegScan");
         
-        int64_t stage1_max_num_groups_9213;
+        int64_t stage1_max_num_groups_9770;
         
-        stage1_max_num_groups_9213 = ctx->opencl.max_group_size;
+        stage1_max_num_groups_9770 = ctx->opencl.max_group_size;
         
-        int64_t stage1_num_groups_9214 = smin64(stage1_max_num_groups_9213,
-                                                num_groups_8985);
-        int32_t num_threads_9215 = sext_i64_i32(stage1_num_groups_9214 *
-                segscan_group_sizze_8983);
+        int64_t stage1_num_groups_9771 = smin64(stage1_max_num_groups_9770,
+                                                num_groups_9507);
+        int32_t num_threads_9772 = sext_i64_i32(stage1_num_groups_9771 *
+                segscan_group_sizze_9505);
         
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_8988, 1,
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9510, 1,
                                                 sizeof(ctx->failure_is_an_option),
                                                 &ctx->failure_is_an_option));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_8988, 3,
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9510, 3,
                                                 (size_t) smax64((int64_t) 1,
                                                                 (int64_t) 4 *
-                                                                segscan_group_sizze_8983),
+                                                                segscan_group_sizze_9505),
                                                 NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_8988, 4,
-                                                sizeof(num_threads_9215),
-                                                &num_threads_9215));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_8988, 5,
-                                                sizeof(mem_9161.mem),
-                                                &mem_9161.mem));
-        if (1 * ((size_t) stage1_num_groups_9214 *
-                 (size_t) segscan_group_sizze_8983) != 0) {
-            const size_t global_work_sizze_9569[1] =
-                         {(size_t) stage1_num_groups_9214 *
-                         (size_t) segscan_group_sizze_8983};
-            const size_t local_work_sizze_9573[1] =
-                         {(size_t) segscan_group_sizze_8983};
-            int64_t time_start_9570 = 0, time_end_9571 = 0;
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9510, 4,
+                                                sizeof(num_threads_9772),
+                                                &num_threads_9772));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9510, 5,
+                                                sizeof(mem_9687.mem),
+                                                &mem_9687.mem));
+        if (1 * ((size_t) stage1_num_groups_9771 *
+                 (size_t) segscan_group_sizze_9505) != 0) {
+            const size_t global_work_sizze_10134[1] =
+                         {(size_t) stage1_num_groups_9771 *
+                         (size_t) segscan_group_sizze_9505};
+            const size_t local_work_sizze_10138[1] =
+                         {(size_t) segscan_group_sizze_9505};
+            int64_t time_start_10135 = 0, time_end_10136 = 0;
             
             if (ctx->debugging) {
                 fprintf(ctx->log,
                         "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage1_8988", global_work_sizze_9569[0],
-                        local_work_sizze_9573[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    segscan_group_sizze_8983)));
-                time_start_9570 = get_wall_time();
+                        "scan_stage1_9510", global_work_sizze_10134[0],
+                        local_work_sizze_10138[0], (int) (0 +
+                                                          smax64((int64_t) 1,
+                                                                 (int64_t) 4 *
+                                                                 segscan_group_sizze_9505)));
+                time_start_10135 = get_wall_time();
             }
             OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage1_8988,
+                                                            ctx->scan_stage1_9510,
                                                             1, NULL,
-                                                            global_work_sizze_9569,
-                                                            local_work_sizze_9573,
+                                                            global_work_sizze_10134,
+                                                            local_work_sizze_10138,
                                                             0, NULL,
                                                             ctx->profiling_paused ||
                                                             !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage1_8988_runs,
-                                                                                                      &ctx->scan_stage1_8988_total_runtime)));
+                                                                                                      &ctx->scan_stage1_9510_runs,
+                                                                                                      &ctx->scan_stage1_9510_total_runtime)));
             if (ctx->debugging) {
                 OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9571 = get_wall_time();
+                time_end_10136 = get_wall_time();
                 
-                long time_diff_9572 = time_end_9571 - time_start_9570;
+                long time_diff_10137 = time_end_10136 - time_start_10135;
                 
                 fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage1_8988", time_diff_9572);
+                        "scan_stage1_9510", time_diff_10137);
             }
         }
         ctx->failure_is_an_option = 1;
         if (ctx->debugging)
             fprintf(ctx->log, "%s: %llu%c", "elems_per_group",
-                    (long long) (segscan_group_sizze_8983 *
+                    (long long) (segscan_group_sizze_9505 *
                                  sdiv_up64((int64_t) 3,
-                                           sext_i32_i64(num_threads_9215))),
+                                           sext_i32_i64(num_threads_9772))),
                     '\n');
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_8988, 1,
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9510, 1,
                                                 (size_t) smax64((int64_t) 1,
                                                                 (int64_t) 4 *
-                                                                stage1_num_groups_9214),
+                                                                stage1_num_groups_9771),
                                                 NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_8988, 2,
-                                                sizeof(stage1_num_groups_9214),
-                                                &stage1_num_groups_9214));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_8988, 3,
-                                                sizeof(num_threads_9215),
-                                                &num_threads_9215));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_8988, 4,
-                                                sizeof(mem_9161.mem),
-                                                &mem_9161.mem));
-        if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9214) != 0) {
-            const size_t global_work_sizze_9574[1] = {(size_t) (int64_t) 1 *
-                         (size_t) stage1_num_groups_9214};
-            const size_t local_work_sizze_9578[1] =
-                         {(size_t) stage1_num_groups_9214};
-            int64_t time_start_9575 = 0, time_end_9576 = 0;
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9510, 2,
+                                                sizeof(stage1_num_groups_9771),
+                                                &stage1_num_groups_9771));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9510, 3,
+                                                sizeof(num_threads_9772),
+                                                &num_threads_9772));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9510, 4,
+                                                sizeof(mem_9687.mem),
+                                                &mem_9687.mem));
+        if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9771) != 0) {
+            const size_t global_work_sizze_10139[1] = {(size_t) (int64_t) 1 *
+                         (size_t) stage1_num_groups_9771};
+            const size_t local_work_sizze_10143[1] =
+                         {(size_t) stage1_num_groups_9771};
+            int64_t time_start_10140 = 0, time_end_10141 = 0;
             
             if (ctx->debugging) {
                 fprintf(ctx->log,
                         "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage2_8988", global_work_sizze_9574[0],
-                        local_work_sizze_9578[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    stage1_num_groups_9214)));
-                time_start_9575 = get_wall_time();
+                        "scan_stage2_9510", global_work_sizze_10139[0],
+                        local_work_sizze_10143[0], (int) (0 +
+                                                          smax64((int64_t) 1,
+                                                                 (int64_t) 4 *
+                                                                 stage1_num_groups_9771)));
+                time_start_10140 = get_wall_time();
             }
             OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage2_8988,
+                                                            ctx->scan_stage2_9510,
                                                             1, NULL,
-                                                            global_work_sizze_9574,
-                                                            local_work_sizze_9578,
+                                                            global_work_sizze_10139,
+                                                            local_work_sizze_10143,
                                                             0, NULL,
                                                             ctx->profiling_paused ||
                                                             !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage2_8988_runs,
-                                                                                                      &ctx->scan_stage2_8988_total_runtime)));
+                                                                                                      &ctx->scan_stage2_9510_runs,
+                                                                                                      &ctx->scan_stage2_9510_total_runtime)));
             if (ctx->debugging) {
                 OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9576 = get_wall_time();
+                time_end_10141 = get_wall_time();
                 
-                long time_diff_9577 = time_end_9576 - time_start_9575;
+                long time_diff_10142 = time_end_10141 - time_start_10140;
                 
                 fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage2_8988", time_diff_9577);
+                        "scan_stage2_9510", time_diff_10142);
             }
         }
         
-        int32_t required_groups_9260 = sext_i64_i32(sdiv_up64((int64_t) 3,
-                                                              segscan_group_sizze_8983));
+        int32_t required_groups_9817 = sext_i64_i32(sdiv_up64((int64_t) 3,
+                                                              segscan_group_sizze_9505));
         
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_8988, 1,
-                                                sizeof(num_groups_8985),
-                                                &num_groups_8985));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_8988, 2,
-                                                sizeof(num_threads_9215),
-                                                &num_threads_9215));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_8988, 3,
-                                                sizeof(required_groups_9260),
-                                                &required_groups_9260));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_8988, 4,
-                                                sizeof(mem_9161.mem),
-                                                &mem_9161.mem));
-        if (1 * ((size_t) num_groups_8985 *
-                 (size_t) segscan_group_sizze_8983) != 0) {
-            const size_t global_work_sizze_9579[1] = {(size_t) num_groups_8985 *
-                         (size_t) segscan_group_sizze_8983};
-            const size_t local_work_sizze_9583[1] =
-                         {(size_t) segscan_group_sizze_8983};
-            int64_t time_start_9580 = 0, time_end_9581 = 0;
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9510, 1,
+                                                sizeof(num_groups_9507),
+                                                &num_groups_9507));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9510, 2,
+                                                sizeof(num_threads_9772),
+                                                &num_threads_9772));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9510, 3,
+                                                sizeof(required_groups_9817),
+                                                &required_groups_9817));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9510, 4,
+                                                sizeof(mem_9687.mem),
+                                                &mem_9687.mem));
+        if (1 * ((size_t) num_groups_9507 *
+                 (size_t) segscan_group_sizze_9505) != 0) {
+            const size_t global_work_sizze_10144[1] =
+                         {(size_t) num_groups_9507 *
+                         (size_t) segscan_group_sizze_9505};
+            const size_t local_work_sizze_10148[1] =
+                         {(size_t) segscan_group_sizze_9505};
+            int64_t time_start_10145 = 0, time_end_10146 = 0;
             
             if (ctx->debugging) {
                 fprintf(ctx->log,
                         "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage3_8988", global_work_sizze_9579[0],
-                        local_work_sizze_9583[0], (int) 0);
-                time_start_9580 = get_wall_time();
+                        "scan_stage3_9510", global_work_sizze_10144[0],
+                        local_work_sizze_10148[0], (int) 0);
+                time_start_10145 = get_wall_time();
             }
             OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage3_8988,
+                                                            ctx->scan_stage3_9510,
                                                             1, NULL,
-                                                            global_work_sizze_9579,
-                                                            local_work_sizze_9583,
+                                                            global_work_sizze_10144,
+                                                            local_work_sizze_10148,
                                                             0, NULL,
                                                             ctx->profiling_paused ||
                                                             !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage3_8988_runs,
-                                                                                                      &ctx->scan_stage3_8988_total_runtime)));
+                                                                                                      &ctx->scan_stage3_9510_runs,
+                                                                                                      &ctx->scan_stage3_9510_total_runtime)));
             if (ctx->debugging) {
                 OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9581 = get_wall_time();
+                time_end_10146 = get_wall_time();
                 
-                long time_diff_9582 = time_end_9581 - time_start_9580;
+                long time_diff_10147 = time_end_10146 - time_start_10145;
                 
                 fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage3_8988", time_diff_9582);
+                        "scan_stage3_9510", time_diff_10147);
             }
         }
     }
     
-    int32_t x_8742;
-    int32_t read_res_9584;
+    int32_t x_9668;
+    int32_t read_res_10149;
     
     OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9161.mem,
+                                                 mem_9687.mem,
                                                  ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
                                                  (int64_t) 2 * sizeof(int32_t),
                                                  sizeof(int32_t),
-                                                 &read_res_9584, 0, NULL,
+                                                 &read_res_10149, 0, NULL,
                                                  ctx->profiling_paused ||
                                                  !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
                                                                                            &ctx->copy_scalar_from_dev_runs,
                                                                                            &ctx->copy_scalar_from_dev_total_runtime)));
     if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
         return 1;
-    x_8742 = read_res_9584;
+    x_9668 = read_res_10149;
     
-    int32_t binop_p_8743 = add32(1, x_8742);
-    int64_t defunc_0_f_res_8744 = sext_i32_i64(binop_p_8743);
-    int64_t binop_y_9162 = (int64_t) 4 * defunc_0_f_res_8744;
-    int64_t bytes_9163 = smax64((int64_t) 0, binop_y_9162);
+    int32_t binop_p_9265 = add32(1, x_9668);
+    int64_t defunc_0_f_res_9266 = sext_i32_i64(binop_p_9265);
+    int64_t segmap_group_sizze_9515;
     
-    if (memblock_alloc_device(ctx, &mem_9164, bytes_9163, "mem_9164")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (futrts_builtinzhreplicate_i32(ctx, mem_9164, defunc_0_f_res_8744, 0) !=
-        0) {
-        err = 1;
-        goto cleanup;
-    }
+    segmap_group_sizze_9515 = *ctx->tuning_params.segmap_group_sizze_9514;
     
-    int64_t segmap_group_sizze_8993;
+    int64_t segmap_usable_groups_9516 = sdiv_up_safe64((int64_t) 3,
+                                                       segmap_group_sizze_9515);
+    int64_t segscan_group_sizze_9519;
     
-    segmap_group_sizze_8993 = *ctx->tuning_params.segmap_group_sizze_8992;
+    segscan_group_sizze_9519 = *ctx->tuning_params.segscan_group_sizze_9518;
     
-    int64_t segmap_usable_groups_8994 = sdiv_up64((int64_t) 3,
-                                                  segmap_group_sizze_8993);
+    int64_t num_groups_9521;
+    int32_t max_num_groups_9830;
     
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    max_num_groups_9830 = *ctx->tuning_params.segscan_num_groups_9520;
+    num_groups_9521 = sext_i64_i32(smax64((int64_t) 1,
+                                          smin64(sdiv_up64(defunc_0_f_res_9266,
+                                                           segscan_group_sizze_9519),
+                                                 sext_i32_i64(max_num_groups_9830))));
     
-    int32_t virt_num_groups_9285 = sext_i64_i32(sdiv_up64((int64_t) 3,
-                                                          segmap_group_sizze_8993));
+    int64_t segmap_group_sizze_9537;
     
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_8990, 1,
-                                            sizeof(ctx->failure_is_an_option),
-                                            &ctx->failure_is_an_option));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_8990, 3,
-                                            sizeof(defunc_0_f_res_8744),
-                                            &defunc_0_f_res_8744));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_8990, 4,
-                                            sizeof(mem_9161.mem),
-                                            &mem_9161.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_8990, 5,
-                                            sizeof(mem_9164.mem),
-                                            &mem_9164.mem));
-    if (1 * ((size_t) segmap_usable_groups_8994 *
-             (size_t) segmap_group_sizze_8993) != 0) {
-        const size_t global_work_sizze_9585[1] =
-                     {(size_t) segmap_usable_groups_8994 *
-                     (size_t) segmap_group_sizze_8993};
-        const size_t local_work_sizze_9589[1] =
-                     {(size_t) segmap_group_sizze_8993};
-        int64_t time_start_9586 = 0, time_end_9587 = 0;
-        
-        if (ctx->debugging) {
-            fprintf(ctx->log,
-                    "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segmap_8990", global_work_sizze_9585[0],
-                    local_work_sizze_9589[0], (int) 0);
-            time_start_9586 = get_wall_time();
-        }
-        OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segmap_8990, 1,
-                                                        NULL,
-                                                        global_work_sizze_9585,
-                                                        local_work_sizze_9589,
-                                                        0, NULL,
-                                                        ctx->profiling_paused ||
-                                                        !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segmap_8990_runs,
-                                                                                                  &ctx->segmap_8990_total_runtime)));
-        if (ctx->debugging) {
-            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9587 = get_wall_time();
-            
-            long time_diff_9588 = time_end_9587 - time_start_9586;
-            
-            fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_8990",
-                    time_diff_9588);
-        }
-    }
-    ctx->failure_is_an_option = 1;
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    if (memblock_unref_device(ctx, &mem_9161, "mem_9161") != 0)
-        return 1;
+    segmap_group_sizze_9537 = *ctx->tuning_params.segmap_group_sizze_9528;
     
-    int64_t segscan_group_sizze_8997;
+    int64_t segmap_usable_groups_9538 = sdiv_up_safe64(defunc_0_f_res_9266,
+                                                       segmap_group_sizze_9537);
+    bool dim_match_9300 = (int64_t) 6 == defunc_0_f_res_9266;
+    bool empty_or_match_cert_9301;
     
-    segscan_group_sizze_8997 = *ctx->tuning_params.segscan_group_sizze_8996;
-    
-    int64_t num_groups_8999;
-    int32_t max_num_groups_9294;
-    
-    max_num_groups_9294 = *ctx->tuning_params.segscan_num_groups_8998;
-    num_groups_8999 = sext_i64_i32(smax64((int64_t) 1,
-                                          smin64(sdiv_up64(defunc_0_f_res_8744,
-                                                           segscan_group_sizze_8997),
-                                                 sext_i32_i64(max_num_groups_9294))));
-    if (memblock_alloc_device(ctx, &mem_9169, bytes_9163, "mem_9169")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (slt64((int64_t) 0, defunc_0_f_res_8744)) {
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegScan");
-        
-        int64_t stage1_max_num_groups_9295;
-        
-        stage1_max_num_groups_9295 = ctx->opencl.max_group_size;
-        
-        int64_t stage1_num_groups_9296 = smin64(stage1_max_num_groups_9295,
-                                                num_groups_8999);
-        int32_t num_threads_9297 = sext_i64_i32(stage1_num_groups_9296 *
-                segscan_group_sizze_8997);
-        
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9002, 1,
-                                                (size_t) smax64((int64_t) 1,
-                                                                (int64_t) 4 *
-                                                                segscan_group_sizze_8997),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9002, 2,
-                                                sizeof(defunc_0_f_res_8744),
-                                                &defunc_0_f_res_8744));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9002, 3,
-                                                sizeof(num_threads_9297),
-                                                &num_threads_9297));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9002, 4,
-                                                sizeof(mem_9164.mem),
-                                                &mem_9164.mem));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9002, 5,
-                                                sizeof(mem_9169.mem),
-                                                &mem_9169.mem));
-        if (1 * ((size_t) stage1_num_groups_9296 *
-                 (size_t) segscan_group_sizze_8997) != 0) {
-            const size_t global_work_sizze_9590[1] =
-                         {(size_t) stage1_num_groups_9296 *
-                         (size_t) segscan_group_sizze_8997};
-            const size_t local_work_sizze_9594[1] =
-                         {(size_t) segscan_group_sizze_8997};
-            int64_t time_start_9591 = 0, time_end_9592 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage1_9002", global_work_sizze_9590[0],
-                        local_work_sizze_9594[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    segscan_group_sizze_8997)));
-                time_start_9591 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage1_9002,
-                                                            1, NULL,
-                                                            global_work_sizze_9590,
-                                                            local_work_sizze_9594,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage1_9002_runs,
-                                                                                                      &ctx->scan_stage1_9002_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9592 = get_wall_time();
-                
-                long time_diff_9593 = time_end_9592 - time_start_9591;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage1_9002", time_diff_9593);
-            }
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s: %llu%c", "elems_per_group",
-                    (long long) (segscan_group_sizze_8997 *
-                                 sdiv_up64(defunc_0_f_res_8744,
-                                           sext_i32_i64(num_threads_9297))),
-                    '\n');
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9002, 1,
-                                                (size_t) smax64((int64_t) 1,
-                                                                (int64_t) 4 *
-                                                                stage1_num_groups_9296),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9002, 2,
-                                                sizeof(defunc_0_f_res_8744),
-                                                &defunc_0_f_res_8744));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9002, 3,
-                                                sizeof(stage1_num_groups_9296),
-                                                &stage1_num_groups_9296));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9002, 4,
-                                                sizeof(num_threads_9297),
-                                                &num_threads_9297));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9002, 5,
-                                                sizeof(mem_9169.mem),
-                                                &mem_9169.mem));
-        if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9296) != 0) {
-            const size_t global_work_sizze_9595[1] = {(size_t) (int64_t) 1 *
-                         (size_t) stage1_num_groups_9296};
-            const size_t local_work_sizze_9599[1] =
-                         {(size_t) stage1_num_groups_9296};
-            int64_t time_start_9596 = 0, time_end_9597 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage2_9002", global_work_sizze_9595[0],
-                        local_work_sizze_9599[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    stage1_num_groups_9296)));
-                time_start_9596 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage2_9002,
-                                                            1, NULL,
-                                                            global_work_sizze_9595,
-                                                            local_work_sizze_9599,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage2_9002_runs,
-                                                                                                      &ctx->scan_stage2_9002_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9597 = get_wall_time();
-                
-                long time_diff_9598 = time_end_9597 - time_start_9596;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage2_9002", time_diff_9598);
-            }
-        }
-        
-        int32_t required_groups_9342 =
-                sext_i64_i32(sdiv_up64(defunc_0_f_res_8744,
-                                       segscan_group_sizze_8997));
-        
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9002, 1,
-                                                sizeof(defunc_0_f_res_8744),
-                                                &defunc_0_f_res_8744));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9002, 2,
-                                                sizeof(num_groups_8999),
-                                                &num_groups_8999));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9002, 3,
-                                                sizeof(num_threads_9297),
-                                                &num_threads_9297));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9002, 4,
-                                                sizeof(required_groups_9342),
-                                                &required_groups_9342));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9002, 5,
-                                                sizeof(mem_9169.mem),
-                                                &mem_9169.mem));
-        if (1 * ((size_t) num_groups_8999 *
-                 (size_t) segscan_group_sizze_8997) != 0) {
-            const size_t global_work_sizze_9600[1] = {(size_t) num_groups_8999 *
-                         (size_t) segscan_group_sizze_8997};
-            const size_t local_work_sizze_9604[1] =
-                         {(size_t) segscan_group_sizze_8997};
-            int64_t time_start_9601 = 0, time_end_9602 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage3_9002", global_work_sizze_9600[0],
-                        local_work_sizze_9604[0], (int) 0);
-                time_start_9601 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage3_9002,
-                                                            1, NULL,
-                                                            global_work_sizze_9600,
-                                                            local_work_sizze_9604,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage3_9002_runs,
-                                                                                                      &ctx->scan_stage3_9002_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9602 = get_wall_time();
-                
-                long time_diff_9603 = time_end_9602 - time_start_9601;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage3_9002", time_diff_9603);
-            }
-        }
-    }
-    
-    int64_t segmap_group_sizze_9015;
-    
-    segmap_group_sizze_9015 = *ctx->tuning_params.segmap_group_sizze_9006;
-    
-    int64_t segmap_usable_groups_9016 = sdiv_up64(defunc_0_f_res_8744,
-                                                  segmap_group_sizze_9015);
-    
-    if (memblock_alloc_device(ctx, &mem_9173, bytes_9163, "mem_9173")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_groups_9355 = sext_i64_i32(sdiv_up64(defunc_0_f_res_8744,
-                                                          segmap_group_sizze_9015));
-    
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9019, 1,
-                                            sizeof(defunc_0_f_res_8744),
-                                            &defunc_0_f_res_8744));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9019, 2,
-                                            sizeof(mem_9169.mem),
-                                            &mem_9169.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9019, 3,
-                                            sizeof(mem_9173.mem),
-                                            &mem_9173.mem));
-    if (1 * ((size_t) segmap_usable_groups_9016 *
-             (size_t) segmap_group_sizze_9015) != 0) {
-        const size_t global_work_sizze_9605[1] =
-                     {(size_t) segmap_usable_groups_9016 *
-                     (size_t) segmap_group_sizze_9015};
-        const size_t local_work_sizze_9609[1] =
-                     {(size_t) segmap_group_sizze_9015};
-        int64_t time_start_9606 = 0, time_end_9607 = 0;
-        
-        if (ctx->debugging) {
-            fprintf(ctx->log,
-                    "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segmap_9019", global_work_sizze_9605[0],
-                    local_work_sizze_9609[0], (int) 0);
-            time_start_9606 = get_wall_time();
-        }
-        OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segmap_9019, 1,
-                                                        NULL,
-                                                        global_work_sizze_9605,
-                                                        local_work_sizze_9609,
-                                                        0, NULL,
-                                                        ctx->profiling_paused ||
-                                                        !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segmap_9019_runs,
-                                                                                                  &ctx->segmap_9019_total_runtime)));
-        if (ctx->debugging) {
-            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9607 = get_wall_time();
-            
-            long time_diff_9608 = time_end_9607 - time_start_9606;
-            
-            fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9019",
-                    time_diff_9608);
-        }
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    if (memblock_unref_device(ctx, &mem_9169, "mem_9169") != 0)
-        return 1;
-    
-    bool dim_match_8779 = (int64_t) 6 == defunc_0_f_res_8744;
-    bool empty_or_match_cert_8780;
-    
-    if (!dim_match_8779) {
+    if (!dim_match_9300) {
         ctx->error = msgprintf("Error: %s%lld%s%lld%s\n\nBacktrace:\n%s",
                                "Value of (core language) shape (",
-                               (long long) defunc_0_f_res_8744,
+                               (long long) defunc_0_f_res_9266,
                                ") cannot match shape of type `[",
                                (long long) (int64_t) 6, "]i32`.",
-                               "-> #0  TSP.fut:52:55-77\n   #1  TSP.fut:100:23-53\n");
+                               "-> #0  TSP.fut:52:55-77\n   #1  TSP.fut:87:25-53\n   #2  TSP.fut:91:62-70\n   #3  TSP.fut:103:19-45\n");
         err = FUTHARK_PROGRAM_ERROR;
         goto cleanup;
     }
     
-    int64_t segscan_group_sizze_9025;
+    int64_t segscan_group_sizze_9547;
     
-    segscan_group_sizze_9025 = *ctx->tuning_params.segscan_group_sizze_9024;
+    segscan_group_sizze_9547 = *ctx->tuning_params.segscan_group_sizze_9546;
     
-    int64_t num_groups_9027;
-    int32_t max_num_groups_9364;
+    int64_t num_groups_9549;
+    int32_t max_num_groups_9831;
     
-    max_num_groups_9364 = *ctx->tuning_params.segscan_num_groups_9026;
-    num_groups_9027 = sext_i64_i32(smax64((int64_t) 1,
+    max_num_groups_9831 = *ctx->tuning_params.segscan_num_groups_9548;
+    num_groups_9549 = sext_i64_i32(smax64((int64_t) 1,
                                           smin64(sdiv_up64((int64_t) 6,
-                                                           segscan_group_sizze_9025),
-                                                 sext_i32_i64(max_num_groups_9364))));
-    if (memblock_alloc_device(ctx, &mem_9176, (int64_t) 6, "mem_9176")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc_device(ctx, &mem_9178, (int64_t) 24, "mem_9178")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (slt64((int64_t) 0, (int64_t) 6)) {
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s\n", "\n# SegScan");
-        
-        int64_t stage1_max_num_groups_9365;
-        
-        stage1_max_num_groups_9365 = ctx->opencl.max_group_size;
-        
-        int64_t stage1_num_groups_9366 = smin64(stage1_max_num_groups_9365,
-                                                num_groups_9027);
-        int32_t num_threads_9367 = sext_i64_i32(stage1_num_groups_9366 *
-                segscan_group_sizze_9025);
-        
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 1,
-                                                (size_t) smax64((int64_t) 1,
-                                                                (int64_t) 4 *
-                                                                segscan_group_sizze_9025),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 2,
-                                                (size_t) smax64((int64_t) 1,
-                                                                segscan_group_sizze_9025),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 3,
-                                                sizeof(num_threads_9367),
-                                                &num_threads_9367));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 4,
-                                                sizeof(mem_9164.mem),
-                                                &mem_9164.mem));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 5,
-                                                sizeof(mem_9176.mem),
-                                                &mem_9176.mem));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9030, 6,
-                                                sizeof(mem_9178.mem),
-                                                &mem_9178.mem));
-        if (1 * ((size_t) stage1_num_groups_9366 *
-                 (size_t) segscan_group_sizze_9025) != 0) {
-            const size_t global_work_sizze_9610[1] =
-                         {(size_t) stage1_num_groups_9366 *
-                         (size_t) segscan_group_sizze_9025};
-            const size_t local_work_sizze_9614[1] =
-                         {(size_t) segscan_group_sizze_9025};
-            int64_t time_start_9611 = 0, time_end_9612 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage1_9030", global_work_sizze_9610[0],
-                        local_work_sizze_9614[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    segscan_group_sizze_9025) +
-                                                         smax64((int64_t) 1,
-                                                                segscan_group_sizze_9025)));
-                time_start_9611 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage1_9030,
-                                                            1, NULL,
-                                                            global_work_sizze_9610,
-                                                            local_work_sizze_9614,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage1_9030_runs,
-                                                                                                      &ctx->scan_stage1_9030_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9612 = get_wall_time();
-                
-                long time_diff_9613 = time_end_9612 - time_start_9611;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage1_9030", time_diff_9613);
-            }
-        }
-        if (ctx->debugging)
-            fprintf(ctx->log, "%s: %llu%c", "elems_per_group",
-                    (long long) (segscan_group_sizze_9025 *
-                                 sdiv_up64((int64_t) 6,
-                                           sext_i32_i64(num_threads_9367))),
-                    '\n');
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 1,
-                                                (size_t) smax64((int64_t) 1,
-                                                                (int64_t) 4 *
-                                                                stage1_num_groups_9366),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 2,
-                                                (size_t) smax64((int64_t) 1,
-                                                                stage1_num_groups_9366),
-                                                NULL));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 3,
-                                                sizeof(stage1_num_groups_9366),
-                                                &stage1_num_groups_9366));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 4,
-                                                sizeof(num_threads_9367),
-                                                &num_threads_9367));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 5,
-                                                sizeof(mem_9176.mem),
-                                                &mem_9176.mem));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9030, 6,
-                                                sizeof(mem_9178.mem),
-                                                &mem_9178.mem));
-        if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9366) != 0) {
-            const size_t global_work_sizze_9615[1] = {(size_t) (int64_t) 1 *
-                         (size_t) stage1_num_groups_9366};
-            const size_t local_work_sizze_9619[1] =
-                         {(size_t) stage1_num_groups_9366};
-            int64_t time_start_9616 = 0, time_end_9617 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage2_9030", global_work_sizze_9615[0],
-                        local_work_sizze_9619[0], (int) (0 + smax64((int64_t) 1,
-                                                                    (int64_t) 4 *
-                                                                    stage1_num_groups_9366) +
-                                                         smax64((int64_t) 1,
-                                                                stage1_num_groups_9366)));
-                time_start_9616 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage2_9030,
-                                                            1, NULL,
-                                                            global_work_sizze_9615,
-                                                            local_work_sizze_9619,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage2_9030_runs,
-                                                                                                      &ctx->scan_stage2_9030_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9617 = get_wall_time();
-                
-                long time_diff_9618 = time_end_9617 - time_start_9616;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage2_9030", time_diff_9618);
-            }
-        }
-        
-        int32_t required_groups_9431 = sext_i64_i32(sdiv_up64((int64_t) 6,
-                                                              segscan_group_sizze_9025));
-        
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9030, 1,
-                                                sizeof(num_groups_9027),
-                                                &num_groups_9027));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9030, 2,
-                                                sizeof(num_threads_9367),
-                                                &num_threads_9367));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9030, 3,
-                                                sizeof(required_groups_9431),
-                                                &required_groups_9431));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9030, 4,
-                                                sizeof(mem_9176.mem),
-                                                &mem_9176.mem));
-        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9030, 5,
-                                                sizeof(mem_9178.mem),
-                                                &mem_9178.mem));
-        if (1 * ((size_t) num_groups_9027 *
-                 (size_t) segscan_group_sizze_9025) != 0) {
-            const size_t global_work_sizze_9620[1] = {(size_t) num_groups_9027 *
-                         (size_t) segscan_group_sizze_9025};
-            const size_t local_work_sizze_9624[1] =
-                         {(size_t) segscan_group_sizze_9025};
-            int64_t time_start_9621 = 0, time_end_9622 = 0;
-            
-            if (ctx->debugging) {
-                fprintf(ctx->log,
-                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                        "scan_stage3_9030", global_work_sizze_9620[0],
-                        local_work_sizze_9624[0], (int) 0);
-                time_start_9621 = get_wall_time();
-            }
-            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                            ctx->scan_stage3_9030,
-                                                            1, NULL,
-                                                            global_work_sizze_9620,
-                                                            local_work_sizze_9624,
-                                                            0, NULL,
-                                                            ctx->profiling_paused ||
-                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                      &ctx->scan_stage3_9030_runs,
-                                                                                                      &ctx->scan_stage3_9030_total_runtime)));
-            if (ctx->debugging) {
-                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-                time_end_9622 = get_wall_time();
-                
-                long time_diff_9623 = time_end_9622 - time_start_9621;
-                
-                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                        "scan_stage3_9030", time_diff_9623);
-            }
-        }
-    }
-    if (memblock_unref_device(ctx, &mem_9164, "mem_9164") != 0)
-        return 1;
-    if (memblock_unref_device(ctx, &mem_9176, "mem_9176") != 0)
-        return 1;
+                                                           segscan_group_sizze_9547),
+                                                 sext_i32_i64(max_num_groups_9831))));
     
-    int64_t segmap_group_sizze_9045;
+    int64_t segmap_group_sizze_9567;
     
-    segmap_group_sizze_9045 = *ctx->tuning_params.segmap_group_sizze_9034;
+    segmap_group_sizze_9567 = *ctx->tuning_params.segmap_group_sizze_9556;
     
-    int64_t segmap_usable_groups_9046 = sdiv_up64((int64_t) 6,
-                                                  segmap_group_sizze_9045);
+    int64_t segmap_usable_groups_9568 = sdiv_up_safe64((int64_t) 6,
+                                                       segmap_group_sizze_9567);
+    int64_t segred_group_sizze_9579;
     
-    if (memblock_alloc_device(ctx, &mem_9181, (int64_t) 24, "mem_9181")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
+    segred_group_sizze_9579 = *ctx->tuning_params.segred_group_sizze_9578;
     
-    int32_t virt_num_groups_9444 = sext_i64_i32(sdiv_up64((int64_t) 6,
-                                                          segmap_group_sizze_9045));
+    int64_t num_groups_9581;
+    int32_t max_num_groups_9832;
     
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9049, 1,
-                                            sizeof(mem_9178.mem),
-                                            &mem_9178.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9049, 2,
-                                            sizeof(mem_9181.mem),
-                                            &mem_9181.mem));
-    if (1 * ((size_t) segmap_usable_groups_9046 *
-             (size_t) segmap_group_sizze_9045) != 0) {
-        const size_t global_work_sizze_9625[1] =
-                     {(size_t) segmap_usable_groups_9046 *
-                     (size_t) segmap_group_sizze_9045};
-        const size_t local_work_sizze_9629[1] =
-                     {(size_t) segmap_group_sizze_9045};
-        int64_t time_start_9626 = 0, time_end_9627 = 0;
-        
-        if (ctx->debugging) {
-            fprintf(ctx->log,
-                    "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segmap_9049", global_work_sizze_9625[0],
-                    local_work_sizze_9629[0], (int) 0);
-            time_start_9626 = get_wall_time();
-        }
-        OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segmap_9049, 1,
-                                                        NULL,
-                                                        global_work_sizze_9625,
-                                                        local_work_sizze_9629,
-                                                        0, NULL,
-                                                        ctx->profiling_paused ||
-                                                        !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segmap_9049_runs,
-                                                                                                  &ctx->segmap_9049_total_runtime)));
-        if (ctx->debugging) {
-            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9627 = get_wall_time();
-            
-            long time_diff_9628 = time_end_9627 - time_start_9626;
-            
-            fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9049",
-                    time_diff_9628);
-        }
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    if (memblock_unref_device(ctx, &mem_9178, "mem_9178") != 0)
-        return 1;
-    
-    int64_t segred_group_sizze_9057;
-    
-    segred_group_sizze_9057 = *ctx->tuning_params.segred_group_sizze_9056;
-    
-    int64_t num_groups_9059;
-    int32_t max_num_groups_9453;
-    
-    max_num_groups_9453 = *ctx->tuning_params.segred_num_groups_9058;
-    num_groups_9059 = sext_i64_i32(smax64((int64_t) 1,
+    max_num_groups_9832 = *ctx->tuning_params.segred_num_groups_9580;
+    num_groups_9581 = sext_i64_i32(smax64((int64_t) 1,
                                           smin64(sdiv_up64((int64_t) 6,
-                                                           segred_group_sizze_9057),
-                                                 sext_i32_i64(max_num_groups_9453))));
-    if (memblock_alloc_device(ctx, &mem_9184, (int64_t) 4, "mem_9184")) {
+                                                           segred_group_sizze_9579),
+                                                 sext_i32_i64(max_num_groups_9832))));
+    
+    int64_t binop_y_9697 = (int64_t) 4 * defunc_0_f_res_9266;
+    int64_t bytes_9698 = smax64((int64_t) 0, binop_y_9697);
+    
+    if (memblock_alloc_device(ctx, &mem_9699, bytes_9698, "mem_9699")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_9186, (int64_t) 4, "mem_9186")) {
+    if (memblock_alloc_device(ctx, &mem_9704, bytes_9698, "mem_9704")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_9188, (int64_t) 4, "mem_9188")) {
+    if (memblock_alloc_device(ctx, &mem_9708, bytes_9698, "mem_9708")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9711, (int64_t) 6, "mem_9711")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9713, (int64_t) 24, "mem_9713")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9716, (int64_t) 24, "mem_9716")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9719, (int64_t) 4, "mem_9719")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9721, (int64_t) 4, "mem_9721")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &mem_9723, (int64_t) 4, "mem_9723")) {
         err = 1;
         goto cleanup;
     }
     
-    struct memblock_device counter_mem_9454 = ctx->counter_mem_9454;
+    int64_t ext_9736;
+    int64_t ext_9734;
+    int64_t ext_9733;
+    bool twoOptAlg_res_9244;
+    bool loop_while_9247;
+    int32_t cond_9249;
+    int64_t ctx_param_ext_9688;
+    int64_t ctx_param_ext_9689;
+    int64_t ctx_param_ext_9690;
+    int64_t ctx_param_ext_9691;
     
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_9456, (int64_t) 4 *
-                              num_groups_9059, "segred_tmp_mem_9456")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_9458, (int64_t) 4 *
-                              num_groups_9059, "segred_tmp_mem_9458")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_9460, (int64_t) 4 *
-                              num_groups_9059, "segred_tmp_mem_9460")) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    int64_t num_threads_9462 = num_groups_9059 * segred_group_sizze_9057;
-    
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegRed");
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 1,
-                                            sizeof(ctx->failure_is_an_option),
-                                            &ctx->failure_is_an_option));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 3,
-                                            (size_t) ((int64_t) 4 *
-                                                      segred_group_sizze_9057),
-                                            NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 4,
-                                            (size_t) ((int64_t) 4 *
-                                                      segred_group_sizze_9057),
-                                            NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 5,
-                                            (size_t) ((int64_t) 4 *
-                                                      segred_group_sizze_9057),
-                                            NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 6,
-                                            (size_t) 1, NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 7,
-                                            sizeof(defunc_0_f_res_8744),
-                                            &defunc_0_f_res_8744));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 8,
-                                            sizeof(num_groups_9059),
-                                            &num_groups_9059));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 9,
-                                            sizeof(mem_9156.mem),
-                                            &mem_9156.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 10,
-                                            sizeof(mem_9158.mem),
-                                            &mem_9158.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 11,
-                                            sizeof(mem_9173.mem),
-                                            &mem_9173.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 12,
-                                            sizeof(mem_9181.mem),
-                                            &mem_9181.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 13,
-                                            sizeof(mem_9184.mem),
-                                            &mem_9184.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 14,
-                                            sizeof(mem_9186.mem),
-                                            &mem_9186.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 15,
-                                            sizeof(mem_9188.mem),
-                                            &mem_9188.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 16,
-                                            sizeof(counter_mem_9454.mem),
-                                            &counter_mem_9454.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 17,
-                                            sizeof(segred_tmp_mem_9456.mem),
-                                            &segred_tmp_mem_9456.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 18,
-                                            sizeof(segred_tmp_mem_9458.mem),
-                                            &segred_tmp_mem_9458.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9066, 19,
-                                            sizeof(segred_tmp_mem_9460.mem),
-                                            &segred_tmp_mem_9460.mem));
-    if (1 * ((size_t) num_groups_9059 * (size_t) segred_group_sizze_9057) !=
-        0) {
-        const size_t global_work_sizze_9631[1] = {(size_t) num_groups_9059 *
-                     (size_t) segred_group_sizze_9057};
-        const size_t local_work_sizze_9635[1] =
-                     {(size_t) segred_group_sizze_9057};
-        int64_t time_start_9632 = 0, time_end_9633 = 0;
+    ctx_param_ext_9688 = (int64_t) 6;
+    ctx_param_ext_9689 = (int64_t) 0;
+    ctx_param_ext_9690 = (int64_t) 1;
+    ctx_param_ext_9691 = (int64_t) 6;
+    if (memblock_set_device(ctx, &mem_param_9692, &mem_9682, "mem_9682") != 0)
+        return 1;
+    loop_while_9247 = 1;
+    cond_9249 = -1;
+    while (loop_while_9247) {
+        if (futrts_builtinzhreplicate_i32(ctx, mem_9699, defunc_0_f_res_9266,
+                                          0) != 0) {
+            err = 1;
+            goto cleanup;
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
         
-        if (ctx->debugging) {
-            fprintf(ctx->log,
-                    "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segred_nonseg_9066", global_work_sizze_9631[0],
-                    local_work_sizze_9635[0], (int) (0 + (int64_t) 4 *
-                                                     segred_group_sizze_9057 +
-                                                     (int64_t) 4 *
-                                                     segred_group_sizze_9057 +
-                                                     (int64_t) 4 *
-                                                     segred_group_sizze_9057 +
-                                                     1));
-            time_start_9632 = get_wall_time();
-        }
-        OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segred_nonseg_9066,
-                                                        1, NULL,
-                                                        global_work_sizze_9631,
-                                                        local_work_sizze_9635,
-                                                        0, NULL,
-                                                        ctx->profiling_paused ||
-                                                        !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segred_nonseg_9066_runs,
-                                                                                                  &ctx->segred_nonseg_9066_total_runtime)));
-        if (ctx->debugging) {
-            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9633 = get_wall_time();
-            
-            long time_diff_9634 = time_end_9633 - time_start_9632;
-            
-            fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                    "segred_nonseg_9066", time_diff_9634);
-        }
-    }
-    ctx->failure_is_an_option = 1;
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
-    if (memblock_unref_device(ctx, &mem_9173, "mem_9173") != 0)
-        return 1;
-    if (memblock_unref_device(ctx, &mem_9181, "mem_9181") != 0)
-        return 1;
-    
-    int32_t read_res_9636;
-    
-    OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9184.mem,
-                                                 ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
-                                                 (int64_t) 0 * sizeof(int32_t),
-                                                 sizeof(int32_t),
-                                                 &read_res_9636, 0, NULL,
-                                                 ctx->profiling_paused ||
-                                                 !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                           &ctx->copy_scalar_from_dev_runs,
-                                                                                           &ctx->copy_scalar_from_dev_total_runtime)));
-    if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
-        return 1;
-    defunc_2_reduce_res_8818 = read_res_9636;
-    if (memblock_unref_device(ctx, &mem_9184, "mem_9184") != 0)
-        return 1;
-    
-    int32_t defunc_2_reduce_res_8819;
-    int32_t read_res_9637;
-    
-    OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9186.mem,
-                                                 ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
-                                                 (int64_t) 0 * sizeof(int32_t),
-                                                 sizeof(int32_t),
-                                                 &read_res_9637, 0, NULL,
-                                                 ctx->profiling_paused ||
-                                                 !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                           &ctx->copy_scalar_from_dev_runs,
-                                                                                           &ctx->copy_scalar_from_dev_total_runtime)));
-    if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
-        return 1;
-    defunc_2_reduce_res_8819 = read_res_9637;
-    if (memblock_unref_device(ctx, &mem_9186, "mem_9186") != 0)
-        return 1;
-    
-    int32_t defunc_2_reduce_res_8820;
-    int32_t read_res_9638;
-    
-    OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9188.mem,
-                                                 ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
-                                                 (int64_t) 0 * sizeof(int32_t),
-                                                 sizeof(int32_t),
-                                                 &read_res_9638, 0, NULL,
-                                                 ctx->profiling_paused ||
-                                                 !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                           &ctx->copy_scalar_from_dev_runs,
-                                                                                           &ctx->copy_scalar_from_dev_total_runtime)));
-    if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
-        return 1;
-    defunc_2_reduce_res_8820 = read_res_9638;
-    if (memblock_unref_device(ctx, &mem_9188, "mem_9188") != 0)
-        return 1;
-    
-    int32_t minI_8919 = add32(1, defunc_2_reduce_res_8819);
-    int64_t segmap_group_sizze_9098;
-    
-    segmap_group_sizze_9098 = *ctx->tuning_params.segmap_group_sizze_9070;
-    
-    int64_t segmap_usable_groups_9099 = sdiv_up64((int64_t) 6,
-                                                  segmap_group_sizze_9098);
-    
-    if (memblock_alloc_device(ctx, &mem_9191, (int64_t) 24, "mem_9191")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "\n# SegMap");
-    
-    int32_t virt_num_groups_9519 = sext_i64_i32(sdiv_up64((int64_t) 6,
-                                                          segmap_group_sizze_9098));
-    
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9102, 1,
-                                            sizeof(ctx->failure_is_an_option),
-                                            &ctx->failure_is_an_option));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9102, 3,
-                                            sizeof(defunc_2_reduce_res_8820),
-                                            &defunc_2_reduce_res_8820));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9102, 4,
-                                            sizeof(minI_8919), &minI_8919));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9102, 5,
-                                            sizeof(mem_9156.mem),
-                                            &mem_9156.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9102, 6,
-                                            sizeof(mem_9191.mem),
-                                            &mem_9191.mem));
-    if (1 * ((size_t) segmap_usable_groups_9099 *
-             (size_t) segmap_group_sizze_9098) != 0) {
-        const size_t global_work_sizze_9639[1] =
-                     {(size_t) segmap_usable_groups_9099 *
-                     (size_t) segmap_group_sizze_9098};
-        const size_t local_work_sizze_9643[1] =
-                     {(size_t) segmap_group_sizze_9098};
-        int64_t time_start_9640 = 0, time_end_9641 = 0;
+        int32_t virt_num_groups_9853 = sext_i64_i32(sdiv_up64((int64_t) 3,
+                                                              segmap_group_sizze_9515));
         
-        if (ctx->debugging) {
-            fprintf(ctx->log,
-                    "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segmap_9102", global_work_sizze_9639[0],
-                    local_work_sizze_9643[0], (int) 0);
-            time_start_9640 = get_wall_time();
-        }
-        OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segmap_9102, 1,
-                                                        NULL,
-                                                        global_work_sizze_9639,
-                                                        local_work_sizze_9643,
-                                                        0, NULL,
-                                                        ctx->profiling_paused ||
-                                                        !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segmap_9102_runs,
-                                                                                                  &ctx->segmap_9102_total_runtime)));
-        if (ctx->debugging) {
-            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9641 = get_wall_time();
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9512, 1,
+                                                sizeof(ctx->failure_is_an_option),
+                                                &ctx->failure_is_an_option));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9512, 3,
+                                                sizeof(defunc_0_f_res_9266),
+                                                &defunc_0_f_res_9266));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9512, 4,
+                                                sizeof(mem_9687.mem),
+                                                &mem_9687.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9512, 5,
+                                                sizeof(mem_9699.mem),
+                                                &mem_9699.mem));
+        if (1 * ((size_t) segmap_usable_groups_9516 *
+                 (size_t) segmap_group_sizze_9515) != 0) {
+            const size_t global_work_sizze_10150[1] =
+                         {(size_t) segmap_usable_groups_9516 *
+                         (size_t) segmap_group_sizze_9515};
+            const size_t local_work_sizze_10154[1] =
+                         {(size_t) segmap_group_sizze_9515};
+            int64_t time_start_10151 = 0, time_end_10152 = 0;
             
-            long time_diff_9642 = time_end_9641 - time_start_9640;
-            
-            fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9102",
-                    time_diff_9642);
+            if (ctx->debugging) {
+                fprintf(ctx->log,
+                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                        "segmap_9512", global_work_sizze_10150[0],
+                        local_work_sizze_10154[0], (int) 0);
+                time_start_10151 = get_wall_time();
+            }
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                            ctx->segmap_9512, 1,
+                                                            NULL,
+                                                            global_work_sizze_10150,
+                                                            local_work_sizze_10154,
+                                                            0, NULL,
+                                                            ctx->profiling_paused ||
+                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                      &ctx->segmap_9512_runs,
+                                                                                                      &ctx->segmap_9512_total_runtime)));
+            if (ctx->debugging) {
+                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                time_end_10152 = get_wall_time();
+                
+                long time_diff_10153 = time_end_10152 - time_start_10151;
+                
+                fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9512",
+                        time_diff_10153);
+            }
         }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        if (slt64((int64_t) 0, defunc_0_f_res_9266)) {
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s\n", "\n# SegScan");
+            
+            int64_t stage1_max_num_groups_9862;
+            
+            stage1_max_num_groups_9862 = ctx->opencl.max_group_size;
+            
+            int64_t stage1_num_groups_9863 = smin64(stage1_max_num_groups_9862,
+                                                    num_groups_9521);
+            int32_t num_threads_9864 = sext_i64_i32(stage1_num_groups_9863 *
+                    segscan_group_sizze_9519);
+            
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9524, 1,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    (int64_t) 4 *
+                                                                    segscan_group_sizze_9519),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9524, 2,
+                                                    sizeof(defunc_0_f_res_9266),
+                                                    &defunc_0_f_res_9266));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9524, 3,
+                                                    sizeof(num_threads_9864),
+                                                    &num_threads_9864));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9524, 4,
+                                                    sizeof(mem_9699.mem),
+                                                    &mem_9699.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9524, 5,
+                                                    sizeof(mem_9704.mem),
+                                                    &mem_9704.mem));
+            if (1 * ((size_t) stage1_num_groups_9863 *
+                     (size_t) segscan_group_sizze_9519) != 0) {
+                const size_t global_work_sizze_10155[1] =
+                             {(size_t) stage1_num_groups_9863 *
+                             (size_t) segscan_group_sizze_9519};
+                const size_t local_work_sizze_10159[1] =
+                             {(size_t) segscan_group_sizze_9519};
+                int64_t time_start_10156 = 0, time_end_10157 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage1_9524", global_work_sizze_10155[0],
+                            local_work_sizze_10159[0], (int) (0 +
+                                                              smax64((int64_t) 1,
+                                                                     (int64_t) 4 *
+                                                                     segscan_group_sizze_9519)));
+                    time_start_10156 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage1_9524,
+                                                                1, NULL,
+                                                                global_work_sizze_10155,
+                                                                local_work_sizze_10159,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage1_9524_runs,
+                                                                                                          &ctx->scan_stage1_9524_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10157 = get_wall_time();
+                    
+                    long time_diff_10158 = time_end_10157 - time_start_10156;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage1_9524", time_diff_10158);
+                }
+            }
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s: %llu%c", "elems_per_group",
+                        (long long) (segscan_group_sizze_9519 *
+                                     sdiv_up64(defunc_0_f_res_9266,
+                                               sext_i32_i64(num_threads_9864))),
+                        '\n');
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9524, 1,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    (int64_t) 4 *
+                                                                    stage1_num_groups_9863),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9524, 2,
+                                                    sizeof(defunc_0_f_res_9266),
+                                                    &defunc_0_f_res_9266));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9524, 3,
+                                                    sizeof(stage1_num_groups_9863),
+                                                    &stage1_num_groups_9863));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9524, 4,
+                                                    sizeof(num_threads_9864),
+                                                    &num_threads_9864));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9524, 5,
+                                                    sizeof(mem_9704.mem),
+                                                    &mem_9704.mem));
+            if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9863) !=
+                0) {
+                const size_t global_work_sizze_10160[1] =
+                             {(size_t) (int64_t) 1 *
+                             (size_t) stage1_num_groups_9863};
+                const size_t local_work_sizze_10164[1] =
+                             {(size_t) stage1_num_groups_9863};
+                int64_t time_start_10161 = 0, time_end_10162 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage2_9524", global_work_sizze_10160[0],
+                            local_work_sizze_10164[0], (int) (0 +
+                                                              smax64((int64_t) 1,
+                                                                     (int64_t) 4 *
+                                                                     stage1_num_groups_9863)));
+                    time_start_10161 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage2_9524,
+                                                                1, NULL,
+                                                                global_work_sizze_10160,
+                                                                local_work_sizze_10164,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage2_9524_runs,
+                                                                                                          &ctx->scan_stage2_9524_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10162 = get_wall_time();
+                    
+                    long time_diff_10163 = time_end_10162 - time_start_10161;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage2_9524", time_diff_10163);
+                }
+            }
+            
+            int32_t required_groups_9909 =
+                    sext_i64_i32(sdiv_up64(defunc_0_f_res_9266,
+                                           segscan_group_sizze_9519));
+            
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9524, 1,
+                                                    sizeof(defunc_0_f_res_9266),
+                                                    &defunc_0_f_res_9266));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9524, 2,
+                                                    sizeof(num_groups_9521),
+                                                    &num_groups_9521));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9524, 3,
+                                                    sizeof(num_threads_9864),
+                                                    &num_threads_9864));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9524, 4,
+                                                    sizeof(required_groups_9909),
+                                                    &required_groups_9909));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9524, 5,
+                                                    sizeof(mem_9704.mem),
+                                                    &mem_9704.mem));
+            if (1 * ((size_t) num_groups_9521 *
+                     (size_t) segscan_group_sizze_9519) != 0) {
+                const size_t global_work_sizze_10165[1] =
+                             {(size_t) num_groups_9521 *
+                             (size_t) segscan_group_sizze_9519};
+                const size_t local_work_sizze_10169[1] =
+                             {(size_t) segscan_group_sizze_9519};
+                int64_t time_start_10166 = 0, time_end_10167 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage3_9524", global_work_sizze_10165[0],
+                            local_work_sizze_10169[0], (int) 0);
+                    time_start_10166 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage3_9524,
+                                                                1, NULL,
+                                                                global_work_sizze_10165,
+                                                                local_work_sizze_10169,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage3_9524_runs,
+                                                                                                          &ctx->scan_stage3_9524_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10167 = get_wall_time();
+                    
+                    long time_diff_10168 = time_end_10167 - time_start_10166;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage3_9524", time_diff_10168);
+                }
+            }
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_groups_9922 =
+                sext_i64_i32(sdiv_up64(defunc_0_f_res_9266,
+                                       segmap_group_sizze_9537));
+        
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9541, 1,
+                                                sizeof(defunc_0_f_res_9266),
+                                                &defunc_0_f_res_9266));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9541, 2,
+                                                sizeof(mem_9704.mem),
+                                                &mem_9704.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9541, 3,
+                                                sizeof(mem_9708.mem),
+                                                &mem_9708.mem));
+        if (1 * ((size_t) segmap_usable_groups_9538 *
+                 (size_t) segmap_group_sizze_9537) != 0) {
+            const size_t global_work_sizze_10170[1] =
+                         {(size_t) segmap_usable_groups_9538 *
+                         (size_t) segmap_group_sizze_9537};
+            const size_t local_work_sizze_10174[1] =
+                         {(size_t) segmap_group_sizze_9537};
+            int64_t time_start_10171 = 0, time_end_10172 = 0;
+            
+            if (ctx->debugging) {
+                fprintf(ctx->log,
+                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                        "segmap_9541", global_work_sizze_10170[0],
+                        local_work_sizze_10174[0], (int) 0);
+                time_start_10171 = get_wall_time();
+            }
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                            ctx->segmap_9541, 1,
+                                                            NULL,
+                                                            global_work_sizze_10170,
+                                                            local_work_sizze_10174,
+                                                            0, NULL,
+                                                            ctx->profiling_paused ||
+                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                      &ctx->segmap_9541_runs,
+                                                                                                      &ctx->segmap_9541_total_runtime)));
+            if (ctx->debugging) {
+                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                time_end_10172 = get_wall_time();
+                
+                long time_diff_10173 = time_end_10172 - time_start_10171;
+                
+                fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9541",
+                        time_diff_10173);
+            }
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        if (slt64((int64_t) 0, (int64_t) 6)) {
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s\n", "\n# SegScan");
+            
+            int64_t stage1_max_num_groups_9931;
+            
+            stage1_max_num_groups_9931 = ctx->opencl.max_group_size;
+            
+            int64_t stage1_num_groups_9932 = smin64(stage1_max_num_groups_9931,
+                                                    num_groups_9549);
+            int32_t num_threads_9933 = sext_i64_i32(stage1_num_groups_9932 *
+                    segscan_group_sizze_9547);
+            
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 1,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    (int64_t) 4 *
+                                                                    segscan_group_sizze_9547),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 2,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    segscan_group_sizze_9547),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 3,
+                                                    sizeof(num_threads_9933),
+                                                    &num_threads_9933));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 4,
+                                                    sizeof(mem_9699.mem),
+                                                    &mem_9699.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 5,
+                                                    sizeof(mem_9711.mem),
+                                                    &mem_9711.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage1_9552, 6,
+                                                    sizeof(mem_9713.mem),
+                                                    &mem_9713.mem));
+            if (1 * ((size_t) stage1_num_groups_9932 *
+                     (size_t) segscan_group_sizze_9547) != 0) {
+                const size_t global_work_sizze_10175[1] =
+                             {(size_t) stage1_num_groups_9932 *
+                             (size_t) segscan_group_sizze_9547};
+                const size_t local_work_sizze_10179[1] =
+                             {(size_t) segscan_group_sizze_9547};
+                int64_t time_start_10176 = 0, time_end_10177 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage1_9552", global_work_sizze_10175[0],
+                            local_work_sizze_10179[0], (int) (0 +
+                                                              smax64((int64_t) 1,
+                                                                     (int64_t) 4 *
+                                                                     segscan_group_sizze_9547) +
+                                                              smax64((int64_t) 1,
+                                                                     segscan_group_sizze_9547)));
+                    time_start_10176 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage1_9552,
+                                                                1, NULL,
+                                                                global_work_sizze_10175,
+                                                                local_work_sizze_10179,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage1_9552_runs,
+                                                                                                          &ctx->scan_stage1_9552_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10177 = get_wall_time();
+                    
+                    long time_diff_10178 = time_end_10177 - time_start_10176;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage1_9552", time_diff_10178);
+                }
+            }
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s: %llu%c", "elems_per_group",
+                        (long long) (segscan_group_sizze_9547 *
+                                     sdiv_up64((int64_t) 6,
+                                               sext_i32_i64(num_threads_9933))),
+                        '\n');
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 1,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    (int64_t) 4 *
+                                                                    stage1_num_groups_9932),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 2,
+                                                    (size_t) smax64((int64_t) 1,
+                                                                    stage1_num_groups_9932),
+                                                    NULL));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 3,
+                                                    sizeof(stage1_num_groups_9932),
+                                                    &stage1_num_groups_9932));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 4,
+                                                    sizeof(num_threads_9933),
+                                                    &num_threads_9933));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 5,
+                                                    sizeof(mem_9711.mem),
+                                                    &mem_9711.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage2_9552, 6,
+                                                    sizeof(mem_9713.mem),
+                                                    &mem_9713.mem));
+            if (1 * ((size_t) (int64_t) 1 * (size_t) stage1_num_groups_9932) !=
+                0) {
+                const size_t global_work_sizze_10180[1] =
+                             {(size_t) (int64_t) 1 *
+                             (size_t) stage1_num_groups_9932};
+                const size_t local_work_sizze_10184[1] =
+                             {(size_t) stage1_num_groups_9932};
+                int64_t time_start_10181 = 0, time_end_10182 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage2_9552", global_work_sizze_10180[0],
+                            local_work_sizze_10184[0], (int) (0 +
+                                                              smax64((int64_t) 1,
+                                                                     (int64_t) 4 *
+                                                                     stage1_num_groups_9932) +
+                                                              smax64((int64_t) 1,
+                                                                     stage1_num_groups_9932)));
+                    time_start_10181 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage2_9552,
+                                                                1, NULL,
+                                                                global_work_sizze_10180,
+                                                                local_work_sizze_10184,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage2_9552_runs,
+                                                                                                          &ctx->scan_stage2_9552_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10182 = get_wall_time();
+                    
+                    long time_diff_10183 = time_end_10182 - time_start_10181;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage2_9552", time_diff_10183);
+                }
+            }
+            
+            int32_t required_groups_9997 = sext_i64_i32(sdiv_up64((int64_t) 6,
+                                                                  segscan_group_sizze_9547));
+            
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9552, 1,
+                                                    sizeof(num_groups_9549),
+                                                    &num_groups_9549));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9552, 2,
+                                                    sizeof(num_threads_9933),
+                                                    &num_threads_9933));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9552, 3,
+                                                    sizeof(required_groups_9997),
+                                                    &required_groups_9997));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9552, 4,
+                                                    sizeof(mem_9711.mem),
+                                                    &mem_9711.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->scan_stage3_9552, 5,
+                                                    sizeof(mem_9713.mem),
+                                                    &mem_9713.mem));
+            if (1 * ((size_t) num_groups_9549 *
+                     (size_t) segscan_group_sizze_9547) != 0) {
+                const size_t global_work_sizze_10185[1] =
+                             {(size_t) num_groups_9549 *
+                             (size_t) segscan_group_sizze_9547};
+                const size_t local_work_sizze_10189[1] =
+                             {(size_t) segscan_group_sizze_9547};
+                int64_t time_start_10186 = 0, time_end_10187 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "scan_stage3_9552", global_work_sizze_10185[0],
+                            local_work_sizze_10189[0], (int) 0);
+                    time_start_10186 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->scan_stage3_9552,
+                                                                1, NULL,
+                                                                global_work_sizze_10185,
+                                                                local_work_sizze_10189,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->scan_stage3_9552_runs,
+                                                                                                          &ctx->scan_stage3_9552_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10187 = get_wall_time();
+                    
+                    long time_diff_10188 = time_end_10187 - time_start_10186;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "scan_stage3_9552", time_diff_10188);
+                }
+            }
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegMap");
+        
+        int32_t virt_num_groups_10010 = sext_i64_i32(sdiv_up64((int64_t) 6,
+                                                               segmap_group_sizze_9567));
+        
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9571, 1,
+                                                sizeof(mem_9713.mem),
+                                                &mem_9713.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9571, 2,
+                                                sizeof(mem_9716.mem),
+                                                &mem_9716.mem));
+        if (1 * ((size_t) segmap_usable_groups_9568 *
+                 (size_t) segmap_group_sizze_9567) != 0) {
+            const size_t global_work_sizze_10190[1] =
+                         {(size_t) segmap_usable_groups_9568 *
+                         (size_t) segmap_group_sizze_9567};
+            const size_t local_work_sizze_10194[1] =
+                         {(size_t) segmap_group_sizze_9567};
+            int64_t time_start_10191 = 0, time_end_10192 = 0;
+            
+            if (ctx->debugging) {
+                fprintf(ctx->log,
+                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                        "segmap_9571", global_work_sizze_10190[0],
+                        local_work_sizze_10194[0], (int) 0);
+                time_start_10191 = get_wall_time();
+            }
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                            ctx->segmap_9571, 1,
+                                                            NULL,
+                                                            global_work_sizze_10190,
+                                                            local_work_sizze_10194,
+                                                            0, NULL,
+                                                            ctx->profiling_paused ||
+                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                      &ctx->segmap_9571_runs,
+                                                                                                      &ctx->segmap_9571_total_runtime)));
+            if (ctx->debugging) {
+                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                time_end_10192 = get_wall_time();
+                
+                long time_diff_10193 = time_end_10192 - time_start_10191;
+                
+                fprintf(ctx->log, "kernel %s runtime: %ldus\n", "segmap_9571",
+                        time_diff_10193);
+            }
+        }
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        struct memblock_device counter_mem_10019 = ctx->counter_mem_10019;
+        
+        if (memblock_alloc_device(ctx, &segred_tmp_mem_10021, (int64_t) 4 *
+                                  num_groups_9581, "segred_tmp_mem_10021")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &segred_tmp_mem_10023, (int64_t) 4 *
+                                  num_groups_9581, "segred_tmp_mem_10023")) {
+            err = 1;
+            goto cleanup;
+        }
+        if (memblock_alloc_device(ctx, &segred_tmp_mem_10025, (int64_t) 4 *
+                                  num_groups_9581, "segred_tmp_mem_10025")) {
+            err = 1;
+            goto cleanup;
+        }
+        
+        int64_t num_threads_10027 = num_groups_9581 * segred_group_sizze_9579;
+        
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "\n# SegRed");
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 1,
+                                                sizeof(ctx->failure_is_an_option),
+                                                &ctx->failure_is_an_option));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 3,
+                                                (size_t) ((int64_t) 4 *
+                                                          segred_group_sizze_9579),
+                                                NULL));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 4,
+                                                (size_t) ((int64_t) 4 *
+                                                          segred_group_sizze_9579),
+                                                NULL));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 5,
+                                                (size_t) ((int64_t) 4 *
+                                                          segred_group_sizze_9579),
+                                                NULL));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 6,
+                                                (size_t) 1, NULL));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 7,
+                                                sizeof(defunc_0_f_res_9266),
+                                                &defunc_0_f_res_9266));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 8,
+                                                sizeof(num_groups_9581),
+                                                &num_groups_9581));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 9,
+                                                sizeof(ctx_param_ext_9689),
+                                                &ctx_param_ext_9689));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 10,
+                                                sizeof(ctx_param_ext_9690),
+                                                &ctx_param_ext_9690));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 11,
+                                                sizeof(mem_9684.mem),
+                                                &mem_9684.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 12,
+                                                sizeof(mem_param_9692.mem),
+                                                &mem_param_9692.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 13,
+                                                sizeof(mem_9708.mem),
+                                                &mem_9708.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 14,
+                                                sizeof(mem_9716.mem),
+                                                &mem_9716.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 15,
+                                                sizeof(mem_9719.mem),
+                                                &mem_9719.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 16,
+                                                sizeof(mem_9721.mem),
+                                                &mem_9721.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 17,
+                                                sizeof(mem_9723.mem),
+                                                &mem_9723.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 18,
+                                                sizeof(counter_mem_10019.mem),
+                                                &counter_mem_10019.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 19,
+                                                sizeof(segred_tmp_mem_10021.mem),
+                                                &segred_tmp_mem_10021.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 20,
+                                                sizeof(segred_tmp_mem_10023.mem),
+                                                &segred_tmp_mem_10023.mem));
+        OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9588, 21,
+                                                sizeof(segred_tmp_mem_10025.mem),
+                                                &segred_tmp_mem_10025.mem));
+        if (1 * ((size_t) num_groups_9581 * (size_t) segred_group_sizze_9579) !=
+            0) {
+            const size_t global_work_sizze_10196[1] =
+                         {(size_t) num_groups_9581 *
+                         (size_t) segred_group_sizze_9579};
+            const size_t local_work_sizze_10200[1] =
+                         {(size_t) segred_group_sizze_9579};
+            int64_t time_start_10197 = 0, time_end_10198 = 0;
+            
+            if (ctx->debugging) {
+                fprintf(ctx->log,
+                        "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                        "segred_nonseg_9588", global_work_sizze_10196[0],
+                        local_work_sizze_10200[0], (int) (0 + (int64_t) 4 *
+                                                          segred_group_sizze_9579 +
+                                                          (int64_t) 4 *
+                                                          segred_group_sizze_9579 +
+                                                          (int64_t) 4 *
+                                                          segred_group_sizze_9579 +
+                                                          1));
+                time_start_10197 = get_wall_time();
+            }
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                            ctx->segred_nonseg_9588,
+                                                            1, NULL,
+                                                            global_work_sizze_10196,
+                                                            local_work_sizze_10200,
+                                                            0, NULL,
+                                                            ctx->profiling_paused ||
+                                                            !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                      &ctx->segred_nonseg_9588_runs,
+                                                                                                      &ctx->segred_nonseg_9588_total_runtime)));
+            if (ctx->debugging) {
+                OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                time_end_10198 = get_wall_time();
+                
+                long time_diff_10199 = time_end_10198 - time_start_10197;
+                
+                fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                        "segred_nonseg_9588", time_diff_10199);
+            }
+        }
+        ctx->failure_is_an_option = 1;
+        if (ctx->debugging)
+            fprintf(ctx->log, "%s\n", "");
+        
+        int32_t defunc_2_reduce_res_9338;
+        int32_t read_res_10201;
+        
+        OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
+                                                     mem_9719.mem,
+                                                     ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
+                                                     (int64_t) 0 *
+                                                     sizeof(int32_t),
+                                                     sizeof(int32_t),
+                                                     &read_res_10201, 0, NULL,
+                                                     ctx->profiling_paused ||
+                                                     !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                               &ctx->copy_scalar_from_dev_runs,
+                                                                                               &ctx->copy_scalar_from_dev_total_runtime)));
+        if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
+            return 1;
+        defunc_2_reduce_res_9338 = read_res_10201;
+        
+        bool cond_9439 = slt32(defunc_2_reduce_res_9338, 0);
+        int64_t ext_9731;
+        
+        if (cond_9439) {
+            ext_9731 = (int64_t) 6;
+        } else {
+            ext_9731 = ctx_param_ext_9691;
+        }
+        
+        int64_t ext_9730;
+        
+        if (cond_9439) {
+            ext_9730 = (int64_t) 6;
+        } else {
+            ext_9730 = ctx_param_ext_9688;
+        }
+        
+        int64_t ext_9729;
+        
+        if (cond_9439) {
+            ext_9729 = (int64_t) 1;
+        } else {
+            ext_9729 = ctx_param_ext_9690;
+        }
+        
+        int64_t ext_9728;
+        
+        if (cond_9439) {
+            ext_9728 = (int64_t) 0;
+        } else {
+            ext_9728 = ctx_param_ext_9689;
+        }
+        if (cond_9439) {
+            int32_t defunc_2_reduce_res_9339;
+            int32_t read_res_10202;
+            
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
+                                                         mem_9721.mem,
+                                                         ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
+                                                         (int64_t) 0 *
+                                                         sizeof(int32_t),
+                                                         sizeof(int32_t),
+                                                         &read_res_10202, 0,
+                                                         NULL,
+                                                         ctx->profiling_paused ||
+                                                         !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                   &ctx->copy_scalar_from_dev_runs,
+                                                                                                   &ctx->copy_scalar_from_dev_total_runtime)));
+            if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
+                return 1;
+            defunc_2_reduce_res_9339 = read_res_10202;
+            
+            int32_t defunc_2_reduce_res_9340;
+            int32_t read_res_10203;
+            
+            OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
+                                                         mem_9723.mem,
+                                                         ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
+                                                         (int64_t) 0 *
+                                                         sizeof(int32_t),
+                                                         sizeof(int32_t),
+                                                         &read_res_10203, 0,
+                                                         NULL,
+                                                         ctx->profiling_paused ||
+                                                         !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                   &ctx->copy_scalar_from_dev_runs,
+                                                                                                   &ctx->copy_scalar_from_dev_total_runtime)));
+            if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
+                return 1;
+            defunc_2_reduce_res_9340 = read_res_10203;
+            
+            int32_t minI_9441 = add32(1, defunc_2_reduce_res_9339);
+            int64_t segmap_group_sizze_9620;
+            
+            segmap_group_sizze_9620 =
+                *ctx->tuning_params.segmap_group_sizze_9592;
+            
+            int64_t segmap_usable_groups_9621 = sdiv_up64((int64_t) 6,
+                                                          segmap_group_sizze_9620);
+            
+            if (memblock_alloc_device(ctx, &mem_9726, (int64_t) 24,
+                                      "mem_9726")) {
+                err = 1;
+                goto cleanup;
+            }
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s\n", "\n# SegMap");
+            
+            int32_t virt_num_groups_10084 = sext_i64_i32(sdiv_up64((int64_t) 6,
+                                                                   segmap_group_sizze_9620));
+            
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 1,
+                                                    sizeof(ctx->failure_is_an_option),
+                                                    &ctx->failure_is_an_option));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 3,
+                                                    sizeof(defunc_2_reduce_res_9340),
+                                                    &defunc_2_reduce_res_9340));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 4,
+                                                    sizeof(minI_9441),
+                                                    &minI_9441));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 5,
+                                                    sizeof(ctx_param_ext_9689),
+                                                    &ctx_param_ext_9689));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 6,
+                                                    sizeof(ctx_param_ext_9690),
+                                                    &ctx_param_ext_9690));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 7,
+                                                    sizeof(mem_param_9692.mem),
+                                                    &mem_param_9692.mem));
+            OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segmap_9624, 8,
+                                                    sizeof(mem_9726.mem),
+                                                    &mem_9726.mem));
+            if (1 * ((size_t) segmap_usable_groups_9621 *
+                     (size_t) segmap_group_sizze_9620) != 0) {
+                const size_t global_work_sizze_10204[1] =
+                             {(size_t) segmap_usable_groups_9621 *
+                             (size_t) segmap_group_sizze_9620};
+                const size_t local_work_sizze_10208[1] =
+                             {(size_t) segmap_group_sizze_9620};
+                int64_t time_start_10205 = 0, time_end_10206 = 0;
+                
+                if (ctx->debugging) {
+                    fprintf(ctx->log,
+                            "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
+                            "segmap_9624", global_work_sizze_10204[0],
+                            local_work_sizze_10208[0], (int) 0);
+                    time_start_10205 = get_wall_time();
+                }
+                OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
+                                                                ctx->segmap_9624,
+                                                                1, NULL,
+                                                                global_work_sizze_10204,
+                                                                local_work_sizze_10208,
+                                                                0, NULL,
+                                                                ctx->profiling_paused ||
+                                                                !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                                          &ctx->segmap_9624_runs,
+                                                                                                          &ctx->segmap_9624_total_runtime)));
+                if (ctx->debugging) {
+                    OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+                    time_end_10206 = get_wall_time();
+                    
+                    long time_diff_10207 = time_end_10206 - time_start_10205;
+                    
+                    fprintf(ctx->log, "kernel %s runtime: %ldus\n",
+                            "segmap_9624", time_diff_10207);
+                }
+            }
+            ctx->failure_is_an_option = 1;
+            if (ctx->debugging)
+                fprintf(ctx->log, "%s\n", "");
+            if (memblock_set_device(ctx, &ext_mem_9727, &mem_9726,
+                                    "mem_9726") != 0)
+                return 1;
+        } else {
+            if (memblock_set_device(ctx, &ext_mem_9727, &mem_param_9692,
+                                    "mem_param_9692") != 0)
+                return 1;
+        }
+        
+        int64_t ctx_param_ext_tmp_9833 = ext_9730;
+        int64_t ctx_param_ext_tmp_9834 = ext_9728;
+        int64_t ctx_param_ext_tmp_9835 = ext_9729;
+        int64_t ctx_param_ext_tmp_9836 = ext_9731;
+        
+        if (memblock_set_device(ctx, &mem_param_tmp_9837, &ext_mem_9727,
+                                "ext_mem_9727") != 0)
+            return 1;
+        
+        bool loop_while_tmp_9838 = cond_9439;
+        int32_t cond_tmp_9840 = defunc_2_reduce_res_9338;
+        
+        ctx_param_ext_9688 = ctx_param_ext_tmp_9833;
+        ctx_param_ext_9689 = ctx_param_ext_tmp_9834;
+        ctx_param_ext_9690 = ctx_param_ext_tmp_9835;
+        ctx_param_ext_9691 = ctx_param_ext_tmp_9836;
+        if (memblock_set_device(ctx, &mem_param_9692, &mem_param_tmp_9837,
+                                "mem_param_tmp_9837") != 0)
+            return 1;
+        loop_while_9247 = loop_while_tmp_9838;
+        cond_9249 = cond_tmp_9840;
     }
-    ctx->failure_is_an_option = 1;
-    if (ctx->debugging)
-        fprintf(ctx->log, "%s\n", "");
+    ext_9736 = ctx_param_ext_9688;
+    ext_9735 = ctx_param_ext_9689;
+    ext_9734 = ctx_param_ext_9690;
+    ext_9733 = ctx_param_ext_9691;
+    if (memblock_set_device(ctx, &ext_mem_9732, &mem_param_9692,
+                            "mem_param_9692") != 0)
+        return 1;
+    twoOptAlg_res_9244 = loop_while_9247;
+    twoOptAlg_res_9246 = cond_9249;
+    if (memblock_unref_device(ctx, &mem_9687, "mem_9687") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9699, "mem_9699") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9704, "mem_9704") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9708, "mem_9708") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9711, "mem_9711") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9713, "mem_9713") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9716, "mem_9716") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9719, "mem_9719") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9721, "mem_9721") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9723, "mem_9723") != 0)
+        return 1;
     
-    int64_t segred_group_sizze_9127;
+    int64_t segred_group_sizze_9649;
     
-    segred_group_sizze_9127 = *ctx->tuning_params.segred_group_sizze_9126;
+    segred_group_sizze_9649 = *ctx->tuning_params.segred_group_sizze_9648;
     
-    int64_t num_groups_9129;
-    int32_t max_num_groups_9528;
+    int64_t num_groups_9651;
+    int32_t max_num_groups_10093;
     
-    max_num_groups_9528 = *ctx->tuning_params.segred_num_groups_9128;
-    num_groups_9129 = sext_i64_i32(smax64((int64_t) 1,
+    max_num_groups_10093 = *ctx->tuning_params.segred_num_groups_9650;
+    num_groups_9651 = sext_i64_i32(smax64((int64_t) 1,
                                           smin64(sdiv_up64((int64_t) 5,
-                                                           segred_group_sizze_9127),
-                                                 sext_i32_i64(max_num_groups_9528))));
-    if (memblock_alloc_device(ctx, &mem_9194, (int64_t) 4, "mem_9194")) {
+                                                           segred_group_sizze_9649),
+                                                 sext_i32_i64(max_num_groups_10093))));
+    if (memblock_alloc_device(ctx, &mem_9739, (int64_t) 4, "mem_9739")) {
         err = 1;
         goto cleanup;
     }
-    if (memblock_alloc_device(ctx, &mem_9196, (int64_t) 4, "mem_9196")) {
-        err = 1;
-        goto cleanup;
-    }
-    
-    struct memblock_device counter_mem_9529 = ctx->counter_mem_9529;
-    
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_9531, (int64_t) 4 *
-                              num_groups_9129, "segred_tmp_mem_9531")) {
-        err = 1;
-        goto cleanup;
-    }
-    if (memblock_alloc_device(ctx, &segred_tmp_mem_9533, (int64_t) 4 *
-                              num_groups_9129, "segred_tmp_mem_9533")) {
+    if (memblock_alloc_device(ctx, &mem_9741, (int64_t) 4, "mem_9741")) {
         err = 1;
         goto cleanup;
     }
     
-    int64_t num_threads_9535 = num_groups_9129 * segred_group_sizze_9127;
+    struct memblock_device counter_mem_10094 = ctx->counter_mem_10094;
+    
+    if (memblock_alloc_device(ctx, &segred_tmp_mem_10096, (int64_t) 4 *
+                              num_groups_9651, "segred_tmp_mem_10096")) {
+        err = 1;
+        goto cleanup;
+    }
+    if (memblock_alloc_device(ctx, &segred_tmp_mem_10098, (int64_t) 4 *
+                              num_groups_9651, "segred_tmp_mem_10098")) {
+        err = 1;
+        goto cleanup;
+    }
+    
+    int64_t num_threads_10100 = num_groups_9651 * segred_group_sizze_9649;
     
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "\n# SegRed");
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 1,
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 1,
                                             sizeof(ctx->failure_is_an_option),
                                             &ctx->failure_is_an_option));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 3,
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 3,
                                             (size_t) ((int64_t) 4 *
-                                                      segred_group_sizze_9127),
+                                                      segred_group_sizze_9649),
                                             NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 4,
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 4,
                                             (size_t) ((int64_t) 4 *
-                                                      segred_group_sizze_9127),
+                                                      segred_group_sizze_9649),
                                             NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 5,
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 5,
                                             (size_t) 1, NULL));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 6,
-                                            sizeof(num_groups_9129),
-                                            &num_groups_9129));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 7,
-                                            sizeof(num_threads_9535),
-                                            &num_threads_9535));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 8,
-                                            sizeof(mem_9156.mem),
-                                            &mem_9156.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 9,
-                                            sizeof(mem_9158.mem),
-                                            &mem_9158.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 10,
-                                            sizeof(mem_9191.mem),
-                                            &mem_9191.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 11,
-                                            sizeof(mem_9194.mem),
-                                            &mem_9194.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 12,
-                                            sizeof(mem_9196.mem),
-                                            &mem_9196.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 13,
-                                            sizeof(counter_mem_9529.mem),
-                                            &counter_mem_9529.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 14,
-                                            sizeof(segred_tmp_mem_9531.mem),
-                                            &segred_tmp_mem_9531.mem));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9135, 15,
-                                            sizeof(segred_tmp_mem_9533.mem),
-                                            &segred_tmp_mem_9533.mem));
-    if (1 * ((size_t) num_groups_9129 * (size_t) segred_group_sizze_9127) !=
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 6,
+                                            sizeof(num_groups_9651),
+                                            &num_groups_9651));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 7,
+                                            sizeof(ext_9734), &ext_9734));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 8,
+                                            sizeof(ext_9735), &ext_9735));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 9,
+                                            sizeof(num_threads_10100),
+                                            &num_threads_10100));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 10,
+                                            sizeof(mem_9682.mem),
+                                            &mem_9682.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 11,
+                                            sizeof(mem_9684.mem),
+                                            &mem_9684.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 12,
+                                            sizeof(ext_mem_9732.mem),
+                                            &ext_mem_9732.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 13,
+                                            sizeof(mem_9739.mem),
+                                            &mem_9739.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 14,
+                                            sizeof(mem_9741.mem),
+                                            &mem_9741.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 15,
+                                            sizeof(counter_mem_10094.mem),
+                                            &counter_mem_10094.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 16,
+                                            sizeof(segred_tmp_mem_10096.mem),
+                                            &segred_tmp_mem_10096.mem));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->segred_nonseg_9657, 17,
+                                            sizeof(segred_tmp_mem_10098.mem),
+                                            &segred_tmp_mem_10098.mem));
+    if (1 * ((size_t) num_groups_9651 * (size_t) segred_group_sizze_9649) !=
         0) {
-        const size_t global_work_sizze_9645[1] = {(size_t) num_groups_9129 *
-                     (size_t) segred_group_sizze_9127};
-        const size_t local_work_sizze_9649[1] =
-                     {(size_t) segred_group_sizze_9127};
-        int64_t time_start_9646 = 0, time_end_9647 = 0;
+        const size_t global_work_sizze_10210[1] = {(size_t) num_groups_9651 *
+                     (size_t) segred_group_sizze_9649};
+        const size_t local_work_sizze_10214[1] =
+                     {(size_t) segred_group_sizze_9649};
+        int64_t time_start_10211 = 0, time_end_10212 = 0;
         
         if (ctx->debugging) {
             fprintf(ctx->log,
                     "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "segred_nonseg_9135", global_work_sizze_9645[0],
-                    local_work_sizze_9649[0], (int) (0 + (int64_t) 4 *
-                                                     segred_group_sizze_9127 +
-                                                     (int64_t) 4 *
-                                                     segred_group_sizze_9127 +
-                                                     1));
-            time_start_9646 = get_wall_time();
+                    "segred_nonseg_9657", global_work_sizze_10210[0],
+                    local_work_sizze_10214[0], (int) (0 + (int64_t) 4 *
+                                                      segred_group_sizze_9649 +
+                                                      (int64_t) 4 *
+                                                      segred_group_sizze_9649 +
+                                                      1));
+            time_start_10211 = get_wall_time();
         }
         OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->segred_nonseg_9135,
+                                                        ctx->segred_nonseg_9657,
                                                         1, NULL,
-                                                        global_work_sizze_9645,
-                                                        local_work_sizze_9649,
+                                                        global_work_sizze_10210,
+                                                        local_work_sizze_10214,
                                                         0, NULL,
                                                         ctx->profiling_paused ||
                                                         !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->segred_nonseg_9135_runs,
-                                                                                                  &ctx->segred_nonseg_9135_total_runtime)));
+                                                                                                  &ctx->segred_nonseg_9657_runs,
+                                                                                                  &ctx->segred_nonseg_9657_total_runtime)));
         if (ctx->debugging) {
             OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9647 = get_wall_time();
+            time_end_10212 = get_wall_time();
             
-            long time_diff_9648 = time_end_9647 - time_start_9646;
+            long time_diff_10213 = time_end_10212 - time_start_10211;
             
             fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                    "segred_nonseg_9135", time_diff_9648);
+                    "segred_nonseg_9657", time_diff_10213);
         }
     }
     ctx->failure_is_an_option = 1;
     if (ctx->debugging)
         fprintf(ctx->log, "%s\n", "");
-    if (memblock_unref_device(ctx, &mem_9156, "mem_9156") != 0)
+    if (memblock_unref_device(ctx, &mem_9682, "mem_9682") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9158, "mem_9158") != 0)
+    if (memblock_unref_device(ctx, &mem_9684, "mem_9684") != 0)
         return 1;
     
-    int32_t read_res_9650;
+    int32_t read_res_10215;
     
     OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9194.mem,
+                                                 mem_9739.mem,
                                                  ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
                                                  (int64_t) 0 * sizeof(int32_t),
                                                  sizeof(int32_t),
-                                                 &read_res_9650, 0, NULL,
+                                                 &read_res_10215, 0, NULL,
                                                  ctx->profiling_paused ||
                                                  !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
                                                                                            &ctx->copy_scalar_from_dev_runs,
                                                                                            &ctx->copy_scalar_from_dev_total_runtime)));
     if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
         return 1;
-    defunc_0_f_res_8943 = read_res_9650;
-    if (memblock_unref_device(ctx, &mem_9194, "mem_9194") != 0)
+    defunc_0_f_res_9465 = read_res_10215;
+    if (memblock_unref_device(ctx, &mem_9739, "mem_9739") != 0)
         return 1;
     
-    int32_t read_res_9651;
+    int32_t read_res_10216;
     
     OPENCL_SUCCEED_OR_RETURN(clEnqueueReadBuffer(ctx->opencl.queue,
-                                                 mem_9196.mem,
+                                                 mem_9741.mem,
                                                  ctx->failure_is_an_option ? CL_FALSE : CL_TRUE,
                                                  (int64_t) 0 * sizeof(int32_t),
                                                  sizeof(int32_t),
-                                                 &read_res_9651, 0, NULL,
+                                                 &read_res_10216, 0, NULL,
                                                  ctx->profiling_paused ||
                                                  !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
                                                                                            &ctx->copy_scalar_from_dev_runs,
                                                                                            &ctx->copy_scalar_from_dev_total_runtime)));
     if (ctx->failure_is_an_option && futhark_context_sync(ctx) != 0)
         return 1;
-    defunc_0_f_res_8944 = read_res_9651;
-    if (memblock_unref_device(ctx, &mem_9196, "mem_9196") != 0)
+    defunc_0_f_res_9466 = read_res_10216;
+    if (memblock_unref_device(ctx, &mem_9741, "mem_9741") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &segred_tmp_mem_9533,
-                              "segred_tmp_mem_9533") != 0)
+    if (memblock_unref_device(ctx, &segred_tmp_mem_10098,
+                              "segred_tmp_mem_10098") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &segred_tmp_mem_9531,
-                              "segred_tmp_mem_9531") != 0)
+    if (memblock_unref_device(ctx, &segred_tmp_mem_10096,
+                              "segred_tmp_mem_10096") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9196, "mem_9196") != 0)
+    if (memblock_unref_device(ctx, &mem_9741, "mem_9741") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9194, "mem_9194") != 0)
+    if (memblock_unref_device(ctx, &mem_9739, "mem_9739") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &segred_tmp_mem_9460,
-                              "segred_tmp_mem_9460") != 0)
+    if (memblock_unref_device(ctx, &mem_param_tmp_9837, "mem_param_tmp_9837") !=
+        0)
         return 1;
-    if (memblock_unref_device(ctx, &segred_tmp_mem_9458,
-                              "segred_tmp_mem_9458") != 0)
+    if (memblock_unref_device(ctx, &mem_9726, "mem_9726") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &segred_tmp_mem_9456,
-                              "segred_tmp_mem_9456") != 0)
+    if (memblock_unref_device(ctx, &ext_mem_9727, "ext_mem_9727") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9188, "mem_9188") != 0)
+    if (memblock_unref_device(ctx, &segred_tmp_mem_10025,
+                              "segred_tmp_mem_10025") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9186, "mem_9186") != 0)
+    if (memblock_unref_device(ctx, &segred_tmp_mem_10023,
+                              "segred_tmp_mem_10023") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9184, "mem_9184") != 0)
+    if (memblock_unref_device(ctx, &segred_tmp_mem_10021,
+                              "segred_tmp_mem_10021") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9181, "mem_9181") != 0)
+    if (memblock_unref_device(ctx, &mem_param_9692, "mem_param_9692") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9178, "mem_9178") != 0)
+    if (memblock_unref_device(ctx, &mem_9723, "mem_9723") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9176, "mem_9176") != 0)
+    if (memblock_unref_device(ctx, &mem_9721, "mem_9721") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9173, "mem_9173") != 0)
+    if (memblock_unref_device(ctx, &mem_9719, "mem_9719") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9169, "mem_9169") != 0)
+    if (memblock_unref_device(ctx, &mem_9716, "mem_9716") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9164, "mem_9164") != 0)
+    if (memblock_unref_device(ctx, &mem_9713, "mem_9713") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9161, "mem_9161") != 0)
+    if (memblock_unref_device(ctx, &mem_9711, "mem_9711") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9158, "mem_9158") != 0)
+    if (memblock_unref_device(ctx, &mem_9708, "mem_9708") != 0)
         return 1;
-    if (memblock_unref_device(ctx, &mem_9156, "mem_9156") != 0)
+    if (memblock_unref_device(ctx, &mem_9704, "mem_9704") != 0)
         return 1;
-    #undef defunc_2_reduce_res_8818
-    #undef mem_9191
-    #undef defunc_0_f_res_8943
-    #undef defunc_0_f_res_8944
+    if (memblock_unref_device(ctx, &mem_9699, "mem_9699") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9687, "mem_9687") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9684, "mem_9684") != 0)
+        return 1;
+    if (memblock_unref_device(ctx, &mem_9682, "mem_9682") != 0)
+        return 1;
+    #undef ext_9735
+    #undef ext_mem_9732
+    #undef twoOptAlg_res_9246
+    #undef defunc_0_f_res_9465
+    #undef defunc_0_f_res_9466
     
   cleanup:
     return err;
@@ -8449,8 +8607,8 @@ static int init_constants(struct futhark_context *ctx)
 static int free_constants(struct futhark_context *ctx)
 {
     (void) ctx;
-    if (memblock_unref_device(ctx, &ctx->constants.mem_9191,
-                              "ctx->constants.mem_9191") != 0)
+    if (memblock_unref_device(ctx, &ctx->constants.ext_mem_9732,
+                              "ctx->constants.ext_mem_9732") != 0)
         return 1;
     return 0;
 }
@@ -8563,64 +8721,65 @@ const int64_t *futhark_shape_i32_1d(struct futhark_context *ctx,
 }
 
 static int futrts_builtinzhreplicate_i32(struct futhark_context *ctx,
-                                         struct memblock_device mem_9273,
-                                         int32_t num_elems_9274,
-                                         int32_t val_9275)
+                                         struct memblock_device mem_9841,
+                                         int32_t num_elems_9842,
+                                         int32_t val_9843)
 {
     (void) ctx;
     
     int err = 0;
-    int32_t defunc_2_reduce_res_8818 = ctx->constants.defunc_2_reduce_res_8818;
-    struct memblock_device mem_9191 = ctx->constants.mem_9191;
-    int32_t defunc_0_f_res_8943 = ctx->constants.defunc_0_f_res_8943;
-    int32_t defunc_0_f_res_8944 = ctx->constants.defunc_0_f_res_8944;
-    int64_t group_sizze_9280;
+    int64_t ext_9735 = ctx->constants.ext_9735;
+    struct memblock_device ext_mem_9732 = ctx->constants.ext_mem_9732;
+    int32_t twoOptAlg_res_9246 = ctx->constants.twoOptAlg_res_9246;
+    int32_t defunc_0_f_res_9465 = ctx->constants.defunc_0_f_res_9465;
+    int32_t defunc_0_f_res_9466 = ctx->constants.defunc_0_f_res_9466;
+    int64_t group_sizze_9848;
     
-    group_sizze_9280 =
-        *ctx->tuning_params.builtinzhreplicate_i32zigroup_sizze_9280;
+    group_sizze_9848 =
+        *ctx->tuning_params.builtinzhreplicate_i32zigroup_sizze_9848;
     
-    int64_t num_groups_9281 = sdiv_up64(num_elems_9274, group_sizze_9280);
+    int64_t num_groups_9849 = sdiv_up64(num_elems_9842, group_sizze_9848);
     
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9277,
-                                            0, sizeof(num_elems_9274),
-                                            &num_elems_9274));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9277,
-                                            1, sizeof(val_9275), &val_9275));
-    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9277,
-                                            2, sizeof(mem_9273.mem),
-                                            &mem_9273.mem));
-    if (1 * ((size_t) num_groups_9281 * (size_t) group_sizze_9280) != 0) {
-        const size_t global_work_sizze_9652[1] = {(size_t) num_groups_9281 *
-                     (size_t) group_sizze_9280};
-        const size_t local_work_sizze_9656[1] = {(size_t) group_sizze_9280};
-        int64_t time_start_9653 = 0, time_end_9654 = 0;
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9845,
+                                            0, sizeof(num_elems_9842),
+                                            &num_elems_9842));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9845,
+                                            1, sizeof(val_9843), &val_9843));
+    OPENCL_SUCCEED_OR_RETURN(clSetKernelArg(ctx->builtinzhreplicate_i32zireplicate_9845,
+                                            2, sizeof(mem_9841.mem),
+                                            &mem_9841.mem));
+    if (1 * ((size_t) num_groups_9849 * (size_t) group_sizze_9848) != 0) {
+        const size_t global_work_sizze_10217[1] = {(size_t) num_groups_9849 *
+                     (size_t) group_sizze_9848};
+        const size_t local_work_sizze_10221[1] = {(size_t) group_sizze_9848};
+        int64_t time_start_10218 = 0, time_end_10219 = 0;
         
         if (ctx->debugging) {
             fprintf(ctx->log,
                     "Launching %s with global work size [%zu] and local work size [%zu]; local memory: %d bytes.\n",
-                    "builtin#replicate_i32.replicate_9277",
-                    global_work_sizze_9652[0], local_work_sizze_9656[0],
+                    "builtin#replicate_i32.replicate_9845",
+                    global_work_sizze_10217[0], local_work_sizze_10221[0],
                     (int) 0);
-            time_start_9653 = get_wall_time();
+            time_start_10218 = get_wall_time();
         }
         OPENCL_SUCCEED_OR_RETURN(clEnqueueNDRangeKernel(ctx->opencl.queue,
-                                                        ctx->builtinzhreplicate_i32zireplicate_9277,
+                                                        ctx->builtinzhreplicate_i32zireplicate_9845,
                                                         1, NULL,
-                                                        global_work_sizze_9652,
-                                                        local_work_sizze_9656,
+                                                        global_work_sizze_10217,
+                                                        local_work_sizze_10221,
                                                         0, NULL,
                                                         ctx->profiling_paused ||
                                                         !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
-                                                                                                  &ctx->builtinzhreplicate_i32zireplicate_9277_runs,
-                                                                                                  &ctx->builtinzhreplicate_i32zireplicate_9277_total_runtime)));
+                                                                                                  &ctx->builtinzhreplicate_i32zireplicate_9845_runs,
+                                                                                                  &ctx->builtinzhreplicate_i32zireplicate_9845_total_runtime)));
         if (ctx->debugging) {
             OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
-            time_end_9654 = get_wall_time();
+            time_end_10219 = get_wall_time();
             
-            long time_diff_9655 = time_end_9654 - time_start_9653;
+            long time_diff_10220 = time_end_10219 - time_start_10218;
             
             fprintf(ctx->log, "kernel %s runtime: %ldus\n",
-                    "builtin#replicate_i32.replicate_9277", time_diff_9655);
+                    "builtin#replicate_i32.replicate_9845", time_diff_10220);
         }
     }
     
@@ -8629,42 +8788,69 @@ static int futrts_builtinzhreplicate_i32(struct futhark_context *ctx,
     return err;
 }
 static int futrts_entry_main(struct futhark_context *ctx,
-                             struct memblock_device *mem_out_p_9657,
-                             int32_t *out_prim_out_9658,
-                             int32_t *out_prim_out_9659,
-                             int32_t *out_prim_out_9660)
+                             struct memblock_device *mem_out_p_10222,
+                             int32_t *out_prim_out_10223,
+                             int32_t *out_prim_out_10224,
+                             int32_t *out_prim_out_10225)
 {
     (void) ctx;
     
     int err = 0;
-    struct memblock_device mem_out_9206;
+    struct memblock_device mem_9743;
     
-    mem_out_9206.references = NULL;
+    mem_9743.references = NULL;
     
-    int32_t defunc_2_reduce_res_8818 = ctx->constants.defunc_2_reduce_res_8818;
-    struct memblock_device mem_9191 = ctx->constants.mem_9191;
-    int32_t defunc_0_f_res_8943 = ctx->constants.defunc_0_f_res_8943;
-    int32_t defunc_0_f_res_8944 = ctx->constants.defunc_0_f_res_8944;
-    int32_t prim_out_9207;
-    int32_t prim_out_9208;
-    int32_t prim_out_9209;
+    struct memblock_device mem_out_9763;
     
-    if (memblock_set_device(ctx, &mem_out_9206, &mem_9191, "mem_9191") != 0)
+    mem_out_9763.references = NULL;
+    
+    int64_t ext_9735 = ctx->constants.ext_9735;
+    struct memblock_device ext_mem_9732 = ctx->constants.ext_mem_9732;
+    int32_t twoOptAlg_res_9246 = ctx->constants.twoOptAlg_res_9246;
+    int32_t defunc_0_f_res_9465 = ctx->constants.defunc_0_f_res_9465;
+    int32_t defunc_0_f_res_9466 = ctx->constants.defunc_0_f_res_9466;
+    int32_t prim_out_9764;
+    int32_t prim_out_9765;
+    int32_t prim_out_9766;
+    
+    if (memblock_alloc_device(ctx, &mem_9743, (int64_t) 24, "mem_9743")) {
+        err = 1;
+        goto cleanup;
+    }
+    if ((int64_t) 24 > 0) {
+        OPENCL_SUCCEED_OR_RETURN(clEnqueueCopyBuffer(ctx->opencl.queue,
+                                                     ext_mem_9732.mem,
+                                                     mem_9743.mem,
+                                                     (size_t) (ext_9735 *
+                                                               (int64_t) 4),
+                                                     (size_t) (int64_t) 0,
+                                                     (size_t) (int64_t) 24, 0,
+                                                     NULL,
+                                                     ctx->profiling_paused ||
+                                                     !ctx->profiling ? NULL : opencl_get_event(&ctx->opencl,
+                                                                                               &ctx->copy_dev_to_dev_runs,
+                                                                                               &ctx->copy_dev_to_dev_total_runtime)));
+        if (ctx->debugging)
+            OPENCL_SUCCEED_FATAL(clFinish(ctx->opencl.queue));
+    }
+    if (memblock_set_device(ctx, &mem_out_9763, &mem_9743, "mem_9743") != 0)
         return 1;
-    prim_out_9207 = defunc_0_f_res_8943;
-    prim_out_9208 = defunc_0_f_res_8944;
-    prim_out_9209 = defunc_2_reduce_res_8818;
-    (*mem_out_p_9657).references = NULL;
-    if (memblock_set_device(ctx, &*mem_out_p_9657, &mem_out_9206,
-                            "mem_out_9206") != 0)
+    prim_out_9764 = defunc_0_f_res_9465;
+    prim_out_9765 = defunc_0_f_res_9466;
+    prim_out_9766 = twoOptAlg_res_9246;
+    (*mem_out_p_10222).references = NULL;
+    if (memblock_set_device(ctx, &*mem_out_p_10222, &mem_out_9763,
+                            "mem_out_9763") != 0)
         return 1;
-    *out_prim_out_9658 = prim_out_9207;
-    *out_prim_out_9659 = prim_out_9208;
-    *out_prim_out_9660 = prim_out_9209;
+    *out_prim_out_10223 = prim_out_9764;
+    *out_prim_out_10224 = prim_out_9765;
+    *out_prim_out_10225 = prim_out_9766;
     
   cleanup:
     {
-        if (memblock_unref_device(ctx, &mem_out_9206, "mem_out_9206") != 0)
+        if (memblock_unref_device(ctx, &mem_9743, "mem_9743") != 0)
+            return 1;
+        if (memblock_unref_device(ctx, &mem_out_9763, "mem_out_9763") != 0)
             return 1;
     }
     return err;
@@ -8674,34 +8860,34 @@ int futhark_entry_main(struct futhark_context *ctx, int32_t *out0,
                        int32_t *out1, struct futhark_i32_1d **out2,
                        int32_t *out3)
 {
-    int32_t prim_out_9207;
-    int32_t prim_out_9208;
-    int32_t prim_out_9209;
+    int32_t prim_out_9764;
+    int32_t prim_out_9765;
+    int32_t prim_out_9766;
     int ret = 0;
     
     lock_lock(&ctx->lock);
     
-    struct memblock_device mem_out_9206;
+    struct memblock_device mem_out_9763;
     
-    mem_out_9206.references = NULL;
+    mem_out_9763.references = NULL;
     if (ret == 0) {
-        ret = futrts_entry_main(ctx, &mem_out_9206, &prim_out_9207,
-                                &prim_out_9208, &prim_out_9209);
+        ret = futrts_entry_main(ctx, &mem_out_9763, &prim_out_9764,
+                                &prim_out_9765, &prim_out_9766);
         if (ret == 0) {
-            int32_t defunc_2_reduce_res_8818 =
-                    ctx->constants.defunc_2_reduce_res_8818;
-            struct memblock_device mem_9191 = ctx->constants.mem_9191;
-            int32_t defunc_0_f_res_8943 = ctx->constants.defunc_0_f_res_8943;
-            int32_t defunc_0_f_res_8944 = ctx->constants.defunc_0_f_res_8944;
+            int64_t ext_9735 = ctx->constants.ext_9735;
+            struct memblock_device ext_mem_9732 = ctx->constants.ext_mem_9732;
+            int32_t twoOptAlg_res_9246 = ctx->constants.twoOptAlg_res_9246;
+            int32_t defunc_0_f_res_9465 = ctx->constants.defunc_0_f_res_9465;
+            int32_t defunc_0_f_res_9466 = ctx->constants.defunc_0_f_res_9466;
             
-            *out0 = prim_out_9207;
-            *out1 = prim_out_9208;
+            *out0 = prim_out_9764;
+            *out1 = prim_out_9765;
             assert((*out2 =
                     (struct futhark_i32_1d *) malloc(sizeof(struct futhark_i32_1d))) !=
                 NULL);
-            (*out2)->mem = mem_out_9206;
+            (*out2)->mem = mem_out_9763;
             (*out2)->shape[0] = (int64_t) 6;
-            *out3 = prim_out_9209;
+            *out3 = prim_out_9766;
         }
     }
     lock_unlock(&ctx->lock);
