@@ -80,9 +80,6 @@ let cost [n] [m] (tour : [n]i32) (distM : [m]i32) : i32 =
             ) (iota (n-1)) |> reduce (+) 0
 
 let twoOptAlg [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : ([]i32, i32) =
-    --let retTour = tour
-    --let init = findMinChange distM tour cities
-    --let xs = findMinChange distM tour citiess
     let twoOpt xs =
         let minChange = findMinChange distM xs cities
         in 
@@ -93,7 +90,7 @@ let twoOptAlg [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : ([]i32, 
 
 let main : (i32, i32, []i32) =
     let cities = 5
-    let tour = [4,2,0,3,1,4]
+    let tour = [4,2,0  ,3,1,4]
     let distM = [0,4,6,8,3,
                  4,0,4,5,2,
                  6,4,0,2,3,
@@ -101,8 +98,6 @@ let main : (i32, i32, []i32) =
                  3,2,3,4,0]
     let oldCost = cost tour distM            
     let minTour = twoOptAlg distM tour cities
-    --let firstChange = findMinChange distM tour cities
-    --let firstTour = swap firstChange.1 firstChange.2 tour
     let newCost = cost minTour.0 distM
     in (oldCost, newCost, minTour.0)
     

@@ -84,15 +84,6 @@ int main() {
     memcpy(distM[4], (int[6]) {4,8,5,2,0,4}, sizeof(int) * (column));
     memcpy(distM[5], (int[6]) {5,3,2,3,4,0}, sizeof(int) * (column));
 
-    /*for (int i = 0; i < row; i++) {
-        for (int j = 0; j < column; j ++) {
-            //printf("enter value for distance between city %d and city %d \n", i, j);
-            //scanf("%d", &distM[i][j]);
-            printf("%d ",distM[i][j]);
-        }
-        printf("\n");
-    }*/
-
     int* tour = malloc((cities + 1 ) * sizeof(int));
    //createTour(tour, cities);
     memcpy(tour, (int[6]) {5,3,1,4,2,5}, sizeof(int) * (column));
