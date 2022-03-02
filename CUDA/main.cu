@@ -35,7 +35,7 @@ int twoOptMove(int block_size, int cities){
     replicate0<<< num_blocks, block_size >>> ( totIter, flags_d );
 
     // 3. scatter the flag array
-    mkFlags<<< num_blocks_shp, block_size >>> ( mat_rows, mat_shp_sc_d, flags_d );
+    mkFlags<<< num_blocks_shp, block_size >>> (len, index_shp_sc_d, flags_d);
 
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
