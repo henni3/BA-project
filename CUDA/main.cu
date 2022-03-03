@@ -14,6 +14,10 @@ int twoOptMove(int block_size, int cities){
     //Calculate the length of shape array
     len = cities - 2;
 
+    //Calculate block size
+    unsigned int num_blocks     = (totIter + block_size-1)/block_size; 
+    unsigned int num_blocks_shp = (len + block_size-1)/block_size; 
+
     //Cuda malloc 
     cudaMalloc((void**)&index_shp_d,    len*sizeof(int));
     cudaMalloc((void**)&index_shp_sc_d, len*sizeof(int));
@@ -29,14 +33,30 @@ int twoOptMove(int block_size, int cities){
 
     // Make flag array
     // 1. scan the shape array
-    scanInc< Add<int> > (block_size, totIter, index_shp_sc_d, index_shp_d, d_tmp_int);
+    scanInc< Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
 
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> ( totIter, flags_d );
 
     // 3. scatter the flag array
     mkFlags<<< num_blocks_shp, block_size >>> (len, index_shp_sc_d, flags_d);
+    printf("index_shape_scan: [");
+    for (int = 0; i < len; i++) {
+        printf("%d, ", index_shp_sc_d[i]);
+    }
+    printf("] \n"); 
 
+    printf("index_shape: [");
+    for (int = 0; i < len; i++) {
+        printf("%d, ", index_shp_d[i]);
+    }
+    printf("] \n");
+
+    printf("flag_Arr: [");
+    for (int = 0; i < len; i++) {
+        printf("%d, ", flags_d [i]);
+    }
+    printf("] \n");
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
