@@ -88,14 +88,16 @@ let twoOptAlg [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : ([]i32, 
     let rs = loop (xs, cond) = (tour, -1)  while cond < 0 do twoOpt xs 
     in rs
 
-let main : (i32, i32, []i32) =
-    let cities = 5
-    let tour = [4,2,0  ,3,1,4]
-    let distM = [0,4,6,8,3,
-                 4,0,4,5,2,
-                 6,4,0,2,3,
-                 8,5,2,0,4,
-                 3,2,3,4,0]
+
+let main [m] (cities : i32) (distM : [m]i32) : (i32, i32, []i32) =
+    --let cities = 5
+    let tour = map i32.i64 (iota (i64.i32 cities+1)) |> 
+                map(\i -> if i == cities then 0 else i)
+    --let distM = [0,4,6,8,3,
+    --             4,0,4,5,2,
+    --             6,4,0,2,3,
+    --             8,5,2,0,4,
+    --             3,2,3,4,0]
     let oldCost = cost tour distM            
     let minTour = twoOptAlg distM tour cities
     let newCost = cost minTour.0 distM
