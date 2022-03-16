@@ -21,11 +21,11 @@ void createTour(int* tour, int cities, int startingCity){
             tour[index] = to;
         }
     }
-    printf ( "new route: \n") ;
+    /*printf ( "new route: \n") ;
     for(int t = 0; t < cities+1; t++){
         printf(" %d ", tour[t]);
     }
-    printf("\n");
+    printf("\n");*/
 }
 
 

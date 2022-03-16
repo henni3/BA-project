@@ -1,4 +1,3 @@
--- random module taken from Futharks webpage
 
 module type rand ={
     type rng
@@ -8,8 +7,7 @@ module type rand ={
     val split_n : (n: i64) -> rng -> [n]rng
 }
 
-
-
+-- random module taken from Futharks webpage
 module lcg : rand = {
     type rng = u32
     
@@ -35,6 +33,44 @@ module lcg : rand = {
     def split_n n rng = 
         tabulate n (\i -> init (i32.u32 rng ^ i32.i64 i))
 }
+
+--def rand_i32 (rng: lcg.rng) (bound: i32) =
+--    let (rng,x) = lcg.rand rng
+--    in (rng, x % bound)
+
+
+-- This function swaps the two edges that produce the lowest cost
+let swap [m] (i : i32) (j : i32) (tour : [m]i32) : [m]i32 =
+    let minI = i+1 in 
+    map i32.i64 (iota m) |>
+    map(\ind ->
+        if ind < minI || ind > j then
+            tour[ind]
+        else
+            tour[j - (ind - minI)]
+    ) 
+
+def rand_nonZero (rng: lcg.rng) (bound: i32) =
+    let (rng,x) = lcg.rand rng
+    in  if (x % bound) > 0 then (rng, x % bound) else (rng, (x % bound) + 1)
+    
+let mkRandomTour (offset:i64) (cities:i32) : []i32 = 
+    let rng = lcg.init (i32.i64 offset)
+    --let randIndArr = map (\i -> 
+    --    if i == 0 then rand_i32 rng cities
+    --              else rand_i32 (i-1).0 cities ) iota cities 
+    let initTour = map (\i -> if i == ((i64.i32 cities) + 1) then 0
+                              else i) (iota ((i64.i32 cities)+1)) |> map i32.i64
+    let intialI = rand_nonZero rng (cities + 1)
+    let intialJ = rand_nonZero intialI.0 (cities + 1)
+    let randomSwaps = rand_nonZero intialJ.0 100
+    let rs = loop (intialI,intialJ,initTour) for i < randomSwaps.1 do
+                let intI = rand_nonZero intialI.0 (cities+1)
+                let intJ = rand_nonZero intI.0 (cities+1)
+                let swappedTour = swap intialI.1 intialJ.1 initTour
+                in (intI, intJ, swappedTour)
+    in rs.2
+
     
 -- mkFlagArray is taken from PMPH lecture notes p. 48
 let mkFlagArray 't [m] 
@@ -75,6 +111,10 @@ let changeComparator (t1 : (i32, i32, i32)) (t2: (i32, i32, i32)) : (i32, i32, i
                 else t2
         else t2
 
+-- finds the best cost of two input costs
+let costComparator [n] (cost1: i32) (cost2 :( i32) : i32 = 
+    if cost1 < cost2 then cost1 else cost2
+
 -- findMinChange is the parallel implementation of the two for loops
 -- in the 2-opt move algorithm
 let findMinChange [m] [n] [x] [y] (dist : [m]i32) (tour : [n]i32) 
@@ -94,28 +134,18 @@ let findMinChange [m] [n] [x] [y] (dist : [m]i32) (tour : [n]i32)
                         ) (iota totIter)
     in reduce changeComparator (2147483647, -1, -1) changeArr
 
--- This function swaps the two edges that produce the lowest cost
-let swap [m] (i : i32) (j : i32) (tour : [m]i32) : [m]i32 =
-    let minI = i+1 in 
-    map i32.i64 (iota m) |>
-    map(\ind ->
-        if ind < minI || ind > j then
-            tour[ind]
-        else
-            tour[j - (ind - minI)]
-    ) 
 
 -- 2-opt algorithm
 let twoOptAlg [m] [n] [x] [y] (distM : [m]i32) (tour : [n]i32) 
                             (Iarr : [x]i32) (Jarr : [y]i32) 
-                            (cities : i32) (totIter : i64) : ([]i32, i32) =
+                            (cities : i32) (totIter : i64) : []i32 =
     let twoOpt xs =
         let minChange = findMinChange distM xs Iarr Jarr cities totIter
         in 
             if minChange.0 < 0 then (swap minChange.1 minChange.2 xs, minChange.0) 
                 else (xs, minChange.0)
     let rs = loop (xs, cond) = (tour, -1)  while cond < 0 do twoOpt xs 
-    in rs
+    in rs.0
 
 -- Compute cost of tour
 let cost [n] [m] (tour : [n]i32) (distM : [m]i32) : i32 = 
@@ -131,12 +161,14 @@ let flagArrayGen (cities : i32) : ([]i32)=
                        temp[len - i - 1] 
                       ) (iota len)
     in mkFlagArray aoa_shp 0i32 aoa_val
---[m] (cities : i32) (distM : [m]i32)
-let main (cities : i32) : (i32, i32, []i32) =
+--[m] 
+let main [m] (cities : i32) (numRestarts : i64) 
+         (distM : [m]i32) : (i32) =
     --let cities = 5
     let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
-    let tour = map i32.i64 (iota (i64.i32 cities+1)) |> 
-                map(\i -> if i == cities then 0 else i)
+    --let initTour = (iota (i64.i32 cities+1)) |> 
+                    --map(\i -> (i+1)*10)
+     
     --let oldCost = cost tour distM  
     --let distM = [0,4,6,8,3,
     --             4,0,4,5,2,
@@ -147,12 +179,10 @@ let main (cities : i32) : (i32, i32, []i32) =
     let flagArr = flagArrayGen cities
     let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
     let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
-    map(\ind -> 
-        let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
-        let newCost = cost minTour.0 distM
-        
-        )
-              
-
-    in (oldCost, newCost, minTour.0)
+    let allCosts = map(\ind -> 
+            let tour = mkRandomTour ind cities
+            let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
+            in cost minTour distM
+        )(iota numRestarts)
+    in reduce costComparator 2147483647 allCosts
     
