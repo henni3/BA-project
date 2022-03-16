@@ -137,18 +137,22 @@ let main (cities : i32) : (i32, i32, []i32) =
     let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
     let tour = map i32.i64 (iota (i64.i32 cities+1)) |> 
                 map(\i -> if i == cities then 0 else i)
-    let distM = [0,4,6,8,3,
-                 4,0,4,5,2,
-                 6,4,0,2,3,
-                 8,5,2,0,4,
-                 3,2,3,4,0]
+    --let oldCost = cost tour distM  
+    --let distM = [0,4,6,8,3,
+    --             4,0,4,5,2,
+    --             6,4,0,2,3,
+    --             8,5,2,0,4,
+    --             3,2,3,4,0]
 
     let flagArr = flagArrayGen cities
     let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
     let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
-    
-    let oldCost = cost tour distM            
-    let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
-    let newCost = cost minTour.0 distM
+    map(\ind -> 
+        let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
+        let newCost = cost minTour.0 distM
+        
+        )
+              
+
     in (oldCost, newCost, minTour.0)
     

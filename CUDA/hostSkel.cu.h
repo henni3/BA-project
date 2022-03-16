@@ -253,4 +253,26 @@ void sgmScanInc( const uint32_t     B     // desired CUDA block size ( <= 1024, 
         (d_out, d_inp, d_flags, d_tmp_vals, d_tmp_flags, N, num_seq_chunks);
 }
 
+template<class P>                           // element-type and associative operator properties
+int partition2 ( const uint32_t       B     // desired CUDA block size ( <= 1024, multiple of 32)
+               , const uint32_t       N     // length of the input array
+               , typename P::InpElTp* d_out        // device array of length: N
+               , typename P::InpElTp* d_inp        // device array of length: N
+               , MyInt2*              d_tmp_large  // device array of length: N
+               , MyInt2*              d_tmp_small  // device array of length: MAX_BLOCK
+) {
+    MyInt2 split;
+    // first scan with tuple ints
+    scanInc< AddPairInt<P> >( B, N, (MyInt2*)d_tmp_large, d_inp, (MyInt2*)d_tmp_small);
+
+    cudaMemcpy(&split, d_tmp_large+(N-1), sizeof(MyInt2), cudaMemcpyDeviceToHost);
+
+    // then execute scatter kernel
+    const uint32_t block_size = 256;
+    const uint32_t num_blocks = (N + block_size - 1) / block_size;
+    secondkernel<P><<< num_blocks, block_size >>>(N, split.x, d_out, d_inp, d_tmp_large);
+    
+    return split.x;
+}
+
 #endif //SCAN_HOST

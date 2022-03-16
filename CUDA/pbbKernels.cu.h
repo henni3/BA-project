@@ -1,6 +1,6 @@
 #ifndef SCAN_KERS
 #define SCAN_KERS
-#include <math.h>
+
 #include <cuda_runtime.h>
 
 /**
@@ -33,6 +33,7 @@ class Add {
     static __device__ __host__ inline bool equals(const T t1, const T t2) { return (t1 == t2); }
     static __device__ __host__ inline T remVolatile(volatile T& t)    { T res = t; return res; }
 };
+
 
 /***************************************************/
 /*** Generic Value-Flag Tuple for Segmented Scan ***/
@@ -79,6 +80,57 @@ class LiftOP {
     static __device__ __host__ inline bool
     equals(const RedElTp t1, const RedElTp t2) { 
         return ( (t1.f == t2.f) && OP::equals(t1.v, t2.v) ); 
+    }
+};
+
+/******************************************/
+/*** MyInt2 and Component-wise Addition ***/
+/******************************************/
+
+/**
+ * A class representing a tuple of ints
+ */
+class MyInt2 {
+  public:
+    int x; int y;
+    __device__ __host__ inline MyInt2()                                  { x = 0;    y = 0;    } 
+    __device__ __host__ inline MyInt2(const int& a, const int& b)        { x = a;    y = b;    }
+    __device__ __host__ inline MyInt2(const MyInt2& i4)                  { x = i4.x; y = i4.y; }
+    __device__ __host__ inline void operator=(const MyInt2& i4) volatile { x = i4.x; y = i4.y; }
+};
+
+#define dummmy 66666666
+
+class EvenInt {
+  public:
+    typedef int InpElTp;
+    static __device__ __host__ inline int predicate(int x){ return (1-(x & 1)); }
+};
+
+/**
+ * Representation of the pairwise integer plus operator
+ */
+template<class P>
+class AddPairInt {
+  public:
+    typedef typename P::InpElTp InpElTp;
+    typedef MyInt2              RedElTp;
+    static const bool commutative = true;
+    static __device__ __host__ inline InpElTp identInp(){ return 0; }
+    static __device__ __host__ inline RedElTp mapFun(const InpElTp& el) {
+        // this implements the "even" predicate.
+        int t = P::predicate(el);
+        return MyInt2(t, 1-t);
+    }
+    static __device__ __host__ inline MyInt2 identity() { return MyInt2(0,0); }  
+    static __device__ __host__ inline MyInt2 apply(volatile MyInt2& t1, volatile MyInt2& t2) { 
+        return MyInt2(t1.x + t2.x, t1.y + t2.y);
+    }
+    static __device__ __host__ inline MyInt2 remVolatile(volatile MyInt2& t) {
+        MyInt2 res; res.x = t.x; res.y = t.y; return res;
+    }
+    static __device__ __host__ inline bool equals(MyInt2& t1, MyInt2& t2) {
+        return (t1.x == t2.x && t1.y == t2.y);
     }
 };
 
@@ -152,49 +204,21 @@ class Mssp {
 /**
  * A warp of threads cooperatively scan with generic-binop `OP` a 
  *   number of warp elements stored in shared memory (`ptr`).
- * No synchronization is needed because the threads in a warp execute
+ * No synchronization is needed because the thread in a warp execute
  *   in lockstep.
  * `idx` is the local thread index within a cuda block (threadIdx.x)
  * Each thread returns the corresponding scanned element of type
  *   `typename OP::RedElTp`
- ********************************
- * Weekly Assignment 2, Task 2: *
- ********************************
- *   The provided dummy implementation works correctly, but it is
- *     very slow because the warp reduction is performed sequentially
- *     by the first thread of each warp, so it takes WARP-1=31 steps
- *     to complete, while the other 31 threads of the WARP are iddle.
- *   Your task is to write a warp-level scan implementation in which
- *     the threads in the same WARP cooperate such that the depth of
- *     this implementation is 5 steps ( WARP==32, and lg(32)=5 ).
- *     The algorithm that you need to implement is shown in the 
- *     slides of Lab2. 
- *   The implementation does not need any synchronization, i.e.,
- *     please do NOT use "__syncthreads();" and the like in here,
- *     especially because it will break the whole thing (because
- *     this function is conditionally called sometimes, so not
- *     all threads will reach the barrier, resulting in incorrect
- *     results.) 
  */ 
 template<class OP>
 __device__ inline typename OP::RedElTp
 scanIncWarp( volatile typename OP::RedElTp* ptr, const unsigned int idx ) {
     const unsigned int lane = idx & (WARP-1);
-    const unsigned int k = lgWARP;
-
-    /*if(lane==0) {
-        #pragma unroll
-        for(int i=1; i<WARP; i++) {
-            ptr[idx+i] = OP::apply(ptr[idx+i-1], ptr[idx+i]);
-        }
-	}*/
-
-    int h = 0;
-    for(int d = 0; d < k; d++){
-      h = 1 << d;
-      if(lane >= h){
-        ptr[idx] = OP::apply(ptr[idx-h], ptr[idx]);
-      }
+    #pragma unroll
+    for(uint32_t i=0; i<lgWARP; i++) {
+        const uint32_t p = (1<<i);
+        if( lane >= p ) ptr[idx] = OP::apply(ptr[idx-p], ptr[idx]);
+        // __syncwarp();
     }
     return OP::remVolatile(ptr[idx]);
 }
@@ -205,12 +229,6 @@ scanIncWarp( volatile typename OP::RedElTp* ptr, const unsigned int idx ) {
  * `idx` is the local thread index within a cuda block (threadIdx.x)
  * Each thread returns the corresponding scanned element of type
  *   `typename OP::RedElTp`. Note that this is NOT published to shared memory!
- *
- *******************************************************
- * Weekly Assignment 2, Task 3:
- *******************************************************
- * Find and fix the bug (race condition) that manifests
- *  only when the CUDA block size is set to 1024.
  */ 
 template<class OP>
 __device__ inline typename OP::RedElTp
@@ -226,11 +244,7 @@ scanIncBlock(volatile typename OP::RedElTp* ptr, const unsigned int idx) {
     //   the first warp. This works because
     //   warp size = 32, and 
     //   max block size = 32^2 = 1024
-    typename OP::RedElTp newVal = OP::remVolatile(ptr[idx]);
-    __syncthreads();
-    if (lane == (WARP-1)) {
-      ptr[warpid] = newVal;  
-    }
+    if (lane == (WARP-1)) { ptr[warpid] = res; } 
     __syncthreads();
 
     // 3. scan again the first warp
@@ -390,12 +404,10 @@ redCommuKernel( typename OP::RedElTp* d_tmp
     }
 }
 
-
 /**
  * Helper function that copies `CHUNK` input elements per thread from
  *   global to shared memory, in a way that optimizes spatial locality,
- *   i.e., (32) consecutive threads read/write consecutive input elements
- *   from/to global memory in the same SIMD instruction.
+ *   i.e., (32) consecutive threads read consecutive input elements.
  *   This leads to "coalesced" access in the case when the element size
  *   is a word (or less). Coalesced access means that (groups of 32)
  *   consecutive threads access consecutive memory words.
@@ -417,27 +429,6 @@ redCommuKernel( typename OP::RedElTp* d_tmp
  *   (fast) shared memory, in the same order in which they appear
  *   in global memory, but making sure that consecutive threads
  *   read consecutive elements of `d_inp` in a SIMD instruction.
- *
- ********************************
- * Weekly Assignment 2, Task 1: *
- ********************************
- * The current implementations of functions `copyFromGlb2ShrMem`
- *   and `copyFromShr2GlbMem` are broken because they feature 
- *   (very) uncoalesced access to global memory arrays `d_inp`
- *   and `d_out` (see above). For example, `d_inp[glb_ind]`
- *   can be expanded to `d_inp[glb_offs + threadIdx.x*CHUNK + i]`,
- *   where `threadIdx.x` denotes the local thread-id in the
- *   current block. Assuming `T` is 32-bit int, it follows that
- *   two consecutive threads are going to access in the same SIMD
- *   instruction memory locations that are CHUNK words appart
- *   (`i` being the same for both threads since they execute in
- *   lockstep). 
- *  Your task is to rewrite in both functions the line 
- *      `uint32_t loc_ind = threadIdx.x*CHUNK + i;`
- *    such that the result is the same---i.e., the same elements
- *    are ultimately placed at the same position---but with the
- *    new formula for computing `loc_ind`, two consecutive threads
- *    will access consecutive memory words in the same SIMD instruction.
  */ 
 template<class T, uint32_t CHUNK>
 __device__ inline void
@@ -449,13 +440,13 @@ copyFromGlb2ShrMem( const uint32_t glb_offs
 ) {
     #pragma unroll
     for(uint32_t i=0; i<CHUNK; i++) {
-        uint32_t loc_ind = blockDim.x*i+threadIdx.x; //threadIdx.x*CHUNK + i;
-        uint32_t glb_ind = glb_offs + loc_ind;
+        uint32_t lind = i*blockDim.x + threadIdx.x;
+        uint32_t glb_ind = glb_offs + lind;
         T elm = ne;
         if(glb_ind < N) { elm = d_inp[glb_ind]; }
-        shmem_inp[loc_ind] = elm;
+        shmem_inp[lind] = elm;
     }
-    __syncthreads(); // leave this here at the end!
+    __syncthreads();
 }
 
 /**
@@ -463,12 +454,6 @@ copyFromGlb2ShrMem( const uint32_t glb_offs
  * that you need to copy from shared to global memory, so
  * that consecutive threads write consecutive indices in
  * global memory in the same SIMD instruction. 
- * `glb_offs` is the offset in global-memory array `d_out`
- *    where elements should be written.
- * `d_out` is the global-memory array
- * `N` is the length of `d_out`
- * `shmem_red` is the shared-memory of size
- *    `blockDim.x*CHUNK*sizeof(T)`
  */
 template<class T, uint32_t CHUNK>
 __device__ inline void
@@ -479,16 +464,15 @@ copyFromShr2GlbMem( const uint32_t glb_offs
 ) {
     #pragma unroll
     for (uint32_t i = 0; i < CHUNK; i++) {
-        uint32_t loc_ind = blockDim.x*i+threadIdx.x; //threadIdx.x * CHUNK + i;
-        uint32_t glb_ind = glb_offs + loc_ind;
+        uint32_t lind = i*blockDim.x + threadIdx.x;
+        uint32_t glb_ind = glb_offs + lind;
         if (glb_ind < N) {
-            T elm = const_cast<const T&>(shmem_red[loc_ind]);
+            T elm = const_cast<const T&>(shmem_red[lind]);
             d_out[glb_ind] = elm;
         }
     }
     __syncthreads(); // leave this here at the end!
 }
-
 
 /**
  * This kernel assumes that the generic-associative binary operator
@@ -623,7 +607,6 @@ scan1Block( typename OP::RedElTp* d_inout, uint32_t N ) {
  *   which is stored in `d_tmp[i-1]`.
  */
 template<class OP, int CHUNK>
-__launch_bounds__(1024)
 __global__ void
 scan3rdKernel ( typename OP::RedElTp* d_out
               , typename OP::InpElTp* d_in
@@ -948,7 +931,6 @@ redSgmScanKernel( char*                 d_tmp_flag
  * The implementation is very similar to `scan3rdKernel` kernel.
  */
 template<class OP, int CHUNK>
-__launch_bounds__(1024)
 __global__ void
 sgmScan3rdKernel ( typename OP::RedElTp* d_out
                  , typename OP::InpElTp* d_inp
@@ -1028,7 +1010,7 @@ sgmScan3rdKernel ( typename OP::RedElTp* d_out
         // 4. read the previous element and complete the scan in shared memory
         tmp   = LiftOP<OP>::identity();
         if (threadIdx.x > 0) { 
-            tmp.v = OP::remVolatile(shmem_red[threadIdx.x-1]);
+            tmp.v = shmem_red[threadIdx.x-1];
             tmp.f = shmem_flg[threadIdx.x-1];
         }
         tmp   = LiftOP<OP>::apply(accum, tmp);
@@ -1036,7 +1018,7 @@ sgmScan3rdKernel ( typename OP::RedElTp* d_out
             chunk[i] = LiftOP<OP>::apply(tmp, chunk[i]);
         }
         tmp.f = shmem_flg[blockDim.x-1];
-        tmp.v = OP::remVolatile(shmem_red[blockDim.x-1]);
+        tmp.v = shmem_red[blockDim.x-1];
         accum = LiftOP<OP>::apply(accum, tmp);
         __syncthreads();
 
@@ -1046,10 +1028,38 @@ sgmScan3rdKernel ( typename OP::RedElTp* d_out
         }
         __syncthreads();
 
-        // 5. write back to global memory in coalesced form
+        // 5. write back to global memory
         copyFromShr2GlbMem<typename OP::RedElTp, CHUNK>
                   (inp_block_offs+seq, N, d_out, shmem_red);
     }
+}
+
+/*********************/
+/*** Filter Kernel ***/
+/*********************/
+
+template<class P>
+__global__ void
+secondkernel( uint32_t N
+            , int                  split
+            , typename P::InpElTp* d_out 
+            , typename P::InpElTp* d_inp
+            , MyInt2*              d_scan
+) {
+    typedef typename P::InpElTp InpTp;
+    uint32_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    if(gid >= N) return;
+    
+    InpTp el    = d_inp[gid];
+    MyInt2 tmp  = d_scan[gid];
+    int res_ind;
+    if (P::predicate(el) == 1) {
+        res_ind = tmp.x;
+    } else {
+        res_ind = tmp.y + split;
+    }
+    d_out[res_ind-1] = el;
 }
 
 #endif //SCAN_KERS
