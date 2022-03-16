@@ -42,4 +42,4 @@ let main (n:i32) : (i32,i32) =
     let rng = lcg.init n
     let num1 = rand_i32 rng 10
     let num2 = rand_i32 num1.0 10
-    in (num1.1, num2.2)
+    in (num1.1, num2.1)
