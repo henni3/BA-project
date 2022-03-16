@@ -1,3 +1,41 @@
+-- random module taken from Futharks webpage
+
+module type rand ={
+    type rng
+    val init : i32 -> rng
+    val rand : rng -> (rng, i32)
+    val split : rng -> (rng,rng)
+    val split_n : (n: i64) -> rng -> [n]rng
+}
+
+
+
+module lcg : rand = {
+    type rng = u32
+    
+    def addConst : u32 = 1103515245
+    def multConst : u32 = 12345
+    def modConst : u32 = 1<<31
+
+    def rand rng = 
+        let rng' = (addConst * rng + multConst) % modConst
+        in (rng', i32.u32 rng')
+    
+    
+    def init (x: i32) : u32 =
+        let x = u32.i32 x
+        let x =((x >> 16) ^ x) * 0x45d9f3b   
+        let x =((x >> 16) ^ x) * 0x45d9f3b
+        let x =((x >> 16) ^ x)
+        in x
+    def split (rng: rng) = 
+        (init (i32.u32 (rand rng).0),
+         init (i32.u32 rng))
+
+    def split_n n rng = 
+        tabulate n (\i -> init (i32.u32 rng ^ i32.i64 i))
+}
+    
 -- mkFlagArray is taken from PMPH lecture notes p. 48
 let mkFlagArray 't [m] 
         (aoa_shp: [m]i32) (zero: t)
@@ -39,17 +77,9 @@ let changeComparator (t1 : (i32, i32, i32)) (t2: (i32, i32, i32)) : (i32, i32, i
 
 -- findMinChange is the parallel implementation of the two for loops
 -- in the 2-opt move algorithm
-let findMinChange [m] [n] (dist : [m]i32) (tour : [n]i32) (cities : i32) : (i32, i32, i32) =
-    let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
-    let len = i64.i32 (cities-2)
-    let aoa_val = replicate len 1i32
-    let temp = map (+1) (iota len) |> map i32.i64
-    let aoa_shp = map (\i ->
-                       temp[len - i - 1] 
-                      ) (iota len)
-    let flagArr = mkFlagArray aoa_shp 0i32 aoa_val
-    let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
-    let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
+let findMinChange [m] [n] [x] [y] (dist : [m]i32) (tour : [n]i32) 
+                                (Iarr : [x]i32) (Jarr : [y]i32) 
+                                (cities : i32) (totIter : i64) : (i32, i32, i32) =
     let changeArr = map (\ind -> 
                         let i = Iarr[ind]
                         let iCity = tour[i]
@@ -75,31 +105,50 @@ let swap [m] (i : i32) (j : i32) (tour : [m]i32) : [m]i32 =
             tour[j - (ind - minI)]
     ) 
 
-let cost [n] [m] (tour : [n]i32) (distM : [m]i32) : i32 = 
-        map (\i ->  distM[tour[i] * i32.i64(n-1) + tour[i+1]]
-            ) (iota (n-1)) |> reduce (+) 0
-
-let twoOptAlg [m] [n] (distM : [m]i32) (tour : [n]i32) (cities : i32) : ([]i32, i32) =
+-- 2-opt algorithm
+let twoOptAlg [m] [n] [x] [y] (distM : [m]i32) (tour : [n]i32) 
+                            (Iarr : [x]i32) (Jarr : [y]i32) 
+                            (cities : i32) (totIter : i64) : ([]i32, i32) =
     let twoOpt xs =
-        let minChange = findMinChange distM xs cities
+        let minChange = findMinChange distM xs Iarr Jarr cities totIter
         in 
             if minChange.0 < 0 then (swap minChange.1 minChange.2 xs, minChange.0) 
                 else (xs, minChange.0)
     let rs = loop (xs, cond) = (tour, -1)  while cond < 0 do twoOpt xs 
     in rs
 
+-- Compute cost of tour
+let cost [n] [m] (tour : [n]i32) (distM : [m]i32) : i32 = 
+        map (\i ->  distM[tour[i] * i32.i64(n-1) + tour[i+1]]
+            ) (iota (n-1)) |> reduce (+) 0
 
-let main [m] (cities : i32) (distM : [m]i32) : (i32, i32, []i32) =
+-- Generate flagArray
+let flagArrayGen (cities : i32) : ([]i32)=
+    let len = i64.i32 (cities-2)
+    let aoa_val = replicate len 1i32
+    let temp = map (+1) (iota len) |> map i32.i64
+    let aoa_shp = map (\i ->
+                       temp[len - i - 1] 
+                      ) (iota len)
+    in mkFlagArray aoa_shp 0i32 aoa_val
+--[m] (cities : i32) (distM : [m]i32)
+let main (cities : i32) : (i32, i32, []i32) =
     --let cities = 5
+    let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
     let tour = map i32.i64 (iota (i64.i32 cities+1)) |> 
                 map(\i -> if i == cities then 0 else i)
-    --let distM = [0,4,6,8,3,
-    --             4,0,4,5,2,
-    --             6,4,0,2,3,
-    --             8,5,2,0,4,
-    --             3,2,3,4,0]
+    let distM = [0,4,6,8,3,
+                 4,0,4,5,2,
+                 6,4,0,2,3,
+                 8,5,2,0,4,
+                 3,2,3,4,0]
+
+    let flagArr = flagArrayGen cities
+    let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
+    let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
+    
     let oldCost = cost tour distM            
-    let minTour = twoOptAlg distM tour cities
+    let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
     let newCost = cost minTour.0 distM
     in (oldCost, newCost, minTour.0)
     
