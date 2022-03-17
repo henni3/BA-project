@@ -1,3 +1,9 @@
+-- ==
+--
+-- compiled input @ ../Data/berlin52.txt
+--
+-- compiled input @ ../Data/swiss.txt
+
 
 module type rand ={
     type rng
