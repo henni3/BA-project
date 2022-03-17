@@ -59,14 +59,14 @@ let mkRandomTour (offset:i64) (cities:i32) : []i32 =
     --let randIndArr = map (\i -> 
     --    if i == 0 then rand_i32 rng cities
     --              else rand_i32 (i-1).0 cities ) iota cities 
-    let initTour = map (\i -> if i == ((i64.i32 cities) + 1) then 0
+    let initTour = map (\i -> if i == (i64.i32 cities) then 0
                               else i) (iota ((i64.i32 cities)+1)) |> map i32.i64
-    let intialI = rand_nonZero rng (cities + 1)
-    let intialJ = rand_nonZero intialI.0 (cities + 1)
+    let intialI = rand_nonZero rng (cities)
+    let intialJ = rand_nonZero intialI.0 (cities)
     let randomSwaps = rand_nonZero intialJ.0 100
     let rs = loop (intialI,intialJ,initTour) for i < randomSwaps.1 do
-                let intI = rand_nonZero intialI.0 (cities+1)
-                let intJ = rand_nonZero intI.0 (cities+1)
+                let intI = rand_nonZero intialI.0 (cities)
+                let intJ = rand_nonZero intI.0 (cities)
                 let swappedTour = swap intialI.1 intialJ.1 initTour
                 in (intI, intJ, swappedTour)
     in rs.2
@@ -163,7 +163,7 @@ let flagArrayGen (cities : i32) : ([]i32)=
     in mkFlagArray aoa_shp 0i32 aoa_val
 --[m] 
 let main [m] (cities : i32) (numRestarts : i64) 
-         (distM : [m]i32) : (i32) =
+         (distM : [m]i32) : i32 =
     --let cities = 5
     let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
     --let initTour = (iota (i64.i32 cities+1)) |> 
@@ -180,9 +180,10 @@ let main [m] (cities : i32) (numRestarts : i64)
     let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
     let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
     let allCosts = map(\ind -> 
-            let tour = mkRandomTour ind cities
+            let tour = mkRandomTour ((ind+1)*13) cities
             let minTour = twoOptAlg distM tour Iarr Jarr cities totIter
             in cost minTour distM
         )(iota numRestarts)
     in reduce costComparator 2147483647 allCosts
+    --in mkRandomTour 125 cities
     
