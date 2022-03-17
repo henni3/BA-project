@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hostSkel.cu.h"
-#include "kernels.cu.h"
+#include "tsp-kernels.cu.h"
 
 int twoOptMove(int block_size, int cities){
     int   totIter, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
@@ -60,17 +60,22 @@ int twoOptMove(int block_size, int cities){
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
+    return 0;
 }
 
 
 int main(int argc, char* argv[]) {
     int cities = 5;
+    int block_size = atoi(argv[1]);
     uint32_t totDist = cities * cities;
     uint32_t* distM = (uint32_t*) malloc((totDist)*sizeof(uint32_t));
     uint32_t* tour = (uint32_t*) malloc((cities + 1 ) * sizeof(uint32_t));
 
     memcpy(distM, (uint32_t[25]){0,4,6,8,3,4,0,4,5,2,6,4,0,2,3,8,5,2,0,4,3,2,3,4,0}, sizeof(uint32_t) * (totDist));
     memcpy(tour, (int[6]) {4,2,0,3,1,4}, sizeof(int) * (cities+1));
+
+    twoOptMove(block_size, cities);
+    return 0;
 
     
 }
