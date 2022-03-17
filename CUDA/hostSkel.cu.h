@@ -194,8 +194,7 @@ void scanInc( const uint32_t     B     // desired CUDA block size ( <= 1024, mul
     uint32_t num_seq_chunks;
     const uint32_t num_blocks = getNumBlocks<CHUNK>(N, B, &num_seq_chunks);    
     const size_t   shmem_size = B * max_tp_size * CHUNK;
-
-    //
+    
     redAssocKernel<OP, CHUNK><<< num_blocks, B, shmem_size >>>(d_tmp, d_in, N, num_seq_chunks);
 
     {

@@ -12,7 +12,7 @@ int twoOptMove(int block_size, int cities){
     totIter = ((cities-1) * (cities-2))/2;
 
     //Calculate the length of shape array
-    len = cities - 2;
+    int len = cities - 2;
 
     //Calculate block size
     unsigned int num_blocks     = (totIter + block_size-1)/block_size; 
@@ -25,35 +25,33 @@ int twoOptMove(int block_size, int cities){
 
     cudaMalloc((void**)&d_tmp_int,   MAX_BLOCK*sizeof(int));
     cudaMalloc((void**)&d_tmp_flag,  MAX_BLOCK*sizeof(char));
-
+    
     //Create shape array for index
-    for(int i = 0; i < len; i++){
-        index_shp_d[i] = len - i;
-    }
-
+    mkIndShp<<< num_blocks, block_size >>> (index_shp_d, len);
+    printf("hej\n");
     // Make flag array
     // 1. scan the shape array
-    scanInc< Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
-
+    scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
+    printf("hej\n");
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> ( totIter, flags_d );
 
     // 3. scatter the flag array
     mkFlags<<< num_blocks_shp, block_size >>> (len, index_shp_sc_d, flags_d);
     printf("index_shape_scan: [");
-    for (int = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         printf("%d, ", index_shp_sc_d[i]);
     }
     printf("] \n"); 
 
     printf("index_shape: [");
-    for (int = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         printf("%d, ", index_shp_d[i]);
     }
     printf("] \n");
 
     printf("flag_Arr: [");
-    for (int = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         printf("%d, ", flags_d [i]);
     }
     printf("] \n");
@@ -70,10 +68,12 @@ int main(int argc, char* argv[]) {
     uint32_t totDist = cities * cities;
     uint32_t* distM = (uint32_t*) malloc((totDist)*sizeof(uint32_t));
     uint32_t* tour = (uint32_t*) malloc((cities + 1 ) * sizeof(uint32_t));
+    uint32_t tempDist[25] = {0,4,6,8,3,4,0,4,5,2,6,4,0,2,3,8,5,2,0,4,3,2,3,4,0};
+    uint32_t tempTour[6] = {4,2,0,3,1,4};
 
-    memcpy(distM, (uint32_t[25]){0,4,6,8,3,4,0,4,5,2,6,4,0,2,3,8,5,2,0,4,3,2,3,4,0}, sizeof(uint32_t) * (totDist));
-    memcpy(tour, (int[6]) {4,2,0,3,1,4}, sizeof(int) * (cities+1));
-
+    memcpy(distM, tempDist, sizeof(uint32_t) * (totDist));
+    memcpy(tour, tempTour, sizeof(uint32_t) * (cities+1));
+    
     twoOptMove(block_size, cities);
     return 0;
 
