@@ -10,7 +10,7 @@ int init(int block_size, int cities, int totIter, int* is, int* js){
 
     //Calculate the length of shape array
     len = cities - 2;
-    initHwd();
+    //initHwd();
     //Calculate block size
     unsigned int num_blocks     = (totIter + block_size-1)/block_size; 
     unsigned int num_blocks_shp = (len + block_size-1)/block_size; 
