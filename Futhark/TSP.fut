@@ -112,7 +112,7 @@ let changeComparator (t1 : (i32, i32, i32)) (t2: (i32, i32, i32)) : (i32, i32, i
         else t2
 
 -- finds the best cost of two input costs
-let costComparator [n] (cost1: i32) (cost2 :( i32) : i32 = 
+let costComparator (cost1: i32) (cost2 :( i32)) : i32 = 
     if cost1 < cost2 then cost1 else cost2
 
 -- findMinChange is the parallel implementation of the two for loops
