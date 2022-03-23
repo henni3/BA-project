@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
         printf("too many cities :( \n");
         exit(1);
     }
-    realloc((int*) cities,sizeof(int)* cities * cities);
+    distM = (int*) realloc(distM,sizeof(int)* cities * cities);
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 
