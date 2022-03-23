@@ -107,6 +107,14 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     distM = (int*) realloc(distM,sizeof(int)* cities * cities);
+    printf("matrix: \n[");
+    for (int i = 0; i < cities; i++){
+        for (int j = 0; j < cities; i++){
+            printf("%d, ", distM[i *cities + j]);
+        }
+        printf("\n");
+    }
+    printf("]\n");
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 
