@@ -41,21 +41,16 @@ void log2UB(uint32_t n, uint32_t* ub, uint32_t* lg) {
  */
 template<int CHUNK>
 uint32_t getNumBlocks(const uint32_t N, const uint32_t B, uint32_t* num_chunks) {
-    printf("N: %d, B: %d, chunk: %d, CHUNK: %d\n", N, B, num_chunks, CHUNK);
-    printf("hh3\n");
     const uint32_t max_inp_thds = (N + CHUNK - 1) / CHUNK;
-    printf("hh0\n");
     const uint32_t num_thds0    = min(max_inp_thds, MAX_HWDTH);
-    printf("hh1\n");
-    printf("man_: %d, MAX: %d\n", max_inp_thds, MAX_HWDTH);
     const uint32_t min_elms_all_thds = num_thds0 * CHUNK;
-    printf("min_: %d\n", min_elms_all_thds);
+
     *num_chunks = max(1, N / min_elms_all_thds);
-    //printf("min_: %d\n", min_elms_all_thds);
+
     const uint32_t seq_chunk = (*num_chunks) * CHUNK;
     const uint32_t num_thds = (N + seq_chunk - 1) / seq_chunk;
     const uint32_t num_blocks = (num_thds + B - 1) / B;
-    printf("hh3\n");
+
     if(num_blocks > MAX_BLOCK) {
         printf("Broken Assumption: number of blocks %d exceeds maximal block size: %d. Exiting!"
               , num_blocks, MAX_BLOCK);
@@ -192,30 +187,20 @@ void scanInc( const uint32_t     B     // desired CUDA block size ( <= 1024, mul
             , typename OP::InpElTp* d_in  // device array of length: N
             , typename OP::RedElTp* d_tmp // device array of max length: MAX_BLOCK
 ) {
-    printf("hej-sca\n");
     const uint32_t inp_sz = sizeof(typename OP::InpElTp);
     const uint32_t red_sz = sizeof(typename OP::RedElTp);
-    printf("hej-sca193\n");
     const uint32_t max_tp_size = (inp_sz > red_sz) ? inp_sz : red_sz;
-    printf("hej-sca195\n");
     const uint32_t CHUNK = ELEMS_PER_THREAD*4 / max_tp_size;
-    printf("hej-sca197\n");
     uint32_t num_seq_chunks;
-    printf("hej-sca190\n");
     const uint32_t num_blocks = getNumBlocks<CHUNK>(N, B, &num_seq_chunks);    
-    printf("hej-sca191\n");
     const size_t   shmem_size = B * max_tp_size * CHUNK;
-    printf("hej-sca198\n");
     redAssocKernel<OP, CHUNK><<< num_blocks, B, shmem_size >>>(d_tmp, d_in, N, num_seq_chunks);
-    printf("hej-sca200\n");
     {
         const uint32_t block_size = closestMul32(num_blocks);
         const size_t shmem_size = block_size * sizeof(typename OP::RedElTp);
         scan1Block<OP><<< 1, block_size, shmem_size>>>(d_tmp, num_blocks);
     }
-    printf("hej-sca206\n");
     scan3rdKernel<OP, CHUNK><<< num_blocks, B, shmem_size >>>(d_out, d_in, d_tmp, N, num_seq_chunks);
-    printf("hej-sca208\n");
 }
 
 /**
