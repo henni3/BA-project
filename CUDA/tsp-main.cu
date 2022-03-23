@@ -67,6 +67,7 @@ int init(int block_size, int cities, int totIter, int* is, int* js){
 
 int main(int argc, char* argv[]) {
     initHwd();
+    printf("hej");
     int cities = 330;
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
