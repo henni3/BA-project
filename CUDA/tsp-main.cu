@@ -101,12 +101,12 @@ int main(int argc, char* argv[]) {
     initHwd();
 
     int* distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
-    int cities = fileToDistM(file_name,distM);
+    int cities = fileToDistM(file_name, distMatrix);
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
-    distMatrix = (int*) realloc(distM,sizeof(int)* cities * cities);
+    distMatrix = (int*) realloc(distMatrix,sizeof(int)* cities * cities);
     printf("matrix: \n[");
     for (int i = 0; i < cities; i++){
         for (int j = 0; j < cities; i++){
