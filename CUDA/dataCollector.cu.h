@@ -30,7 +30,7 @@ void create_dist_array (int* dist_array, float* xs, float* ys, int type, int cit
     }
 }
 
-void fileToDistM(char* filename, int* save_array){
+int fileToDistM(char* filename, int* save_array){
     FILE* source = fopen(filename, "r");
     if (source == NULL) {
         printf("Source file not found\n");
@@ -81,4 +81,5 @@ void fileToDistM(char* filename, int* save_array){
     }
     memcpy(save_array,distM,sizeof(int) * cities * cities);
     free(distM);
+    return cities;
 } 
