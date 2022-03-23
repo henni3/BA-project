@@ -3,6 +3,10 @@
 #include <string.h>
 #include "hostSkel.cu.h"
 #include "tsp-kernels.cu.h"
+#include "dataCollector.cu.h"
+
+#define MAXCITIES 10000
+
 
 int init(int block_size, 
          int cities, 
@@ -87,18 +91,26 @@ int init(int block_size,
 
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Usage: %s <block-size>\n", argv[0]);
+    if (argc != 3) {
+        printf("Usage: %s <block-size> <file-name>\n", argv[0]);
         exit(1);
     }
+    int block_size = atoi(argv[1]);
+    char* file_name = argv[2];
     
     initHwd();
-    int cities = 5;
+
+    int* distM = (int) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    int cities = fileToDistM(file_name,distM);
+    if( cities > MAXCITIES){
+        printf("too many cities :( \n");
+        exit(1);
+    }
+    realloc(cities,sizeof(int)* cities * cities);
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 
-    int block_size = atoi(argv[1]);
-   // uint32_t totDist = cities * cities;
+    //uint32_t totDist = cities * cities;
     //uint32_t* distM = (uint32_t*) malloc((totDist)*sizeof(uint32_t));
     //uint32_t* tour = (uint32_t*) malloc((cities + 1 ) * sizeof(uint32_t));
     //uint32_t tempDist[25] = {0,4,6,8,3,4,0,4,5,2,6,4,0,2,3,8,5,2,0,4,3,2,3,4,0};
