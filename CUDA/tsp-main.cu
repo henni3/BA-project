@@ -106,15 +106,15 @@ int main(int argc, char* argv[]) {
         printf("too many cities :( \n");
         exit(1);
     }
-    //distMatrix = (int*) realloc(distMatrix,sizeof(int)* cities * cities);
+    distMatrix = (int*) realloc(distMatrix,sizeof(int)* cities * cities);
     printf("cities: %d \n", cities );
-    /*printf("matrix: \n[");
+    printf("matrix: \n[");
     for (int i = 0; i < cities; i++){
-        for (int j = 0; j < cities; i++){
-            printf("%d \n, ", distMatrix[i *cities + j]);
+        for (int j = 0; j < cities; j++){
+            printf("%d ", distMatrix[i *cities + j]);
         }
         printf("\n");
-    }*/
+    }
     printf("]\n");
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
