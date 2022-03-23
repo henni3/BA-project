@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
     printf("matrix: \n[");
     for (int i = 0; i < cities; i++){
         for (int j = 0; j < cities; i++){
-            printf("%d \n, ", distM[i *cities + j]);
+            printf("%d \n, ", distMatrix[i *cities + j]);
         }
         printf("\n");
     }
