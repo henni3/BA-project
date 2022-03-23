@@ -100,13 +100,13 @@ int main(int argc, char* argv[]) {
     
     initHwd();
 
-    int* distM = (int) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    int* distM = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(file_name,distM);
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
-    realloc(cities,sizeof(int)* cities * cities);
+    realloc((int*) cities,sizeof(int)* cities * cities);
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 

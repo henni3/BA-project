@@ -42,7 +42,7 @@ int fileToDistM(char* filename, int* save_array){
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
             fscanf(source, "%d", &cities);
-            distM = malloc(sizeof(int) * cities * cities);
+            distM = (int*) malloc(sizeof(int) * cities * cities);
         } else if(strncmp("EUC_2D", buf,6) == 0){
             type = EUCLIDIAN;
         } else if(strncmp("GEO:", buf,3) == 0){
@@ -52,8 +52,8 @@ int fileToDistM(char* filename, int* save_array){
         } else if(strncmp("EXPLICIT", buf,8) == 0){
             type = MATRIX;
         } else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
-            X_positions = malloc(sizeof(float) * cities);
-            Y_positions = malloc(sizeof(float) * cities);
+            X_positions = (float*) malloc(sizeof(float) * cities);
+            Y_positions = (float*) malloc(sizeof(float) * cities);
             int i = 0;
             while(fscanf(source,"%d %f %f \n", &read3, &read1, &read2)){
                 X_positions[i] = read1;
