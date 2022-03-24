@@ -47,7 +47,7 @@ __global__ void minusOne(int totIter, int* in_arr) {
 
 __global__ void twoOptKer(int *gloDist, char *gloTour, int cities){
     int i, j;
-    const int city = cities;
+    const unsigned int city = cities;
     __shared__ char shaTour[city+1]; //shared tour
     __shared__ int shaDist[city * city]; // shared distance memory
 
