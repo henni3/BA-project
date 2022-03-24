@@ -47,7 +47,7 @@ int init(int block_size,
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
     convert<<< num_blocks, block_size >>> (flag_int, flags_d, totIter);
     
-    
+    /*
     int* flag = (int*) malloc(totIter*sizeof(int));
     cudaMemcpy(flag, flag_int, totIter*sizeof(int), cudaMemcpyDeviceToHost);
     printf("flag: [");
@@ -66,7 +66,7 @@ int init(int block_size,
     }
     printf("]\n");
     free(flag_c);
-
+    */
 
     //Make is array
     // 1. scan the flag array
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 
     init(block_size, cities, totIter, is_d, js_d);
 
-    /*int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
+    int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
     int k = 0;
     printf("is: [");
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
         printf("%d, ", js_h[i]);
     }
     printf("]\n");
-    free(js_h); free(is_h);*/
+    free(js_h); free(is_h);
 
     cudaFree(is_d); cudaFree(js_d);
     return 0;
