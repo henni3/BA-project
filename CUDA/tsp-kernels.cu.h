@@ -29,7 +29,7 @@ __global__ void replicate0(int totIter, char* flags_d) {
 __global__ void replicate1(int totIter, int* flags_d) {
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < totIter){
-        printf("glb id_replicate %d \n", glb_id)
+        printf("glb id_replicate %d \n", glb_id);
         flags_d[glb_id]=1;
     }
 }

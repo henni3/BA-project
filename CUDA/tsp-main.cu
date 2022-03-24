@@ -45,7 +45,7 @@ int init(int block_size,
     // 3. scatter the flag array
     mkFlags<<< num_blocks_shp, block_size >>> (totIter, index_shp_sc_d, flags_d);
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
-    convert<<< num_blocks_shp, block_size >>> (flag_int, flags_d, totIter);
+    convert<<< num_blocks, block_size >>> (flag_int, flags_d, totIter);
     
     
     int* flag = (int*) malloc(totIter*sizeof(int));
