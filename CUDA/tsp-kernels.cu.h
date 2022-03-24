@@ -44,3 +44,7 @@ __global__ void minusOne(int totIter, int* in_arr) {
         in_arr[glb_id]=in_arr[glb_id]-1;
     }
 }
+
+__global__ void 2optKer(int *gloDist, int randOffset, int cities){
+    
+}
