@@ -159,6 +159,7 @@ int main(int argc, char* argv[]) {
     
 
     //run 2 opt kernel
+    unsigned int num_blocks = (totIter + block_size-1)/block_size; 
     char* tour = (char*) malloc((cities+1)*sizeof(char));
     for(int i = 0; i < cities; i++){
         tour[i] = i;
