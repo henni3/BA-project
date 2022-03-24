@@ -167,7 +167,8 @@ let flagArrayGen (cities : i32) : ([]i32)=
                        temp[len - i - 1] 
                       ) (iota len)
     in mkFlagArray aoa_shp 0i32 aoa_val
---[m] 
+
+
 let main [m] (cities : i32) (numRestarts : i64) 
          (distM : [m]i32) : i32 =
     --let cities = 5

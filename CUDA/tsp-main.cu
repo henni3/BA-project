@@ -95,11 +95,13 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s <block-size> <file-name>\n", argv[0]);
         exit(1);
     }
+    // Collect input arguments
     int block_size = atoi(argv[1]);
     char* file_name = argv[2];
     
     initHwd();
 
+    // Collect information from datafile into distMatrix and cities
     int* distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(file_name, distMatrix);
     if( cities > MAXCITIES){
@@ -116,18 +118,11 @@ int main(int argc, char* argv[]) {
         printf("\n");
     }
     printf("\n");
+
+
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 
-    //uint32_t totDist = cities * cities;
-    //uint32_t* distM = (uint32_t*) malloc((totDist)*sizeof(uint32_t));
-    //uint32_t* tour = (uint32_t*) malloc((cities + 1 ) * sizeof(uint32_t));
-    //uint32_t tempDist[25] = {0,4,6,8,3,4,0,4,5,2,6,4,0,2,3,8,5,2,0,4,3,2,3,4,0};
-    //uint32_t tempTour[6] = {4,2,0,3,1,4};
-
-    //memcpy(distM, tempDist, sizeof(uint32_t) * (totDist));
-    //memcpy(tour, tempTour, sizeof(uint32_t) * (cities+1));
-    
     //Memory for i-array and j-array
     int *is_d, *js_d;
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
@@ -135,13 +130,17 @@ int main(int argc, char* argv[]) {
 
 
     init(block_size, cities, totIter, is_d, js_d);
+
     int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
+    int k = 0;
     printf("is: [");
     for(int i = 0; i < totIter; i++){
         printf("%d, ", is_h[i]);
+        k++;
     }
     printf("]\n");
+    printf("k = %d\n", k);
 
     int* js_h = (int*) malloc(totIter*sizeof(int));
     cudaMemcpy(js_h, js_d, totIter*sizeof(int), cudaMemcpyDeviceToHost);
