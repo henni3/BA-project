@@ -45,6 +45,23 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void 2optKer(int *gloDist, int randOffset, int cities){
-    
+__global__ void twoOptKer(int *gloDist, char *gloTour, int cities){
+    int i, j;
+    __shared__ char shaTour[cities+1]; //shared tour
+    __shared__ int shaDist[cities * cities]; // shared distance memory
+
+    for(i = threadIdx.x; i < cities * cities; i += blockDim.x){
+        if(i < cities+1){
+            shaTour[i] = gloTour[i];
+            shaDist[i] = gloDist[i];
+            printf("shareTour: %d\n", shaTour[i]);
+        }else{
+            shaDist[i] = gloDist[i];
+        }
+        printf("shareDist: %d\n", shaDist[i]);
+    }
+    __syncthreads();
+
+
+
 }

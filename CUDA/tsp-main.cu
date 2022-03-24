@@ -102,13 +102,19 @@ int main(int argc, char* argv[]) {
     initHwd();
 
     // Collect information from datafile into distMatrix and cities
-    int* distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    int* distMatrix, *kerDist;
+    distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(file_name, distMatrix);
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
     distMatrix = (int*) realloc(distMatrix,sizeof(int)* cities * cities);
+    cudaMalloc((void**)&kerDist, cities*cities*sizeof(int));
+    cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(int), cudaMemcpyHostToDevice);
+
+    
+    
     /*printf("cities: %d \n", cities );
     printf("matrix: \n");
     for (int i = 0; i < cities; i++){
@@ -150,8 +156,24 @@ int main(int argc, char* argv[]) {
     }
     printf("]\n");
     free(js_h); free(is_h);
+    
+
+    //run 2 opt kernel
+    char* tour = (char*) malloc((cities+1)*sizeof(char));
+    for(int i = 0; i < cities; i++){
+        tour[i] = i;
+    }
+    tour[cities] = 0;
+    int* kerTour;
+    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(char));
+
+    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(char), cudaMemcpyHostToDevice);
+    
+    twoOptKer<<< num_blocks, block_size >>> (kerDist, kerTour, cities);
+
 
     cudaFree(is_d); cudaFree(js_d);
+    cudaFree(kerDist); cudaFree(kerTour);
     return 0;
 
     
