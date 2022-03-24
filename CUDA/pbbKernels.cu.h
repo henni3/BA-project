@@ -35,6 +35,26 @@ class Add {
 };
 
 
+/**
+ * Generic Add operator that can be instantiated over
+ *  numeric-basic types, such as int32_t, int64_t,
+ *  float, double, etc.
+ */
+template<class T>
+class AddMinusOne {
+  public:
+    typedef T InpElTp;
+    typedef T RedElTp;
+    static const bool commutative = true;
+    static __device__ __host__ inline T identInp()                    { return (T)0;    }
+    static __device__ __host__ inline T mapFun(const T& el)           { return el;      }
+    static __device__ __host__ inline T identity()                    { return (T)0;    }
+    static __device__ __host__ inline T apply(const T t1, const T t2) { return (t1 + t2)-1; }
+
+    static __device__ __host__ inline bool equals(const T t1, const T t2) { return (t1 == t2); }
+    static __device__ __host__ inline T remVolatile(volatile T& t)    { T res = t; return res; }
+};
+
 /***************************************************/
 /*** Generic Value-Flag Tuple for Segmented Scan ***/
 /***************************************************/

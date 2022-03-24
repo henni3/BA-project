@@ -70,17 +70,17 @@ int init(int block_size,
 
     //Make is array
     // 1. scan the flag array
-    scanInc<Add<int> > (block_size, totIter, is_d, flag_int, d_tmp_int);
+    scanInc<AddMinusOne<int> > (block_size, totIter, is_d, flag_int, d_tmp_int);
     // 2. minus each element of is_d array with one to get the final is_d array
-     minusOne<<< num_blocks, block_size >>> (totIter, is_d);
+    //minusOne<<< num_blocks, block_size >>> (totIter, is_d);
  
     //Make js array
     // 1. create an array of ones
     replicate1<<< num_blocks, block_size >>> (totIter, oneArr);
     // 2. segmented scan on the flag array
-    sgmScanInc<Add<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
+    sgmScanInc<AddMinusOne<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
     // 3. minus each element of js_d array with one to get the final js_d array
-    minusOne<<< num_blocks, block_size >>> (totIter, js_d);
+    //minusOne<<< num_blocks, block_size >>> (totIter, js_d);
 
     
     //free cuda memory
