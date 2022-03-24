@@ -78,7 +78,7 @@ int init(int block_size,
     // 1. create an array of ones
     replicate1<<< num_blocks, block_size >>> (totIter, oneArr);
     // 2. segmented scan on the flag array
-    sgmScanInc<CAST_USER_ADDR_T<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
+    sgmScanInc<Add<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
     // 3. minus each element of js_d array with one to get the final js_d array
     minusOne<<< num_blocks, block_size >>> (totIter, js_d);
 
