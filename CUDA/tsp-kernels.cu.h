@@ -10,11 +10,12 @@ __global__ void mkIndShp(int* index_shp_d, int len){
 __global__ void convert(int* out_flags, char* in_flags, int totIter) {
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < totIter){
-        if(in_flags[glb_id] == 0){
+        printf("%d, \n ", in_flags[glb_id]);
+        /*if(in_flags[glb_id] == 0){
             out_flags[glb_id] = 0;
         }else{
             out_flags[glb_id] = 1;
-        }
+        }*/
         //=(int)in_flags[glb_id];
     }
 }
