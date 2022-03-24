@@ -45,12 +45,11 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void twoOptKer(int *gloDist, char *gloTour, int cities){
+__global__ void twoOptKer(uint32_t *gloDist, uint16_t *gloTour, int cities){
     int i, j;
-    const unsigned int city = cities;
-    __shared__ char shaTour[city]; //shared tour
-    __shared__ int shaDist[city * city]; // shared distance memory
-
+    extern __shared__ uint16_t sharedTourDist[]; //shared memory for both cities and tour
+    uint16_t* shaTour = sharedTourDist;
+    uint32_t* shaDist = (uint32_t*)&shaTour[cities+1];
     for(i = threadIdx.x; i < cities * cities; i += blockDim.x){
         if(i < cities+1){
             shaTour[i] = gloTour[i];

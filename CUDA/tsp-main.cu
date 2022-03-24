@@ -102,16 +102,16 @@ int main(int argc, char* argv[]) {
     initHwd();
 
     // Collect information from datafile into distMatrix and cities
-    int* distMatrix, *kerDist;
-    distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    uint32_t* distMatrix, *kerDist;
+    distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(file_name, distMatrix);
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
-    distMatrix = (int*) realloc(distMatrix,sizeof(int)* cities * cities);
-    cudaMalloc((void**)&kerDist, cities*cities*sizeof(int));
-    cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(int), cudaMemcpyHostToDevice);
+    distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
+    cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
+    cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
 
     
     
@@ -160,16 +160,16 @@ int main(int argc, char* argv[]) {
 
     //run 2 opt kernel
     unsigned int num_blocks = (totIter + block_size-1)/block_size; 
-    char *tour, *kerTour;
-    tour = (char*) malloc((cities+1)*sizeof(char));
+    uint16_t *tour, *kerTour;
+    tour = (uint16_t*) malloc((cities+1)*sizeof(uint16_t));
     for(int i = 0; i < cities; i++){
         tour[i] = i;
     }
     tour[cities] = 0;
-    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(char));
-    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(char), cudaMemcpyHostToDevice);
-    
-    twoOptKer<<< num_blocks, block_size >>> (kerDist, kerTour, cities);
+    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(uint16_t));
+    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(uint16_t), cudaMemcpyHostToDevice);
+    uint32_t sharedMemSize = (cities+1) * sizeof(uint16_t) + cities * cites * sizeof(uint32_t);
+    twoOptKer<<< num_blocks, block_size, sharedMemSize>>> (kerDist, kerTour, cities);
 
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
