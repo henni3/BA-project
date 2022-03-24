@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
     
     twoOptKer<<< num_blocks, block_size >>> (kerDist, kerTour, cities);
 
-    free(tour); free(distMatrix)
+    free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
     cudaFree(kerDist); cudaFree(kerTour);
     return 0;
