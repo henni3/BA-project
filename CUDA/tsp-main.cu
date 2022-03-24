@@ -54,7 +54,7 @@ int init(int block_size,
     for(int i = 0; i < totIter; i++){
         printf("%d, ", flag[i]);
     }
-    printf("]\n");
+    printf("]\n \n");
     free(flag);
 
     
