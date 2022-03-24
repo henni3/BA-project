@@ -47,7 +47,7 @@ int init(int block_size,
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
     convert<<< num_blocks_shp, block_size >>> (flag_int, flags_d, totIter);
     
-    /*
+    
     int* flag = (int*) malloc(totIter*sizeof(int));
     cudaMemcpy(flag, flag_int, totIter*sizeof(int), cudaMemcpyDeviceToHost);
     printf("flag: [");
@@ -55,9 +55,9 @@ int init(int block_size,
         printf("%d, ", flag[i]);
     }
     printf("]\n");
-    free(flag); */
+    free(flag);
 
-    /*
+    
     char* flag_c = (char*) malloc(totIter*sizeof(char));
     cudaMemcpy(flag_c, flags_d, totIter*sizeof(char), cudaMemcpyDeviceToHost);
     printf("flag_c: [");
@@ -65,7 +65,7 @@ int init(int block_size,
         printf("%d, ", flag_c[i]);
     }
     printf("]\n");
-    free(flag_c); */
+    free(flag_c);
 
 
     //Make is array
