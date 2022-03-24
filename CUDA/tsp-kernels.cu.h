@@ -10,7 +10,7 @@ __global__ void mkIndShp(int* index_shp_d, int len){
 __global__ void convert(int* out_flags, char* in_flags, int totIter) {
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < totIter){
-        out_flags[glb_id]=in_flags[glb_id];
+        out_flags[glb_id]=(int)in_flags[glb_id];
     }
 }
 __global__ void replicate0(int totIter, char* flags_d) {
