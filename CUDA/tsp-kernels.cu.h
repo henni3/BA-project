@@ -13,6 +13,7 @@ __global__ void convert(int* out_flags, char* in_flags, int totIter) {
         out_flags[glb_id] = in_flags[glb_id];
     }
 }
+
 __global__ void replicate0(int totIter, char* flags_d) {
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < totIter){
