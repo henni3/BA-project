@@ -46,7 +46,7 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void twoOptKer(uint32_t *glo_dist, unsigned short *glo_tour, uint32_t* glo_is, uint32_t* glo_js, int cities, int totIter){
+__global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, uint32_t* glo_is, uint32_t* glo_js, int cities, int totIter){
     int i, j, ip1, jp1, change;
     int32_t localMinChange[3];
     extern __shared__ unsigned short totShared[]; //shared memory for both tour, minChange and tempRes
