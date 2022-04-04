@@ -54,6 +54,7 @@ __global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities
     float* minChange = (float*)&tempRes[3*blockDim.x];
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
+    printf("hello:\n");
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
         if(i < cities+1){
             shaTour[i] = gloTour[i];
