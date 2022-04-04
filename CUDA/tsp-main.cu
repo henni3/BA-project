@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
         tour[i] = i;
     }*/
 
-    tour = [1,3,4,0,2,1];
+    tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
     unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
