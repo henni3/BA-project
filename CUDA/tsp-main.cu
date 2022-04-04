@@ -168,8 +168,8 @@ int main(int argc, char* argv[]) {
     tour[cities] = 0;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
-    unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(float) + 3*sizeof(float);
-    twoOptKer<<< num_blocks, block_size, sharedMemSize>>> (kerDist, kerTour, cities);
+    unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(uint32_t) + 3*sizeof(uint32_t);
+    twoOptKer<<< num_blocks, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
 
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
