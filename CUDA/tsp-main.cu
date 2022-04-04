@@ -162,11 +162,11 @@ int main(int argc, char* argv[]) {
     unsigned int num_blocks = (totIter + block_size-1)/block_size; 
     unsigned short *tour, *kerTour;
     tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
-    /*for(int i = 0; i < cities; i++){
+    for(int i = 0; i < cities; i++){
         tour[i] = i;
-    }*/
+    }
 
-    tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
+    //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
     unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
