@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
 
     init(block_size, cities, totIter, is_d, js_d);
 
-    /*int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
+    int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
     int k = 0;
     printf("is: [");
@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
         printf("%d, ", js_h[i]);
     }
     printf("]\n");
-    free(js_h); free(is_h);*/
+    free(js_h); free(is_h);
     
 
     //run 2 opt kernel
