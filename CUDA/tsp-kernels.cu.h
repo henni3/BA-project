@@ -99,7 +99,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         }
         for(int ind = threadIdx.x; ind < totIter; ind += blockDim.x){
             i = glo_is[ind];
-            j = glo_js[ind];
+            j = glo_js[ind] + i + 2;
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
