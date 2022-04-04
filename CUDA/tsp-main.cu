@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
     int totIter = ((cities-1) * (cities-2))/2;
 
     //Memory for i-array and j-array
-    uint32_t *is_d, *js_d;
+    int *is_d, *js_d;
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
 
