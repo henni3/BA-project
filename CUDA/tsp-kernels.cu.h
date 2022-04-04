@@ -46,10 +46,10 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void twoOptKer(uint32_t *gloDist, uint16_t *gloTour, int cities){
+__global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities){
     int i, j, ip1, jp1;
-    extern __shared__ uint16_t totShared[]; //shared memory for both tour, minChange and tempResults
-    uint16_t* shaTour = totShared;
+    extern __shared__ unsigned short totShared[]; //shared memory for both tour, minChange and tempResults
+    unsigned short* shaTour = totShared;
     float* tempRes = (float*)&totShared[cities+1];
     float* minChange = (float*)&tempRes[3*blockDim.x];
     int resSize = blockDim.x + cities+1;

@@ -160,15 +160,15 @@ int main(int argc, char* argv[]) {
 
     //run 2 opt kernel
     unsigned int num_blocks = (totIter + block_size-1)/block_size; 
-    uint32_t *tour, *kerTour;
-    tour = (uint32_t*) malloc((cities+1)*sizeof(uint32_t));
+    unsigned short *tour, *kerTour;
+    tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
     for(int i = 0; i < cities; i++){
         tour[i] = i;
     }
     tour[cities] = 0;
-    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(uint16_t));
-    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(uint16_t), cudaMemcpyHostToDevice);
-    uint16_t sharedMemSize = (cities+1) * sizeof(uint16_t) + (block_size*3) * sizeof(float) + 3*sizeof(float);
+    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
+    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
+    unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(float) + 3*sizeof(float);
     twoOptKer<<< num_blocks, block_size, sharedMemSize>>> (kerDist, kerTour, cities);
 
     free(tour); free(distMatrix);
