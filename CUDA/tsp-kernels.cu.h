@@ -106,20 +106,20 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-            if(change < localMinChange[0]){ 
+            if(change < localMinChange[0]){
                     localMinChange[0] = change; 
                     localMinChange[1] = i; 
                     localMinChange[2] = j;
             }
             printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
         }
-        for(int t = threadIdx.x; t < totIter; t += blockDim.x){
-            int a = tempRes[t*3] = localMinChange[0];
-            int b = tempRes[t*3+1] = localMinChange[1];
-            int c = tempRes[t*3+2] = localMinChange[2];
-            printf("res: change %d, i %d, j %d \n", a, b, c);
+        if(threadIdx.x < min(totIter, blockDim.x))){
+            tempRes[threadIdx.x*3] = localMinChange[0];
+            tempRes[threadIdx.x*3+1] = localMinChange[1];
+            tempRes[threadIdx.x*3+2] = localMinChange[2];
+            printf("res: change %d, i %d, j %d \n", tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
         }
-    }
         __syncthreads();
 
+    }
 }
