@@ -65,13 +65,13 @@ __global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities
             tempRes[tmp+1] = float (tmp);  
             tempRes[tmp+2] = float (tmp);  
             printf("temp res: fst %02.f, sec %02.f, thr %02.f \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
-        }/*else{
+        }else if(i < totSize){
             int tmpM = (i-resSize)*3;
             minChange[tmpM] = float (tmpM);
             minChange[tmpM+1] = float (tmpM);
             minChange[tmpM+2] = float (tmpM);
             printf("minChange: fst %02.f, sec %02.f, thr %02.f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
-        }*/
+        }
     }
     __syncthreads();
 
