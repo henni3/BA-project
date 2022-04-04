@@ -114,10 +114,10 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
         }
         for(int t = threadIdx.x; t < totIter; t += blockDim.x){
-            tempRes[t*3] = localMinChange[0];
-            tempRes[t*3+1] = localMinChange[1];
-            tempRes[t*3+2] = localMinChange[2];
-            printf("res: change %d, i %d, j %d \n", tempRes[t*3], tempRes[t*3+1], tempRes[*3+2]);
+            int a = tempRes[t*3] = localMinChange[0];
+            int b = tempRes[t*3+1] = localMinChange[1];
+            int c = tempRes[t*3+2] = localMinChange[2];
+            printf("res: change %d, i %d, j %d \n", a, b, c);
         }
     }
         __syncthreads();
