@@ -11,8 +11,8 @@
 int init(int block_size, 
          int cities, 
          int totIter, 
-         int* is_d, 
-         int* js_d){
+         uint32_t* is_d, 
+         uint32_t* js_d){
     int len, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
     int *flag_int, *oneArr, *seg_sc_tmp_int;
     char *flags_d, *d_tmp_flag; 
