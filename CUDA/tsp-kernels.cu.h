@@ -46,20 +46,32 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void twoOptKer(uint32_t *gloDist, uint32_t *gloTour, int cities){
-    int i, j;
-    extern __shared__ uint32_t sharedTourDist[]; //shared memory for both cities and tour
-    uint32_t* shaTour = sharedTourDist;
-    uint32_t* shaDist = (uint32_t*)&shaTour[cities+1];
-    for(i = threadIdx.x; i < cities * cities; i += blockDim.x){
+__global__ void twoOptKer(uint32_t *gloDist, uint16_t *gloTour, int cities){
+    int i, j, ip1, jp1;
+    extern __shared__ uint16_t totShared[]; //shared memory for both tour, minChange and tempResults
+    uint16_t* shaTour = totShared;
+    float* tempRes = (float*)&totShared[cities+1];
+    float* minChange = (float*)&tempRes[3*blockDim.x];
+    int resSize = blockDim.x + cities+1;
+    int totSize = resSize+3;
+    for(i = threadIdx.x; i < ; i += blockDim.x){
         if(i < cities+1){
             shaTour[i] = gloTour[i];
-            shaDist[i] = gloDist[i];
             printf("shareTour: %d\n", shaTour[i]);
-        }else{
-            shaDist[i] = gloDist[i];
         }
-        printf("shareDist: %d\n", shaDist[i]);
+        else if(i > cities && i < resSize){
+            int tmp = (i-(cities+1))*3
+            tempRes[tmp] = float (tmp);
+            tempRes[tmp+1] = float (tmp);  
+            tempRes[tmp+2] = float (tmp);  
+            printf("temp res: fst %02.f, sec %02.f, thr %02.f \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
+        }else if(i < totSize){
+            int tmpM = (i-resSize)*3
+            minChange[tmpM] = float (tmpM);
+            minChange[tmpM+1] = float (tmpM);
+            minChange[tmpM+2] = float (tmpM);
+            printf("minChange: fst %02.f, sec %02.f, thr %02.f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2];
+        }
     }
     __syncthreads();
 
