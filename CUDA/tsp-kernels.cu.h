@@ -46,13 +46,13 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-__global__ void twoOptKer(uint32_t *glo_dist, unsigned short *glo_tour, uint32_t* glo_Is, uint32_t* glo_js, int cities, int totIter){
+__global__ void twoOptKer(uint32_t *glo_dist, unsigned short *glo_tour, uint32_t* glo_is, uint32_t* glo_js, int cities, int totIter){
     int i, j, ip1, jp1, change;
-    uint32_t localMinChange[3];
+    int32_t localMinChange[3];
     extern __shared__ unsigned short totShared[]; //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;
-    uint32_t* tempRes = (uint32_t*)&tour[cities+1];
-    uint32_t* minChange = (uint32_t*)&tempRes[3*blockDim.x];
+    int* tempRes = (int*)&tour[cities+1];
+    int* minChange = (int*)&tempRes[3*blockDim.x];
 
 
     /* Test of shared memory
@@ -82,19 +82,22 @@ __global__ void twoOptKer(uint32_t *glo_dist, unsigned short *glo_tour, uint32_t
         if(t < cities+1){   //initialize tour to shared memory
             tour[t] = glo_tour[t];
         }else{              //initialize minChange to shared memory
-            minChange[0] = -1; minChange[1] = 0; minChange[2] = 0;
-            printf("thread num in else:", t);
+            minChange[0] = -1; 
+            minChange[1] = 0; 
+            minChange[2] = 0;
+            printf("thread num in else: %d", t);
         }
     }
-    localMinChange[0] = 0; localMinChange[1] = 0; localMinChange[2] = 0;
+    localMinChange[0] = 0; 
+    localMinChange[1] = 0; 
+    localMinChange[2] = 0;
     __syncthreads();
     printf("init minChange: fst %d, sec %d, thr %d \n", minChange[0], minChange[1], minChange[2]);
 
     while(minChange[0] < 0){
-        float localMin[3] = {0,0,0};
         for(int ind = threadIdx.x; ind < totIter; ind += blockDim.x){
-            i = glo_Is[ind];
-            j = glo_Js[ind];
+            i = glo_is[ind];
+            j = glo_js[ind];
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
