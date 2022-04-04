@@ -60,17 +60,17 @@ __global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities
             printf("shareTour: %d\n", shaTour[i]);
         }
         else if(i > cities && i < resSize){
-            int tmp = (i-(cities+1))*3
+            int tmp = (i-(cities+1))*3;
             tempRes[tmp] = float (tmp);
             tempRes[tmp+1] = float (tmp);  
             tempRes[tmp+2] = float (tmp);  
             printf("temp res: fst %02.f, sec %02.f, thr %02.f \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
         }else if(i < totSize){
-            int tmpM = (i-resSize)*3
+            int tmpM = (i-resSize)*3;
             minChange[tmpM] = float (tmpM);
             minChange[tmpM+1] = float (tmpM);
             minChange[tmpM+2] = float (tmpM);
-            printf("minChange: fst %02.f, sec %02.f, thr %02.f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2];
+            printf("minChange: fst %02.f, sec %02.f, thr %02.f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
     }
     __syncthreads();
