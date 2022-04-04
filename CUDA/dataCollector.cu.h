@@ -74,7 +74,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
     }
     if (type != MATRIX) {
         for (uint32_t i = 0; i < cities; i++){
-        printf("X , Y  pos value is: %f , %f \n", X_positions[i], Y_positions[i] );
+        //printf("X , Y  pos value is: %f , %f \n", X_positions[i], Y_positions[i] );
         }
         create_dist_array(distM, X_positions, Y_positions, type, cities);
         free(X_positions);  free(Y_positions);

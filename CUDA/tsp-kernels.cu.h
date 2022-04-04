@@ -55,11 +55,11 @@ __global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     printf("hello:\n");
-    for(i = threadIdx.x; i < totSize; i += blockDim.x){
+    for(i = threadIdx.x; i < cites+1; i += blockDim.x){
         if(i < cities+1){
             shaTour[i] = gloTour[i];
             printf("shareTour: %d\n", shaTour[i]);
-        }
+        }/*
         else if(i > cities && i < resSize){
             int tmp = (i-(cities+1))*3;
             tempRes[tmp] = float (tmp);
@@ -72,7 +72,7 @@ __global__ void twoOptKer(uint32_t *gloDist, unsigned short *gloTour, int cities
             minChange[tmpM+1] = float (tmpM);
             minChange[tmpM+2] = float (tmpM);
             printf("minChange: fst %02.f, sec %02.f, thr %02.f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
-        }
+        }*/
     }
     __syncthreads();
 
