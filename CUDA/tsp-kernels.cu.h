@@ -85,14 +85,13 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             minChange[0] = -1; 
             minChange[1] = 0; 
             minChange[2] = 0;
-            printf("thread num in else: %d", t);
+            printf("thread num in else: %d \n", t);
         }
     }
     localMinChange[0] = 0; 
     localMinChange[1] = 0; 
     localMinChange[2] = 0;
     __syncthreads();
-    printf("init minChange: fst %d, sec %d, thr %d \n", minChange[0], minChange[1], minChange[2]);
 
     while(minChange[0] < 0){
         if(threadIdx.x == 0){
@@ -111,9 +110,9 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                     localMinChange[0] = change; 
                     localMinChange[1] = i; 
                     localMinChange[2] = j;
-            }            
+            }
+            printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
         }
         __syncthreads();
-        printf("each threads smallest element: change %d, i %d, j %d", localMinChange[0], localMinChange[1], localMinChange[2]);   
     }
 }
