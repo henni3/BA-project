@@ -130,7 +130,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             tempRes[threadIdx.x*3] = localMinChange[0];
             tempRes[threadIdx.x*3+1] = localMinChange[1];
             tempRes[threadIdx.x*3+2] = localMinChange[2];
-            //printf("res: change %d, i %d, j %d \n", tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
+            printf("res: change %d, i %d, j %d \n", tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
         }
         __syncthreads();
         
@@ -185,7 +185,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         int temp, swapCities;
         i = tempRes[1] + 1;
         j = tempRes[2];
-        swapCities = (((tempRes[1] - tempRes[2]) + 1) / 2) + i; //the ceiling of j/2 plus i
+        swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
         printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
         for(int t = threadIdx.x + i; t < swapCities; t += blockDim.x){
