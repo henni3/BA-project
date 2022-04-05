@@ -168,6 +168,9 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             __syncthreads();
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
+            if(num_threads == 1){
+                break;
+            }
             printf("thread id: %d\n", threadIdx.x);
         }
         if(threadIdx.x == 0){
