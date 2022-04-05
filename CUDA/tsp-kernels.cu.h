@@ -181,7 +181,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             }
         }
         //Prepare information for swapping
-        int temp, swapCitites;
+        int temp, swapCities;
         i = tempRes[1] + 1;
         j = tempRes[2];
         swapCities = (((tempRes[1] - tempRes[2]) + 1) / 2) + i; //the ceiling of j/2 plus i
