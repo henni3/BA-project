@@ -180,6 +180,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                 break;
             }
         }
+        printf("hej\n");
         //Prepare information for swapping
         int temp, swapCities;
         i = tempRes[1] + 1;
@@ -187,13 +188,14 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         swapCities = (((tempRes[1] - tempRes[2]) + 1) / 2) + i; //the ceiling of j/2 plus i
         //swap
         for(int t = threadIdx.x + i; t < swapCities; t += blockDim.x){
+            printf("t: %d, swapc: %d\n ", t, swapcities);
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
         __syncthreads();
         if(threadIdx.x < (cities+1)){
-            printf("tID: %d, tourElem: %d", threadIdx.x, tour[threadIdx.x]);
+            printf("tID: %d, tourElem: %d\n", threadIdx.x, tour[threadIdx.x]);
         }
         
         
