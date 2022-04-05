@@ -145,7 +145,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         //to find the best minimum change for this climber.
         while(threadIdx.x < num_threads){
             if (threadIdx.x + num_threads < num_elems){
-                if (tempRes[threadIdx.x *3] < tempRes[(threadIdx.x + num_threads)*3]) {
+                if (tempRes[threadIdx.x *3] > tempRes[(threadIdx.x + num_threads)*3]) {
                     tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
                     tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
                     tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
@@ -168,14 +168,12 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             __syncthreads();
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
+            printf("thread id: %d\n", threadIdx.x);
             if(num_threads == 1){
                 break;
             }
-            printf("thread id: %d\n", threadIdx.x);
         }
-        if(threadIdx.x == 0){
-            printf("best change: change %d, i %d, j %d \n", tempRes[0], tempRes[1], tempRes[2]);
-        }
+        printf("best change: thread id %d change %d, i %d, j %d \n", threadIdx.x, tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
 
     }
 }
