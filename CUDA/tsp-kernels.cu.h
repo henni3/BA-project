@@ -180,7 +180,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                 break;
             }
         }
-        printf("hej\n");
+        printf("threadID: %d\n", threadIdx.x);
         //Prepare information for swapping
         int temp, swapCities;
         i = tempRes[1] + 1;
