@@ -178,7 +178,8 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                 break;
             }
         }
-        printf("best change: thread id %d change %d, i %d, j %d \n", threadIdx.x, tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
-
+        if(threadIdx.x == 0){
+            printf("best change: thread id %d change %d, i %d, j %d \n", threadIdx.x, tempRes[0], tempRes[1], tempRes[2]);
+        }
     }
 }
