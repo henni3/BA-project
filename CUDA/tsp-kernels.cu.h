@@ -173,10 +173,11 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
             printf("thread id: %d\n", threadIdx.x);
-            if(num_threads == 1){
+            if(num_threads == num_elems){
                 break;
             }
         }
+        __syncthreads();
         printf("best change: thread id %d change %d, i %d, j %d \n", threadIdx.x, tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
 
     }
