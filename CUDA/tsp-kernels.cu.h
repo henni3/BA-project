@@ -173,7 +173,6 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                     }
                 }
             }
-            printf("thread id: %d\n", threadIdx.x);
             __syncthreads();
 
             num_elems = num_threads;
@@ -182,12 +181,12 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                 break;
             }
         }
-        printf("threadID: %d\n", threadIdx.x);
         //Prepare information for swapping
         int temp, swapCities;
         i = tempRes[1] + 1;
         j = tempRes[2];
         swapCities = (((tempRes[1] - tempRes[2]) + 1) / 2) + i; //the ceiling of j/2 plus i
+        printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
         for(int t = threadIdx.x + i; t < swapCities; t += blockDim.x){
             printf("t: %d, swapc: %d\n ", t, swapCities);
