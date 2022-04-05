@@ -172,6 +172,8 @@ int main(int argc, char* argv[]) {
     unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     twoOptKer<<< num_blocks, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
 
+    
+
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
     cudaFree(kerDist); cudaFree(kerTour);

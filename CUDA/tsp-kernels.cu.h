@@ -194,12 +194,33 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        __syncthreads();
-        if(threadIdx.x < (cities+1)){
-            printf("tID: %d, tourElem: %d\n", threadIdx.x, tour[threadIdx.x]);
+        if(threadIdx.x < 3){
+            minChange[threadIdx.x] = tempRes[threadIdx.x];
         }
-        
-        
-
+        __syncthreads();
     }
+}
+
+__global__ int sumTourKernel(uint32_t* glo_dist, unsigned short *glo_tour, int cities){
+    __shared__ int result_arr[blockDim.x];
+    int idx = threadIdx.x;
+    int sum = 0;
+    int glo_i, glo_ip1;
+    for(int i = idx; i < cities; i += blockDim.x){
+        glo_i = glo_tour[i];
+        glo_ip1 = glo_tour[i+1];
+        sum += glo_dist[glo_i * cities + glo_ip1]
+    }
+    result_arr[idx] = sum;
+    __syncthreads();
+    for (int size = blockDim.x /2; size > 0; size /= 2 ){
+        if (idx < size) {
+            result_arr[idx] += result_arr[idx+size];
+        }
+        __syncthreads();
+    }
+    if(idx == 0) {
+        return result_arr[idx];
+    }
+
 }
