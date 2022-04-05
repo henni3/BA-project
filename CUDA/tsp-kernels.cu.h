@@ -125,7 +125,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
-        if(threadIdx.x < blockDim.x){
+        if(threadIdx.x < totIter){
             tempRes[threadIdx.x*3] = localMinChange[0];
             tempRes[threadIdx.x*3+1] = localMinChange[1];
             tempRes[threadIdx.x*3+2] = localMinChange[2];
