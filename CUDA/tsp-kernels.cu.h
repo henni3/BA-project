@@ -146,6 +146,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         while(threadIdx.x < num_threads){
             if (threadIdx.x + num_threads < num_elems){
                 if (tempRes[threadIdx.x *3] > tempRes[(threadIdx.x + num_threads)*3]) {
+                    printf("if statement\n");
                     tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
                     tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
                     tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
