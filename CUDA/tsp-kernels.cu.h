@@ -171,7 +171,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
                     }
                 }
             }
-            //printf("thread id: %d\n", threadIdx.x);
+            printf("thread id: %d\n", threadIdx.x);
             __syncthreads();
 
             num_elems = num_threads;
