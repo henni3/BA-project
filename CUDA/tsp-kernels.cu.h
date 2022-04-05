@@ -145,28 +145,30 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        while(threadIdx.x < num_threads){
-            if (threadIdx.x + num_threads < num_elems){
-                //printf("num_th: %d, num_elem: %d\n",num_threads, num_elems);
-                //printf("threadid: %d, threadid+threadnum: %d\n",threadIdx.x*3, (threadIdx.x + num_threads)*3);
-                //printf("first elem: %d, second elem: %d\n",tempRes[threadIdx.x*3], tempRes[(threadIdx.x + num_threads)*3]);
-                if (tempRes[threadIdx.x*3] > tempRes[(threadIdx.x + num_threads)*3]) {
-                    //printf("if statement\n");
-                    tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3];
-                    tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
-                    tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
-                }
-                else if (tempRes[threadIdx.x*3] == tempRes[(threadIdx.x + num_threads)*3]){
-                    if (tempRes[threadIdx.x*3 + 1] > tempRes[(threadIdx.x + num_threads)*3 +1 ]){
-                        tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
+        while(1){
+            if(threadIdx.x < num_threads){
+                if (threadIdx.x + num_threads < num_elems){
+                    //printf("num_th: %d, num_elem: %d\n",num_threads, num_elems);
+                    //printf("threadid: %d, threadid+threadnum: %d\n",threadIdx.x*3, (threadIdx.x + num_threads)*3);
+                    //printf("first elem: %d, second elem: %d\n",tempRes[threadIdx.x*3], tempRes[(threadIdx.x + num_threads)*3]);
+                    if (tempRes[threadIdx.x*3] > tempRes[(threadIdx.x + num_threads)*3]) {
+                        //printf("if statement\n");
+                        tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3];
                         tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
                         tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
                     }
-                    else if (tempRes[threadIdx.x*3 +1] == tempRes[(threadIdx.x + num_threads)*3 + 1]){
-                        if (tempRes[threadIdx.x*3 + 2] > tempRes[(threadIdx.x + num_threads)*3] +2){
+                    else if (tempRes[threadIdx.x*3] == tempRes[(threadIdx.x + num_threads)*3]){
+                        if (tempRes[threadIdx.x*3 + 1] > tempRes[(threadIdx.x + num_threads)*3 +1 ]){
                             tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
                             tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
                             tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
+                        }
+                        else if (tempRes[threadIdx.x*3 +1] == tempRes[(threadIdx.x + num_threads)*3 + 1]){
+                            if (tempRes[threadIdx.x*3 + 2] > tempRes[(threadIdx.x + num_threads)*3] +2){
+                                tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
+                                tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
+                                tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
+                            }
                         }
                     }
                 }
