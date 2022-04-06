@@ -76,10 +76,10 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     unsigned short* tour = totShared;               //tour for this climber
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
     int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
-    if (minChange == NULL) {
-        printf("error with creating minchange array \n");
+    if(minChange == NULL || minChange[0]==NULL){
+        printf("pointer error\n");
     }
-    printf("block_size %d\n", block_size);
+
     /* Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
@@ -111,6 +111,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
     }
+    minchange[0] = 0;
     printf("before if, idx %d \n ", idx);
     if(idx == 0){
         printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
