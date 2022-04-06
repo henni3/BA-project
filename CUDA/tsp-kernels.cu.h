@@ -108,9 +108,10 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     printf("before loop \n" );
     //initialize tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
-        printf("t should go up to %d, it is now %d \n", cities + 2, t);
+        printf("t should go up to %d, it is now %d \n", cities, t);
         tour[t] = glo_tour[t];
     }
+    printf("before sync \n ");
     if(idx == 0){
         //initialize minChange to shared memory
         minChange[0] = -1; 
