@@ -107,6 +107,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     int ip1, jp1, change;
     printf("before loop \n" );
     for(int t = idx; t < cities+2; t += block_size){
+        printf("t should go up to %d, it is now %d \n", cities + 2, t);
         if(t < cities+1){   //initialize tour to shared memory
             tour[t] = glo_tour[t];
             printf("idx + block_size: %d \n ", t);
