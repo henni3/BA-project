@@ -47,15 +47,15 @@ __global__ void minusOne(int totIter, int* in_arr) {
 }
 
 
-__device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int cities){
-    __shared__ int result_arr[blockDim.x];
+__device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int cities, const int block_size){
+    __shared__ int result_arr[block_size];
     int idx = threadIdx.x;
     int sum = 0;
     int glo_i, glo_ip1; 
     for(int i = idx; i < cities; i += blockDim.x){
         glo_i = lo_tour[i];
         glo_ip1 = lo_tour[i+1];
-        sum += glo_dist[glo_i * cities + glo_ip1]
+        sum += glo_dist[glo_i * cities + glo_ip1];
     }
     result_arr[idx] = sum;
     __syncthreads();
@@ -65,9 +65,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int ci
         }
         __syncthreads();
     }
-    if(idx == 0) {
-        return result_arr[idx];
-    }
+    return result_arr[idx];
 }
 
 __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo_is, int* glo_js, int cities, int totIter){
@@ -225,7 +223,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         }
         __syncthreads();
     }
-    int local_opt_cost = sumTourKernel(glo_dist, tour, cities);
+    int local_opt_cost = sumTourKernel(glo_dist, tour, cities, (const int) block_size);
     if(idx == 0){
         printf("local cost: %d", local_opt_cost);
     }
