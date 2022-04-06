@@ -115,7 +115,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             //printf("thread num in else: %d \n", t);
         }
     }
-
+    
     __syncthreads();
     if(idx == 0) {
         printf("check 2 \n");
