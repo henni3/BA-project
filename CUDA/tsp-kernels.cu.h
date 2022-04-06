@@ -113,9 +113,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             //printf("thread num in else: %d \n", t);
         }
     }
-    localMinChange[0] = 0; 
-    localMinChange[1] = 0; 
-    localMinChange[2] = 0;
+
     __syncthreads();
 
     //Computation for one climber
@@ -123,6 +121,11 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         if(idx < 3){
             minChange[idx] = 0;
         }
+        // reset each threads local min change
+        localMinChange[0] = 0; 
+        localMinChange[1] = 0; 
+        localMinChange[2] = 0;
+        
         /***
         The 2 opt move
         Each thread calculates the local changes of the given i and j indexes.
@@ -211,18 +214,24 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
         //printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
+        if(idx < cities+1){
+            printf("idx: %d, cities: %d\n", idx, tour[idx]);
+        }
         for(int t = idx + i; t < swapCities; t += block_size){
-            printf("t: %d, swapc: %d\n ", t, swapCities);
+            //printf("t: %d, swapc: %d\n ", t, swapCities);
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
         if(idx < 3){
             minChange[idx] = tempRes[idx];
-            printf("idx: %d, minChange: %d\n ", idx, minChange[idx]);
+            //printf("idx: %d, minChange: %d\n ", idx, minChange[idx]);
 
         }
         __syncthreads();
+        if(idx < cities+1){
+            printf("idx: %d, cities: %d\n", idx, tour[idx]);
+        }
     }
     /*int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     printf("idx: %d, local cost: %d\n", idx, local_opt_cost);*/
