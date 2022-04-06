@@ -73,7 +73,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     int i, j;
     int32_t localMinChange[3];
     printf("hej1 \n");
-    extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
+    __shared__ unsigned short totShared[24000];   //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;               //tour for this climber
     printf("hej2 \n");
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
@@ -111,9 +111,11 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //initialize tour to shared memory
+    printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
     }
+    printf("hej1 \n");
     minChange[0] = 0;
     printf("before if, idx %d \n ", idx);
     if(idx == 0){
