@@ -120,8 +120,8 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
 
     //Computation for one climber
     while(minChange[0] < 0){
-        if(idx == 0){
-            minChange[0] = 0;
+        if(idx < 3){
+            minChange[idx] = 0;
         }
         /***
         The 2 opt move
@@ -153,7 +153,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             tempRes[idx*3] = localMinChange[0];
             tempRes[idx*3+1] = localMinChange[1];
             tempRes[idx*3+2] = localMinChange[2];
-            printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
+            //printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
         }
         __syncthreads();
         
@@ -209,7 +209,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         i = tempRes[1] + 1;
         j = tempRes[2];
         swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
-        printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
+        //printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
             printf("t: %d, swapc: %d\n ", t, swapCities);
@@ -217,7 +217,6 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        __syncthreads();
         if(idx < 3){
             minChange[idx] = tempRes[idx];
             printf("idx: %d, minChange: %d\n ", idx, minChange[idx]);
