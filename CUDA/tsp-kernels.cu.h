@@ -116,7 +116,9 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         printf("in if, with thread id %d = 0 \n ", idx);
         //initialize minChange to shared memory
         minChange[0] = -1; 
+        printf("gets here 1 \n");
         minChange[1] = 0; 
+        printf("gets here 2 \n");
         minChange[2] = 0;
         printf("after minchanges, where the values are min_1 %d, min2 %d, min3 %d \n",minChange[0],minChange[1],minChange[2]);
     }
