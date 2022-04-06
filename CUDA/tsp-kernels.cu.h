@@ -120,10 +120,11 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         minChange[2] = 0;
     }
     printf("before sync \n ");
-    __syncthreads();
+    
     if(idx == 0) {
         printf("check 2 \n");
     }
+    __syncthreads();
     //Computation for one climber
     while(minChange[0] < 0){
         if(idx < 3){
