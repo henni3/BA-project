@@ -77,7 +77,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
     int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
 
-
+    printf("block_size %d\n", block_size);
     /* Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
