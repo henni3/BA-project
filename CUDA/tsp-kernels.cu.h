@@ -105,14 +105,16 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     }
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
+    printf("before loop \n" );
     for(int t = idx; t < cities+2; t += block_size){
         if(t < cities+1){   //initialize tour to shared memory
             tour[t] = glo_tour[t];
+            printf("idx + block_size: \n ", t);
         }else{              //initialize minChange to shared memory
             minChange[0] = -1; 
             minChange[1] = 0; 
             minChange[2] = 0;
-            //printf("thread num in else: %d \n", t);
+            printf("thread num in else: %d \n", t);
         }
     }
     printf("before sync \n ");
