@@ -67,13 +67,14 @@ __device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int ci
     return result_arr[idx];
 }
 
+
 __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo_is, int* glo_js, int cities, int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
     printf("hej1 \n");
-    __shared__ unsigned short totShared[24000];   //shared memory for both tour, minChange and tempRes
+    extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;               //tour for this climber
     printf("hej2 \n");
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread

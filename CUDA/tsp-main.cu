@@ -97,6 +97,7 @@ int main(int argc, char* argv[]) {
     }
     // Collect input arguments
     int block_size = atoi(argv[1]);
+    printf("block size %d, \n", block_size);
     char* file_name = argv[2];
     
     initHwd();
@@ -139,7 +140,7 @@ int main(int argc, char* argv[]) {
 
     int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
-    int k = 0;
+    //int k = 0;
     /*printf("is: [");
     for(int i = 0; i < totIter; i++){
         printf("%d, ", is_h[i]);
@@ -169,9 +170,9 @@ int main(int argc, char* argv[]) {
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
-    //unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    printf("before twoOptKernel \n");
-    twoOptKer<<<num_blocks, block_size>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
+    unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    printf("before twoOptKernel, sharedmemSize : %d \n", sharedMemSize);
+    twoOptKer<<<1, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
 
     
 
