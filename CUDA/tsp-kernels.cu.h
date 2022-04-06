@@ -224,7 +224,6 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         __syncthreads();
     }
     /*int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
-    printf("idx: %d, local cost: %d", idx, local_opt_cost);
-    /*
+    printf("idx: %d, local cost: %d", idx, local_opt_cost);*/
 }
 
