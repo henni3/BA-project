@@ -46,13 +46,39 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
+
+__device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int cities){
+    __shared__ int result_arr[blockDim.x];
+    int idx = threadIdx.x;
+    int sum = 0;
+    int glo_i, glo_ip1; 
+    for(int i = idx; i < cities; i += blockDim.x){
+        glo_i = lo_tour[i];
+        glo_ip1 = lo_tour[i+1];
+        sum += glo_dist[glo_i * cities + glo_ip1]
+    }
+    result_arr[idx] = sum;
+    __syncthreads();
+    for (int size = blockDim.x /2; size > 0; size /= 2 ){
+        if (idx < size) {
+            result_arr[idx] += result_arr[idx+size];
+        }
+        __syncthreads();
+    }
+    if(idx == 0) {
+        return result_arr[idx];
+    }
+}
+
 __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo_is, int* glo_js, int cities, int totIter){
+    int block_size = blockDim.x;
+    int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
     extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;               //tour for this climber
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
-    int* minChange = (int*)&tempRes[3*blockDim.x];  //minChange holds the current best change
+    int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
 
 
     /* Test of shared memory
@@ -80,7 +106,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
 
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
-    for(int t = threadIdx.x; t < cities+2; t += blockDim.x){
+    for(int t = idx; t < cities+2; t += block_size){
         if(t < cities+1){   //initialize tour to shared memory
             tour[t] = glo_tour[t];
         }else{              //initialize minChange to shared memory
@@ -97,7 +123,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
 
     //Computation for one climber
     while(minChange[0] < 0){
-        if(threadIdx.x == 0){
+        if(idx == 0){
             minChange[0] = 0;
         }
         /***
@@ -106,7 +132,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
-        for(int ind = threadIdx.x; ind < totIter; ind += blockDim.x){
+        for(int ind = idx; ind < totIter; ind += block_size){
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
@@ -126,48 +152,48 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
-        if(threadIdx.x < totIter){
-            tempRes[threadIdx.x*3] = localMinChange[0];
-            tempRes[threadIdx.x*3+1] = localMinChange[1];
-            tempRes[threadIdx.x*3+2] = localMinChange[2];
-            printf("res: change %d, i %d, j %d \n", tempRes[threadIdx.x*3], tempRes[threadIdx.x*3+1], tempRes[threadIdx.x*3+2]);
+        if(idx < totIter){
+            tempRes[idx*3] = localMinChange[0];
+            tempRes[idx*3+1] = localMinChange[1];
+            tempRes[idx*3+2] = localMinChange[2];
+            printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
         }
         __syncthreads();
         
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
-        if(totIter < blockDim.x){
+        if(totIter < block_size){
             num_elems = totIter;
         }else{
-            num_elems = blockDim.x;
+            num_elems = block_size;
         }
         num_threads = (num_elems + 1 ) / 2;
 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(1){
-            if(threadIdx.x < num_threads){
-                if (threadIdx.x + num_threads < num_elems){
+            if(idx < num_threads){
+                if (idx + num_threads < num_elems){
                     //printf("num_th: %d, num_elem: %d\n",num_threads, num_elems);
-                    //printf("threadid: %d, threadid+threadnum: %d\n",threadIdx.x*3, (threadIdx.x + num_threads)*3);
-                    //printf("first elem: %d, second elem: %d\n",tempRes[threadIdx.x*3], tempRes[(threadIdx.x + num_threads)*3]);
-                    if (tempRes[threadIdx.x*3] > tempRes[(threadIdx.x + num_threads)*3]) {
+                    //printf("threadid: %d, threadid+threadnum: %d\n",idx*3, (idx + num_threads)*3);
+                    //printf("first elem: %d, second elem: %d\n",tempRes[idx*3], tempRes[(idx + num_threads)*3]);
+                    if (tempRes[idx*3] > tempRes[(idx + num_threads)*3]) {
                         //printf("if statement\n");
-                        tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3];
-                        tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
-                        tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
+                        tempRes[idx*3] = tempRes[(idx + num_threads)*3];
+                        tempRes[idx*3 + 1] = tempRes[(idx + num_threads)*3 + 1];
+                        tempRes[idx*3 + 2] = tempRes[(idx + num_threads)*3 + 2];
                     }
-                    else if (tempRes[threadIdx.x*3] == tempRes[(threadIdx.x + num_threads)*3]){
-                        if (tempRes[threadIdx.x*3 + 1] > tempRes[(threadIdx.x + num_threads)*3 +1 ]){
-                            tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
-                            tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
-                            tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
+                    else if (tempRes[idx*3] == tempRes[(idx + num_threads)*3]){
+                        if (tempRes[idx*3 + 1] > tempRes[(idx + num_threads)*3 +1 ]){
+                            tempRes[idx*3] = tempRes[(idx + num_threads)*3 ];
+                            tempRes[idx*3 + 1] = tempRes[(idx + num_threads)*3 + 1];
+                            tempRes[idx*3 + 2] = tempRes[(idx + num_threads)*3 + 2];
                         }
-                        else if (tempRes[threadIdx.x*3 +1] == tempRes[(threadIdx.x + num_threads)*3 + 1]){
-                            if (tempRes[threadIdx.x*3 + 2] > tempRes[(threadIdx.x + num_threads)*3] +2){
-                                tempRes[threadIdx.x*3] = tempRes[(threadIdx.x + num_threads)*3 ];
-                                tempRes[threadIdx.x*3 + 1] = tempRes[(threadIdx.x + num_threads)*3 + 1];
-                                tempRes[threadIdx.x*3 + 2] = tempRes[(threadIdx.x + num_threads)*3 + 2];
+                        else if (tempRes[idx*3 +1] == tempRes[(idx + num_threads)*3 + 1]){
+                            if (tempRes[idx*3 + 2] > tempRes[(idx + num_threads)*3] +2){
+                                tempRes[idx*3] = tempRes[(idx + num_threads)*3 ];
+                                tempRes[idx*3 + 1] = tempRes[(idx + num_threads)*3 + 1];
+                                tempRes[idx*3 + 2] = tempRes[(idx + num_threads)*3 + 2];
                             }
                         }
                     }
@@ -188,39 +214,20 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
         swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
         printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
-        for(int t = threadIdx.x + i; t < swapCities; t += blockDim.x){
+        for(int t = idx + i; t < swapCities; t += block_size){
             printf("t: %d, swapc: %d\n ", t, swapCities);
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        if(threadIdx.x < 3){
-            minChange[threadIdx.x] = tempRes[threadIdx.x];
+        if(idx < 3){
+            minChange[idx] = tempRes[idx];
         }
         __syncthreads();
     }
+    int local_opt_cost = sumTourKernel(glo_dist, tour, cities);
+    if(idx == 0){
+        printf("local cost: %d", local_opt_cost);
+    }
 }
 
-__global__ int sumTourKernel(uint32_t* glo_dist, unsigned short *glo_tour, int cities){
-    __shared__ int result_arr[blockDim.x];
-    int idx = threadIdx.x;
-    int sum = 0;
-    int glo_i, glo_ip1;
-    for(int i = idx; i < cities; i += blockDim.x){
-        glo_i = glo_tour[i];
-        glo_ip1 = glo_tour[i+1];
-        sum += glo_dist[glo_i * cities + glo_ip1]
-    }
-    result_arr[idx] = sum;
-    __syncthreads();
-    for (int size = blockDim.x /2; size > 0; size /= 2 ){
-        if (idx < size) {
-            result_arr[idx] += result_arr[idx+size];
-        }
-        __syncthreads();
-    }
-    if(idx == 0) {
-        return result_arr[idx];
-    }
-
-}
