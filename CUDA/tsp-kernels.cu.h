@@ -170,9 +170,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         if(idx < 3){
             minChange[idx] = 0;
         }
-        if(idx == 0) {
-            printf("after reset minChange \n");
-        }
         // reset each threads local min change
         localMinChange[0] = 0; 
         localMinChange[1] = 0; 
@@ -185,6 +182,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
+            if(ind == 0) {
+                printf("inside for \n");
+            }
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
