@@ -99,12 +99,12 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
-    printf("hej1 \n");
+    //printf("hej1 \n");
     extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;               //tour for this climber
-    printf("hej2 \n");
+    //printf("hej2 \n");
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
-    printf("hej3 \n");
+    //printf("hej3 \n");
     int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
     if(minChange == NULL){
         printf("pointer error\n");
@@ -139,24 +139,24 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //initialize tour to shared memory
-    printf("hej1 \n");
+    //printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
     }
-    printf("hej1 \n");
+    //printf("hej1 \n");
     minChange[0] = 0;
-    printf("before if, idx %d \n ", idx);
+    //printf("before if, idx %d \n ", idx);
     if(idx == 0){
         printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
         minChange[0] = -1; 
-        printf("gets here 1 \n");
+        //printf("gets here 1 \n");
         minChange[1] = 0; 
-        printf("gets here 2 \n");
+        //printf("gets here 2 \n");
         minChange[2] = 0;
         printf("after minchanges, where the values are min_1 %d, min2 %d, min3 %d \n",minChange[0],minChange[1],minChange[2]);
     }
-    printf("before sync \n ");
+    //printf("before sync \n ");
     
     if(idx == 0) {
         printf("check 2 \n");
