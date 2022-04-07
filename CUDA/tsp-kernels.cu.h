@@ -182,6 +182,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
+            if(ind == 0) {
+                printf("in for\n");
+            }
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
