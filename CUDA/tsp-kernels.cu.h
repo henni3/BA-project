@@ -133,7 +133,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             minChange[tmpM+2] = tmpM;
             printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
-    }*/
+    }
     if(idx == 0) {
         printf("check 1 \n");
     }
