@@ -186,9 +186,21 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 printf("in for\n");
             }
             i = glo_is[ind];
+            if(ind == 0) {
+                printf("forbi i\n");
+            }
             j = glo_js[ind] + i + 2;
+            if(ind == 0) {
+                printf("forbi j\n");
+            }
             ip1 = i+1;
+            if(ind == 0) {
+                printf("forbi ip1\n");
+            }
             jp1 = j+1;
+            if(ind == 0) {
+                printf("forbi jp1\n");
+            }
             int touri = tour[i];
             if(ind == 0) {
                 printf("tour i: %d\n", touri);
