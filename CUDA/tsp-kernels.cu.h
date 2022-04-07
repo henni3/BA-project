@@ -4,7 +4,6 @@ __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < len){
         index_shp_d[glb_id] = len - glb_id;
-        printf("glb_id: %d, index: %d", glb_id, index_shp_d[glb_id]);
     }
 
 }

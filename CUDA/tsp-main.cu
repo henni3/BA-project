@@ -39,6 +39,15 @@ int init(int block_size,
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
     cudaDeviceSynchronize();
+    int* scan = (int*) malloc(len*sizeof(int));
+    cudaMemcpy(scan, index_shp_sc_d, len*sizeof(int), cudaMemcpyDeviceToHost);
+    printf("scab: [");
+    for(int i = 0; i < len; i++){
+        printf("%d, ", scan[i]);
+    }
+    printf("]\n \n");
+    free(scan);
+
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
