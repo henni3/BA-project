@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 
     int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
-    //int k = 0;
+    int k = 0;
     printf("is: [");
     for(int i = 0; i < totIter; i++){
         printf("%d, ", is_h[i]);
