@@ -119,9 +119,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             tour[i] = glo_tour[i];
             printf("shareTour: %d\n", tour[i]);
         }else if(i > cities && i < resSize){
-            printf("i: %d", i);
             int tmp = (i-(cities+1))*3;
-            printf("tmp: %d", tmp);
             tempRes[tmp] = tmp;
             tempRes[tmp+1] = tmp;  
             tempRes[tmp+2] = tmp;  
