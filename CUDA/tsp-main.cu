@@ -165,7 +165,10 @@ int main(int argc, char* argv[]) {
     tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
     for(int i = 0; i < cities; i++){
         tour[i] = i;
-        printf("CPU tour: %d", tour[i]);
+    }
+    tour[cities] = 0;
+    for(int i = 0; i < cities+1; i++){
+        printf("CPU tour: %d\n", tour[i]);
     }
 
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
