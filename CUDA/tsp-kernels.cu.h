@@ -142,6 +142,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
+        printf("idx %d, tour: %d\n", t, tour[i]);
     }
     //printf("hej1 \n");
     minChange[0] = 0;
@@ -202,9 +203,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 printf("forbi jp1\n");
             }
             int touri = glo_dist[1];
-            if(ind == 0) {
-                printf("tour i: %d\n", touri);
-            }
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
