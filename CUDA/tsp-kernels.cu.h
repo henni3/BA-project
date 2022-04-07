@@ -117,20 +117,20 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
         if(i < cities+1){
             tour[i] = glo_tour[i];
-            printf("shareTour: %d\n", shaTour[i]);
+            printf("shareTour: %d\n", tour[i]);
         }
         else if(i > cities && i < resSize){
             int tmp = (i-(cities+1))*3;
-            tempRes[tmp] = float (tmp);
-            tempRes[tmp+1] = float (tmp);  
-            tempRes[tmp+2] = float (tmp);  
-            printf("temp res: fst %f, sec %f, thr %f \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
+            tempRes[tmp] = int (tmp);
+            tempRes[tmp+1] = int (tmp);  
+            tempRes[tmp+2] = int (tmp);  
+            printf("temp res: fst %d, sec %d, thr %d \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
         }else if(i < totSize){
             int tmpM = (i-resSize)*3;
-            minChange[tmpM] = float (tmpM);
-            minChange[tmpM+1] = float (tmpM);
-            minChange[tmpM+2] = float (tmpM);
-            printf("minChange: fst %f, sec %f, thr %f\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
+            minChange[tmpM] = int (tmpM);
+            minChange[tmpM+1] = int (tmpM);
+            minChange[tmpM+2] = int (tmpM);
+            printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
     }
     if(idx == 0) {
