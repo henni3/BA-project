@@ -49,7 +49,7 @@ int init(int block_size,
     cudaDeviceSynchronize();
     int* scan = (int*) malloc(len*sizeof(int));
     cudaMemcpy(scan, index_shp_sc_d, len*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("scab: [");
+    printf("scan: [");
     for(int i = 0; i < len; i++){
         printf("%d, ", scan[i]);
     }
