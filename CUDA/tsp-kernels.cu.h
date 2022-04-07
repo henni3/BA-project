@@ -123,7 +123,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             tempRes[tmp] = tmp;
             tempRes[tmp+1] = tmp;  
             tempRes[tmp+2] = tmp;  
-            printf("temp res: fst %d, sec %d, thr %d \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
+            //printf("temp res: fst %d, sec %d, thr %d \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
         }else if(i < totSize){
             int tmpM = (i-resSize)*3;
             minChange[tmpM] = tmpM;
