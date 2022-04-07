@@ -7,7 +7,6 @@
 
 #define MAXCITIES 10000
 
-
 int init(int block_size, 
          int cities, 
          int totIter, 
@@ -46,10 +45,11 @@ int init(int block_size,
     // Make flag array
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
+    gpuErrchk( cudaPeekAtLastError() );
     cudaDeviceSynchronize();
     int* scan = (int*) malloc(len*sizeof(int));
     cudaMemcpy(scan, index_shp_sc_d, len*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("scan: [");
+    printf("scan: [");  // COSMIN: LOOK HERE!!!
     for(int i = 0; i < len; i++){
         printf("%d, ", scan[i]);
     }
@@ -60,8 +60,9 @@ int init(int block_size,
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
     // 3. scatter the flag array
-    mkFlags<<< num_blocks_shp, block_size >>> (totIter, index_shp_sc_d, flags_d);
-    cudaDeviceSynchronize();
+    mkFlags<<< num_blocks_shp, block_size >>>(len, index_shp_sc_d, flags_d); // was totIter
+    gpuErrchk( cudaPeekAtLastError() );
+    gpuErrchk( cudaDeviceSynchronize() );
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
     convert<<< num_blocks, block_size >>> (flag_int, flags_d, totIter);
     
@@ -191,10 +192,11 @@ int main(int argc, char* argv[]) {
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
-    unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    printf("before twoOptKernel, sharedmemSize : %d \n", sharedMemSize);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    printf("before twoOptKernel, sharedmemSize : %d, block-size: %d \n", sharedMemSize, block_size);
     twoOptKer<<<1, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
     cudaDeviceSynchronize();
+    gpuErrchk( cudaPeekAtLastError() );
     
     printf("after twoOptKernel\n");
     
