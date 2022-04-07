@@ -34,11 +34,11 @@ int init(int block_size,
     cudaMalloc((void**)&d_tmp_flag,     totIter*sizeof(char));
     //Create shape array for index
     mkIndShp<<< num_blocks, block_size >>> (index_shp_d, len);
-
+    cudaDeviceSynchronize();
     // Make flag array
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
-
+    cudaDeviceSynchronize();
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
