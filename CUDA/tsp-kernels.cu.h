@@ -189,6 +189,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
             jp1 = j+1;
+            int touri = tour[i];
+            if(ind == 0) {
+                printf("tour i: %d\n", touri);
+            }
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
