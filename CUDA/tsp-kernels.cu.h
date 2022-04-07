@@ -190,17 +190,19 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-
+            if(ind == 0) {
+                printf("after change \n");
+           }
             //Each thread shall hold the best local change found
             if(change < localMinChange[0]){  
-                    localMinChange[0] = change; 
-                    localMinChange[1] = i; 
-                    localMinChange[2] = j;
+                if(ind == 0) {
+                    printf("change local \n");
+                }
+                localMinChange[0] = change; 
+                localMinChange[1] = i; 
+                localMinChange[2] = j;
             }
             //printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
-        }
-        if(idx == 0) {
-            printf("after for \n");
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
