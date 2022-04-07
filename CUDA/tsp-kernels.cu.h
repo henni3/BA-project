@@ -111,7 +111,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
 
 
-    /* Test of shared memory
+    /*Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
@@ -144,9 +144,14 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         tour[t] = glo_tour[t];
         printf("idx %d, tour: %d\n", t, tour[t]);
     }
-    //printf("hej1 \n");
+    if(idx == 0) {
+        printf("before Change\n");
+    }
     minChange[0] = 0;
-    //printf("before if, idx %d \n ", idx);
+    if(idx == 0) {
+        printf("before if, idx %d \n ", idx);
+
+    }
     if(idx == 0){
         printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
