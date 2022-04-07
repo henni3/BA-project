@@ -202,7 +202,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             if(ind == 0) {
                 printf("forbi jp1\n");
             }
-            int touri = glo_dist[1];
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
