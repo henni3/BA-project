@@ -115,10 +115,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
-        /*if(i < cities+1){
+        if(i < cities+1){
             tour[i] = glo_tour[i];
             printf("shareTour: %d\n", tour[i]);
-        }*/
+        }
         if(i > cities && i < resSize){
             int tmp = (i-(cities+1))*3;
             tempRes[tmp] = int (tmp);
