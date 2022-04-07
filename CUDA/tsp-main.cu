@@ -35,6 +35,14 @@ int init(int block_size,
     //Create shape array for index
     mkIndShp<<< num_blocks, block_size >>> (index_shp_d, len);
     cudaDeviceSynchronize();
+    int* indSha = (int*) malloc(len*sizeof(int));
+    cudaMemcpy(indSha, index_shp_d, len*sizeof(int), cudaMemcpyDeviceToHost);
+    printf("indSha: [");
+    for(int i = 0; i < len; i++){
+        printf("%d, ", indSha[i]);
+    }
+    printf("]\n \n");
+    free(indSha);
     // Make flag array
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
