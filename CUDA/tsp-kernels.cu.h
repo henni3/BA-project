@@ -182,9 +182,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            if(ind == 0) {
-                printf("inside for \n");
-            }
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
@@ -201,6 +198,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                     localMinChange[2] = j;
             }
             //printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
+        }
+        if(idx == 0) {
+            printf("after for \n");
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
