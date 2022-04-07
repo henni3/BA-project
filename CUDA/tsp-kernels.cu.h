@@ -67,8 +67,34 @@ __device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int ci
     return result_arr[idx];
 }
 
+//Random tour generator basen on SPLASH-2 code
+/*__global__ void createTour (unsigned short* iniTour, int cities, int tourOffset){
+    int currTour, rand, mult, add, mask, idx, to, temp;
+    idx = threadIdx.x;
+    currTour = idx + blockIdx.x * blockDim.x;
+    rand = currTour + tourOffset;
+    mult = 1103515245;
+    add = 12345;
+    mask = 0x7fffffff;
+    for(int t = idx; t < cities; t += block_size){
+        rand = (mult * rand + add) & mask;
+        to = rand % cities;
+        if (to <= 0){
+            to = 1;
+        }
+        temp = tour[t];
+        tour[t] = tour[to];
+        tour[to] = temp;
+    }
 
-__global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo_is, int* glo_js, int cities, int totIter){
+} */
+
+
+__global__ void twoOptKer(uint32_t* glo_dist, 
+                          unsigned short *glo_tour, 
+                          int* glo_is, int* glo_js, 
+                          int cities, 
+                          int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j;
@@ -83,6 +109,7 @@ __global__ void twoOptKer(uint32_t* glo_dist, unsigned short *glo_tour, int* glo
     if(minChange == NULL){
         printf("pointer error\n");
     }
+
 
     /* Test of shared memory
     int resSize = blockDim.x + cities+1;
