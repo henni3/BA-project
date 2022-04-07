@@ -111,7 +111,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
 
 
-    //Test of shared memory
+    /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
@@ -132,7 +132,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             minChange[tmpM+2] = int (tmpM);
             printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
-    }
+    }*/
     if(idx == 0) {
         printf("check 1 \n");
     }
