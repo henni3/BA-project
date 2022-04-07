@@ -167,9 +167,9 @@ int main(int argc, char* argv[]) {
         tour[i] = i;
     }
     tour[cities] = 0;
-    for(int i = 0; i < cities+1; i++){
+    /*for(int i = 0; i < cities+1; i++){
         printf("CPU tour: %d\n", tour[i]);
-    }
+    }*/
 
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));

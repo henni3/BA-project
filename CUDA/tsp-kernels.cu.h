@@ -187,10 +187,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 printf("in for\n");
             }
             i = glo_is[ind];
-            if(ind == 0) {
-                printf("forbi i\n");
-            }
             j = glo_js[ind] + i + 2;
+            printf("tour in for. i: %d. j: %d\n", i, j);
+
             if(ind == 0) {
                 printf("forbi j\n");
             }
