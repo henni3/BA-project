@@ -141,21 +141,21 @@ int main(int argc, char* argv[]) {
     int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
     //int k = 0;
-    /*printf("is: [");
+    printf("is: [");
     for(int i = 0; i < totIter; i++){
         printf("%d, ", is_h[i]);
         k++;
     }
     printf("]\n");
-    printf("k = %d\n", k);*/
+    printf("k = %d\n", k);
 
     int* js_h = (int*) malloc(totIter*sizeof(int));
     cudaMemcpy(js_h, js_d, totIter*sizeof(int), cudaMemcpyDeviceToHost);
-    /*printf("js: [");
+    printf("js: [");
     for(int i = 0; i < totIter; i++){
         printf("%d, ", js_h[i]);
     }
-    printf("]\n");*/
+    printf("]\n");
     free(js_h); free(is_h);
     
 
@@ -175,9 +175,9 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
     unsigned short sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    printf("before twoOptKernel, sharedmemSize : %d \n", sharedMemSize);
-    twoOptKer<<<1, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
-    cudaDeviceSynchronize();
+    //printf("before twoOptKernel, sharedmemSize : %d \n", sharedMemSize);
+    //twoOptKer<<<1, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter);
+    //cudaDeviceSynchronize();
     
     printf("after twoOptKernel\n");
     
