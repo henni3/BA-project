@@ -177,9 +177,9 @@ int main(int argc, char* argv[]) {
     
     printf("after twoOptKernel\n");
     
-    //free(tour); free(distMatrix);
-    //cudaFree(is_d); cudaFree(js_d);
-    //cudaFree(kerDist); cudaFree(kerTour);
+    free(tour); free(distMatrix);
+    cudaFree(is_d); cudaFree(js_d);
+    cudaFree(kerDist); cudaFree(kerTour);
     return 0;
 
     
