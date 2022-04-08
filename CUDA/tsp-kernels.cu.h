@@ -198,36 +198,36 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            if(ind == 0) {
+            /*if(ind == 0) {
                 printf("in for\n");
-            }
+            }*/
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
-            printf("tour in for. i: %d. j: %d\n", i, j);
+            /*printf("tour in for. i: %d. j: %d\n", i, j);
 
             if(ind == 0) {
                 printf("forbi j\n");
-            }
+            }*/
             ip1 = i+1;
-            if(ind == 0) {
+            /*if(ind == 0) {
                 printf("forbi ip1\n");
-            }
+            }*/
             jp1 = j+1;
-            if(ind == 0) {
+            /*if(ind == 0) {
                 printf("forbi jp1\n");
-            }
+            }*/
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-            if(ind == 0) {
+            /*if(ind == 0) {
                 printf("after change \n");
-           }
+           }*/
             //Each thread shall hold the best local change found
             if(change < localMinChange[0]){  
-                if(ind == 0) {
+                /*if(ind == 0) {
                     printf("change local \n");
-                }
+                }*/
                 localMinChange[0] = change; 
                 localMinChange[1] = i; 
                 localMinChange[2] = j;
@@ -243,9 +243,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             //printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
         }
         __syncthreads();
-        if(idx == 0) {
+        /*if(idx == 0) {
         printf("check 3 \n");
-        }
+        }*/
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
         if(totIter < block_size){
