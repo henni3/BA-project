@@ -53,7 +53,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
                                 int cities, 
                                 volatile int* result_arr){    
     int idx = threadIdx.x;
-    int block_size = blockDim.x
+    int block_size = blockDim.x;
     int sum = 0;
     int glo_i, glo_ip1; 
     for(int i = idx; i < cities; i += block_size){
