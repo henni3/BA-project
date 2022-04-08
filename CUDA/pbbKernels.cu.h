@@ -165,6 +165,51 @@ class MyInt4 {
     }
 };
 
+class ChangeTuple {
+    public:
+        int32_t change; unsigned short i; unsigned short j;
+    
+    __device__ __host__ inline ChangeTuple() {
+        change = 0; i = 0; j = 0;
+    }
+
+    __device__ __host__ inline ChangeTuple(const int32_t& value, const unsigned short& i_v, const unsigned short& j_v){
+        change = value; i = i_v;  j = j_v;
+    } 
+
+    __device__ __host__ inline ChangeTuple(const ChangeTuple& CT) volatile {
+        change = CT.change; i = CT.i; j = CT.j;
+
+    }
+    //??
+    __device__ __host__ inline void operator=(const ChangeTuple& CT) volatile {
+        change = CT.change; i = CT.i; j = CT.j; 
+    }
+
+};
+
+
+class minInd {
+    public:
+        typedef int32_t inpElTp;
+        typedef ChangeTuple RedElTP;
+        static const bool commutative = true;
+        static __device__ __host__ inline inpElTp identInp(){return 0;}
+        static __device__ __host__ inline RedElTP mapFun(const ChangeTuple& el){return el;}
+        static __device__ __host__ inline ChangeTuple identity() {return ChangeTuple(0,0,0); }
+        static __device__ __host__ inline ChangeTuple apply(volatile ChangeTuple& t1, volatile ChangeTuple& t2) {
+            if (t1.change < t2.change) {
+                return ChangeTuple(t1.change, t1.i, t1.j)
+            }
+            else if (t1.change = t2.change){
+                if(t1.i < t2.i){
+                    return ChangeTuple(t1.change, t1.i, t1.j)
+                }
+                if (t1.j, t2.j)
+            }
+        }
+
+};
 /**
  * Representation of the MSSP operator, so that it can work the generically
  * defined skeletons of reduce, scan, etc.
