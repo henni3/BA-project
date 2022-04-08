@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-struct Lock { 
+/*struct Lock { 
     int *mutex;
 
     Lock(){
@@ -17,7 +17,7 @@ struct Lock {
     __device__ void unlock(){
         atomicExch(mutex, 0);
     } 
-};
+};*/
        
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
