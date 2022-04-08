@@ -103,7 +103,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
-    //printf("hej1 \n");
     extern __shared__ unsigned char totShared[];   //shared memory for both tour, minChange and tempRes
 
     volatile int* tempRes = (volatile int*)&totShared; //tempRes holds the best local changes found by each thread
@@ -175,31 +174,14 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            /*if(ind == 0) {
-                printf("in for\n");
-            }*/
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
-            /*printf("tour in for. i: %d. j: %d\n", i, j);
-
-            if(ind == 0) {
-                printf("forbi j\n");
-            }*/
             ip1 = i+1;
-            /*if(ind == 0) {
-                printf("forbi ip1\n");
-            }*/
             jp1 = j+1;
-            /*if(ind == 0) {
-                printf("forbi jp1\n");
-            }*/
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-            /*if(ind == 0) {
-                printf("after change \n");
-           }*/
             //Each thread shall hold the best local change found
             if(change < localMinChange[0]){  
                 /*if(ind == 0) {
