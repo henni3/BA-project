@@ -195,8 +195,12 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
+    //Experiment!
     int*num;
     cudaMalloc((void**)&num, sizeof(int32_t));
+    cudaMemcpy(num, 1,sizeof(int32_t), cudaMemcpyHostToDevice);
+
+    //Experiment
     twoOptKer<<<5, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter, num);
     cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
