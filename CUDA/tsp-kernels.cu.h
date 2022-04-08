@@ -53,16 +53,17 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
                                 int cities, 
                                 volatile int* result_arr){    
     int idx = threadIdx.x;
+    int block_size = blockDim.x
     int sum = 0;
     int glo_i, glo_ip1; 
-    for(int i = idx; i < cities; i += blockDim.x){
+    for(int i = idx; i < cities; i += block_size){
         glo_i = lo_tour[i];
         glo_ip1 = lo_tour[i+1];
         sum += glo_dist[glo_i * cities + glo_ip1];
     }
     result_arr[idx] = sum;
     __syncthreads();
-    for (int size = blockDim.x /2; size > 0; size /= 2 ){
+    for (int size = block_size /2; size > 0; size /= 2 ){
         if (idx < size) {
             result_arr[idx] += result_arr[idx+size];
         }
@@ -253,9 +254,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         }
         __syncthreads();
     }
-    if(idx == 0) {
-        printf("this is ok, line 261 \n");
-    }
+    
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     if(idx == 0){
         printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
