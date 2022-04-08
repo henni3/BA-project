@@ -101,6 +101,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
+    int glo_id = idx + blockIdx.x * block_size;
     int i, j;
     int32_t localMinChange[3];
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
@@ -111,6 +112,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                  (volatile unsigned short*)(minChange + 3);  //tour for this climber
     if(minChange == NULL){
         printf("pointer error\n");
+    }
+    if(idx == 0){
+        printf("local thread: %d, global thread: %d\n"idx, glo_id);
     }
 
     /*//Test of shared memory
