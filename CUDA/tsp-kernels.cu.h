@@ -103,7 +103,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
-    //printf("hej1 \n");
+    printf("hej1 \n");
     extern __shared__ unsigned char totShared[];   //shared memory for both tour, minChange and tempRes
 
     volatile int* tempRes = (volatile int*)&totShared; //tempRes holds the best local changes found by each thread
