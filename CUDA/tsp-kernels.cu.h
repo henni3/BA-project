@@ -154,14 +154,14 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         tour[t] = glo_tour[t];
         printf("idx %d, tour: %d\n", t, tour[t]);
     }
-    if(idx == 0) {
+    /*if(idx == 0) {
         printf("before Change\n");
-    }
-    minChange[0] = 0;
-    if(idx == 0) {
+    }*/
+    //minChange[0] = 0;
+    /*if(idx == 0) {
         printf("before if, idx %d \n ", idx);
 
-    }
+    }*/
     if(idx == 0){
         //printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
