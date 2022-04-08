@@ -152,36 +152,36 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
-        //printf("idx %d, tour: %d\n", t, tour[t]);
+        printf("idx %d, tour: %d\n", t, tour[t]);
     }
-    /*if(idx == 0) {
+    if(idx == 0) {
         printf("before Change\n");
-    }*/
+    }
     minChange[0] = 0;
-    /*if(idx == 0) {
+    if(idx == 0) {
         printf("before if, idx %d \n ", idx);
 
-    }*/
+    }
     if(idx == 0){
-        //printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
+        printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
         minChange[0] = -1; 
         //printf("gets here 1 \n");
         minChange[1] = 0; 
         //printf("gets here 2 \n");
         minChange[2] = 0;
-        //printf("after minchanges, where the values are min_1 %d, min2 %d, min3 %d \n",minChange[0],minChange[1],minChange[2]);
+        printf("after minchanges, where the values are min_1 %d, min2 %d, min3 %d \n",minChange[0],minChange[1],minChange[2]);
     }
     //printf("before sync \n ");
     
-    /*if(idx == 0) {
+    if(idx == 0) {
         printf("check 2 \n");
-    }*/
+    }
     __syncthreads();
     //Computation for one climber
-    /*if(idx == 0) {
+    if(idx == 0) {
         printf("before while \n");
-    }*/
+    }
     while(minChange[0] < 0){
         if(idx < 3){
             minChange[idx] = 0;
@@ -198,9 +198,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            /*if(ind == 0) {
+            if(ind == 0) {
                 printf("in for\n");
-            }*/
+            }
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
             /*printf("tour in for. i: %d. j: %d\n", i, j);
