@@ -206,7 +206,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             num_elems = block_size;
         }
         num_threads = (num_elems + 1 ) / 2;
-        if(ind == 0) {
+        if(idx == 0) {
             printf("this is ok, line 210 \n");
         }
         //Reduction on all the local minimum changes found by each thread
