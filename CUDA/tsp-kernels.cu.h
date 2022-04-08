@@ -206,19 +206,13 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             num_elems = block_size;
         }
         num_threads = (num_elems + 1 ) / 2;
-        if(idx == 0) {
-            printf("this is ok, line 210 \n");
-        }
+
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(1){
             if(idx < num_threads){
                 if (idx + num_threads < num_elems){
-                    //printf("num_th: %d, num_elem: %d\n",num_threads, num_elems);
-                    //printf("threadid: %d, threadid+threadnum: %d\n",idx*3, (idx + num_threads)*3);
-                    //printf("first elem: %d, second elem: %d\n",tempRes[idx*3], tempRes[(idx + num_threads)*3]);
                     if (tempRes[idx*3] > tempRes[(idx + num_threads)*3]) {
-                        //printf("if statement\n");
                         tempRes[idx*3] = tempRes[(idx + num_threads)*3];
                         tempRes[idx*3 + 1] = tempRes[(idx + num_threads)*3 + 1];
                         tempRes[idx*3 + 2] = tempRes[(idx + num_threads)*3 + 2];
@@ -240,9 +234,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 }
             }
             __syncthreads();
-            /*if(idx == 0) {
-            printf("check 5 \n");
-            }*/
+            if(idx == 0) {
+                printf("this is ok, line 238 \n");
+            }
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
             if(num_threads == num_elems){
