@@ -122,7 +122,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
 
 
-    //Test of shared memory
+    /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
@@ -145,7 +145,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
     if(idx == 0) {
         printf("check 1 \n");
-    }
+    }*/
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //initialize tour to shared memory
@@ -318,7 +318,8 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         __syncthreads();
     }
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
-    printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
-    
+    if(idx == 0){
+        printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
+    }
 }
 
