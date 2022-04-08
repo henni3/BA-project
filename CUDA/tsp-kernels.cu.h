@@ -234,9 +234,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 }
             }
             __syncthreads();
-            if(idx == 0) {
-                printf("this is ok, line 238 \n");
-            }
+
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
             if(num_threads == num_elems){
@@ -248,20 +246,19 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         i = tempRes[1] + 1;
         j = tempRes[2];
         swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
-        //printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
-            //printf("t: %d, swapc: %d\n ", t, swapCities);
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
         if(idx < 3){
             minChange[idx] = tempRes[idx];
-            //printf("idx: %d, minChange: %d\n ", idx, minChange[idx]);
-
         }
         __syncthreads();
+    }
+    if(idx == 0) {
+        printf("this is ok, line 261 \n");
     }
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     if(idx == 0){
