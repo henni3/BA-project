@@ -118,7 +118,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
 
 
-    //Test of shared memory
+    /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
     for(i = threadIdx.x; i < totSize; i += blockDim.x){
@@ -138,46 +138,27 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             minChange[tmpM+2] = tmpM;
             printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
-    }
-    if(idx == 0) {
-        printf("check 1 \n");
-    }
+    }*/
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //initialize tour to shared memory
-    //printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
-        printf("idx %d, tour: %d\n", t, tour[t]);
-    }
-    if(idx == 0) {
-        printf("before Change\n");
+        //printf("idx %d, tour: %d\n", t, tour[t]);
     }
     minChange[0] = 0;
-    if(idx == 0) {
-        printf("before if, idx %d \n ", idx);
 
-    }
     if(idx == 0){
-        printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
         minChange[0] = -1; 
-        //printf("gets here 1 \n");
         minChange[1] = 0; 
-        //printf("gets here 2 \n");
         minChange[2] = 0;
-        printf("after minchanges, where the values are min_1 %d, min2 %d, min3 %d \n",minChange[0],minChange[1],minChange[2]);
     }
     //printf("before sync \n ");
     
-    if(idx == 0) {
-        printf("check 2 \n");
-    }
     __syncthreads();
     //Computation for one climber
-    if(idx == 0) {
-        printf("before while \n");
-    }
+
     while(minChange[0] < 0){
         if(idx < 3){
             minChange[idx] = 0;
@@ -194,36 +175,16 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            if(ind == 0) {
-                printf("in for\n");
-            }
             i = glo_is[ind];
             j = glo_js[ind] + i + 2;
-            printf("tour in for. i: %d. j: %d\n", i, j);
-
-            if(ind == 0) {
-                printf("forbi j\n");
-            }
             ip1 = i+1;
-            if(ind == 0) {
-                printf("forbi ip1\n");
-            }
             jp1 = j+1;
-            if(ind == 0) {
-                printf("forbi jp1\n");
-            }
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-            if(ind == 0) {
-                printf("after change \n");
-           }
             //Each thread shall hold the best local change found
             if(change < localMinChange[0]){  
-                if(ind == 0) {
-                    printf("change local \n");
-                }
                 localMinChange[0] = change; 
                 localMinChange[1] = i; 
                 localMinChange[2] = j;
@@ -239,9 +200,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             //printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
         }
         __syncthreads();
-        if(idx == 0) {
-        printf("check 3 \n");
-        }
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
         if(totIter < block_size){
@@ -250,9 +208,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             num_elems = block_size;
         }
         num_threads = (num_elems + 1 ) / 2;
-        if(idx == 0) {
-        printf("check 3 \n");
-    }
+
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(1){
@@ -284,9 +240,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 }
             }
             __syncthreads();
-            if(idx == 0) {
-            printf("check 5 \n");
-            }
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
             if(num_threads == num_elems){
@@ -298,18 +251,14 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         i = tempRes[1] + 1;
         j = tempRes[2];
         swapCities = (((tempRes[2] - tempRes[1]) + 1) / 2) + i; //the ceiling of j/2 plus i
-        //printf("i: %d, j: %d, swapc: %d\n ", i, j, swapCities);
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
-            //printf("t: %d, swapc: %d\n ", t, swapCities);
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
         if(idx < 3){
             minChange[idx] = tempRes[idx];
-            //printf("idx: %d, minChange: %d\n ", idx, minChange[idx]);
-
         }
         __syncthreads();
     }
