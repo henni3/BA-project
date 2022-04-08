@@ -103,23 +103,15 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int32_t localMinChange[3];
-    extern __shared__ unsigned char totShared[];   //shared memory for both tour, minChange and tempRes
+    extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
-    volatile int* tempRes = (volatile int*)&totShared; //tempRes holds the best local changes found by each thread
-    volatile int* minChange = tempRes + 3*block_size;  //minChange holds the current best change
+    volatile int* tempRes = (volatile int*)&totShared;       //tempRes holds the best local changes found by each thread
+    volatile int* minChange = tempRes + 3*block_size;        //minChange holds the current best change
     volatile unsigned short* tour =
-                 (volatile unsigned short*)(minChange + 3);               //tour for this climber
-    /*extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
-    unsigned short* tour = totShared;               //tour for this climber
-    //printf("hej2 \n");
-    int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
-    //printf("hej3 \n");
-    int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
-    */
+                 (volatile unsigned short*)(minChange + 3);  //tour for this climber
     if(minChange == NULL){
         printf("pointer error\n");
     }
-
 
     /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
