@@ -114,7 +114,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         printf("pointer error\n");
     }
     if(idx == 0){
-        printf("local thread: %d, global thread: %d\n"idx, glo_id);
+        printf("local thread: %d, global thread: %d\n",idx, glo_id);
     }
 
     /*//Test of shared memory
