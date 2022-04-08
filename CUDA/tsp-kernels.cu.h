@@ -1,5 +1,24 @@
 #include <stdio.h>
 
+struct Lock { 
+    int *mutex;
+
+    Lock(){
+        int state = 0;
+        cudaMalloc((void**) &mutex, sizeof(int));
+        cudaMemcpy(mutex, &state, sizeof(int), cudaMemcpyHostToDevice);
+    }
+    Lock(){ 
+        cudaFree(mutex);
+    }
+    __device__ void lock (){
+        while(atomicCAS(mutex, 0, 1) != 0); 
+    }
+    __device__ void unlock(){
+        atomicExch(mutex, 0);
+    } 
+};
+       
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < len){
@@ -99,7 +118,8 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           unsigned short *glo_tour, 
                           int* glo_is, int* glo_js, 
                           int cities, 
-                          int totIter){
+                          int totIter,
+                          int* num){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int glo_id = idx + blockIdx.x * block_size;
@@ -258,6 +278,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     if(idx == 0){
         printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
+        *num = *num+1;
     }
 }
 
