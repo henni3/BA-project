@@ -142,10 +142,8 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             minChange[tmpM+2] = tmpM;
             printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
         }
-    }
-    if(idx == 0) {
-        printf("check 1 \n");
     }*/
+
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //initialize tour to shared memory
@@ -154,14 +152,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         tour[t] = glo_tour[t];
         //printf("idx %d, tour: %d\n", t, tour[t]);
     }
-    /*if(idx == 0) {
-        printf("before Change\n");
-    }*/
-    //minChange[0] = 0;
-    /*if(idx == 0) {
-        printf("before if, idx %d \n ", idx);
-
-    }*/
     if(idx == 0){
         //printf("in if, with thread id %d = 0, with minchange %d \n ", idx, minChange[0]);
         //initialize minChange to shared memory
