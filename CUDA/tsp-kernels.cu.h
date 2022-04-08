@@ -152,7 +152,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //printf("hej1 \n");
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tour[t];
-        printf("idx %d, tour: %d\n", t, tour[t]);
+        //printf("idx %d, tour: %d\n", t, tour[t]);
     }
     /*if(idx == 0) {
         printf("before Change\n");
