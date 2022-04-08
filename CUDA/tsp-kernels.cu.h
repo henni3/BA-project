@@ -48,7 +48,10 @@ __global__ void minusOne(int totIter, int* in_arr) {
 }
 
 
-__device__ int sumTourKernel(uint32_t* glo_dist, unsigned short *lo_tour, int cities, int* result_arr){
+__device__ int sumTourKernel(uint32_t* glo_dist, 
+                                volatile unsigned short *lo_tour, 
+                                int cities, 
+                                volatile int* result_arr){    
     int idx = threadIdx.x;
     int sum = 0;
     int glo_i, glo_ip1; 
@@ -101,12 +104,19 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int i, j;
     int32_t localMinChange[3];
     //printf("hej1 \n");
-    extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
+    extern __shared__ unsigned char totShared[];   //shared memory for both tour, minChange and tempRes
+
+    volatile int* tempRes = (volatile int*)&totShared; //tempRes holds the best local changes found by each thread
+    volatile int* minChange = tempRes + 3*block_size;  //minChange holds the current best change
+    volatile unsigned short* tour =
+                 (volatile unsigned short*)(minChange + 3);               //tour for this climber
+    /*extern __shared__ unsigned short totShared[];   //shared memory for both tour, minChange and tempRes
     unsigned short* tour = totShared;               //tour for this climber
     //printf("hej2 \n");
     int* tempRes = (int*)&tour[cities+1];           //tempRes holds the best local changes found by each thread
     //printf("hej3 \n");
     int* minChange = (int*)&tempRes[3*block_size];  //minChange holds the current best change
+    */
     if(minChange == NULL){
         printf("pointer error\n");
     }
