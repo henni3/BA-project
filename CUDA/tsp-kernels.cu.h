@@ -184,14 +184,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                     glo_dist[tour[j]*cities+tour[jp1]]);
             //Each thread shall hold the best local change found
             if(change < localMinChange[0]){  
-                /*if(ind == 0) {
-                    printf("change local \n");
-                }*/
                 localMinChange[0] = change; 
                 localMinChange[1] = i; 
                 localMinChange[2] = j;
             }
-            //printf("each threads smallest element: change %d, i %d, j %d \n", localMinChange[0], localMinChange[1], localMinChange[2]);   
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
@@ -199,12 +195,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             tempRes[idx*3] = localMinChange[0];
             tempRes[idx*3+1] = localMinChange[1];
             tempRes[idx*3+2] = localMinChange[2];
-            //printf("res: change %d, i %d, j %d \n", tempRes[idx*3], tempRes[idx*3+1], tempRes[idx*3+2]);
         }
         __syncthreads();
-        /*if(idx == 0) {
-        printf("check 3 \n");
-        }*/
+        
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
         if(totIter < block_size){
@@ -213,9 +206,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             num_elems = block_size;
         }
         num_threads = (num_elems + 1 ) / 2;
-        if(idx == 0) {
-        //printf("check 3 \n");
-    }
+        if(ind == 0) {
+            printf("this is ok, line 210 \n");
+        }
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(1){
