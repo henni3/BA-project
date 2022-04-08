@@ -179,9 +179,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
     __syncthreads();
     //Computation for one climber
-    if(idx == 0) {
+    /*if(idx == 0) {
         printf("before while \n");
-    }
+    }*/
     while(minChange[0] < 0){
         if(idx < 3){
             minChange[idx] = 0;
