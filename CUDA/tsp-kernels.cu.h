@@ -255,7 +255,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         }
         num_threads = (num_elems + 1 ) / 2;
         if(idx == 0) {
-        printf("check 3 \n");
+        //printf("check 3 \n");
     }
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
@@ -288,9 +288,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                 }
             }
             __syncthreads();
-            if(idx == 0) {
+            /*if(idx == 0) {
             printf("check 5 \n");
-            }
+            }*/
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
             if(num_threads == num_elems){
