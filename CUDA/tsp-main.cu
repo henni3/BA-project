@@ -206,7 +206,6 @@ int main(int argc, char* argv[]) {
     twoOptKer<<<5, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter, num);
     cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
-    printf("experiment with num: %d\n", num);
     printf("after twoOptKernel\n");
     
     free(tour); free(distMatrix);

@@ -135,11 +135,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(minChange == NULL){
         printf("pointer error\n");
     }
-    if(glo_id == 0){
-        printf("num inside ker: %d\n", num[0]);
-    }
-    __syncthreads(); //has to be removed again! - just for experiments.
-
+    
     /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
@@ -278,9 +274,16 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
+    //EXPERIMENT!!!!!!
     if(idx == 0){
-        printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
         atomicAdd(num, 1);
+        printf("global idx: %d, local cost: %d\n", glo_id, tempRes[0]);
     }
+    __syncthreads(); //REMOVE AGAIN!
+    if(glo_id == 0){
+        printf("Experiment on atomicAdd: %d\n", num);
+    }
+    //EXPERIMENT!!!!!!
+
 }
 
