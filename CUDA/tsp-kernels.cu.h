@@ -135,7 +135,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(minChange == NULL){
         printf("pointer error\n");
     }
-    
+
     /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
     int totSize = resSize+3;
@@ -281,7 +281,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
     __syncthreads(); //REMOVE AGAIN!
     if(glo_id == 0){
-        printf("Experiment on atomicAdd: %d\n", num);
+        printf("Experiment on atomicAdd: %d\n", num[0]);
     }
     //EXPERIMENT!!!!!!
 
