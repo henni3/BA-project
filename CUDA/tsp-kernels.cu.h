@@ -276,12 +276,13 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     //EXPERIMENT!!!!!!
     if(idx == 0){
-        atomicAdd(num, 1);
+        //atomicAdd(num, 1);
+        num[0] +=1;
         printf("global idx: %d, local cost: %d\n", glo_id, tempRes[0]);
     }
     __syncthreads(); //REMOVE AGAIN!
     if(glo_id == 0){
-        printf("Experiment on atomicAdd: %d\n", num[0]);
+        printf("Experiment without atomicAdd: %d\n", num[0]);
     }
     //EXPERIMENT!!!!!!
 
