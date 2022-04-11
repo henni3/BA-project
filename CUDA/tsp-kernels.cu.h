@@ -136,7 +136,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         printf("pointer error\n");
     }
     if(glo_id == 0){
-        printf("num inside ker_ %d\n", num);
+        printf("num inside ker_ %d\n", num[0]);
     }
     __syncthreads(); //has to be removed again! - just for experiments.
 
