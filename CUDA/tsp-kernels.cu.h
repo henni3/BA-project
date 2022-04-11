@@ -120,6 +120,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int cities, 
                           int totIter,
                           int* num){
+    
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int glo_id = idx + blockIdx.x * block_size;
@@ -134,9 +135,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(minChange == NULL){
         printf("pointer error\n");
     }
-    if(idx == 0){
-        printf("local thread: %d, global thread: %d\n",idx, glo_id);
+    if(glo_id == 0){
+        printf("num inside ker_ %d\n", num);
     }
+    __syncthreads(); //has to be removed again! - just for experiments.
 
     /*//Test of shared memory
     int resSize = blockDim.x + cities+1;
