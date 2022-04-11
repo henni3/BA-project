@@ -197,11 +197,10 @@ int main(int argc, char* argv[]) {
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     
     //*******Experiment!
-    int*num, *n;
-    n = (int*) malloc(sizeof(int32_t));
-    n[0] = 1;
-    cudaMalloc((void**)&num, sizeof(int32_t));
-    cudaMemcpy(num, n, sizeof(int32_t), cudaMemcpyHostToDevice);
+    int* num = 0;
+    int n = 0;
+    cudaMalloc((void**)&num, sizeof(int));
+    cudaMemcpy(num, &n, sizeof(int), cudaMemcpyHostToDevice);
     //*****Experiment
 
     twoOptKer<<<5, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter, num);
