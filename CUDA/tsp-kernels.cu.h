@@ -280,7 +280,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     if(idx == 0){
         printf("idx: %d, local cost: %d\n", idx, tempRes[0]);
-        atomicAdd(&num, 1);
+        atomicAdd(num, 1);
     }
 }
 
