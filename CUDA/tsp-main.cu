@@ -204,6 +204,16 @@ int main(int argc, char* argv[]) {
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
     
+
+    int* glo_res = (int*) malloc(2*restarts*sizeof(int));
+    cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
+    printf("res: [");
+    for(int i = 0; i < restarts; i++){
+        printf("%d, ", glo_res[i]);
+    }
+    printf("]\n");
+    free(glo_res);
+
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
     cudaFree(kerDist); cudaFree(kerTour);

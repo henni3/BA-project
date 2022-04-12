@@ -101,7 +101,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int* glo_result, 
                           int cities, 
                           int totIter){
-    
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int glo_id = idx + blockIdx.x * block_size;
@@ -257,10 +256,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     
     //Writing results to global memory
-    /*if(idx == 0){
+    if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-    }*/
+    }
 
     
     
@@ -301,10 +300,5 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             glo_result[1] = tour;
         }
     }*/
-     
-    if(idx == 0){
-        printf("global idx: %d, local cost: %d\n", glo_id, local_opt_cost);
-    }
-
 }
 
