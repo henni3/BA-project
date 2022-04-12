@@ -191,10 +191,10 @@ int main(int argc, char* argv[]) {
     unsigned short *tourMatrix;
     //Create tour matrix
     cudaMalloc((void**)&tourMatrix, (cities+1)*restarts*sizeof(unsigned short));
-    unsigned short* hostTourMatrix = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     createTours<<<num_blocks_tour, block_size>>> (tourMatrix, cities, restarts);
-
+    
+    /*unsigned short* hostTourMatrix = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(hostTourMatrix, tourMatrix, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     printf("Random tours:\n");
     for(int i = 0; i < restarts; i++){
@@ -204,20 +204,20 @@ int main(int argc, char* argv[]) {
         }
         printf("]\n");
     }
-    free(hostTourMatrix);
+    free(hostTourMatrix);*/
 
 
     //unsigned short *kerTour;
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
     //cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
     //cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
-    /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
-    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, glo_results, cities, totIter);
+    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix, is_d, js_d, glo_results, cities, totIter);
     cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
@@ -230,12 +230,11 @@ int main(int argc, char* argv[]) {
         printf("block ID: %d, result: %d\n", glo_res[i*2+1], glo_res[i*2]);
     }
     free(glo_res);
-    */
 
     free(distMatrix);
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrix);
-    //cudaFree(kerDist); cudaFree(kerTour);
-    //cudaFree(glo_results); 
+    cudaFree(kerDist); cudaFree(kerTour);
+    cudaFree(glo_results); 
     return 0;
 
     

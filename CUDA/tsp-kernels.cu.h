@@ -97,15 +97,15 @@ __global__ void createTours(unsigned short* tourMatrix,
             tourMatrix[(cities+1) * glo_id + i] = tourMatrix[(cities+1) * glo_id + to];
             tourMatrix[(cities+1) * glo_id + to] = temp;
         }
-        for(int i = 0; i < cities+1; i++){
+        /*for(int i = 0; i < cities+1; i++){
             printf("glo_id: %d, elem: %d\n",glo_id, tourMatrix[(cities+1) * glo_id + i]);
-        }
+        }*/
     }
 }
 
 
 __global__ void twoOptKer(uint32_t* glo_dist, 
-                          unsigned short *glo_tour, 
+                          unsigned short *glo_tours, 
                           int* glo_is, int* glo_js,
                           int* glo_result, 
                           int cities, 
@@ -149,9 +149,12 @@ __global__ void twoOptKer(uint32_t* glo_dist,
 
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
-    //initialize tour to shared memory
+    //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
-        tour[t] = glo_tour[t];
+        tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
+    }
+    for(int t = idx; t < cities+1; t += block_size){
+        printf("%d, ",tour[t]);
     }
     if(idx == 0){
         //initialize minChange to shared memory
