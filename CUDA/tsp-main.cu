@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     createTours<<<num_blocks_tour, block_size>>> (tourMatrix, cities, restarts);
 
-    cudaMemcpy(hostTourMatrix, tourMatrix, (cities+1)*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    cudaMemcpy(hostTourMatrix, tourMatrix, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     printf("Random tours:\n");
     for(int i = 0; i < restarts; i++){
         printf("[");
