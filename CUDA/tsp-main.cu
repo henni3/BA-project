@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
     int block_size = atoi(argv[1]);
     //printf("block size %d, \n", block_size);
     char* file_name = argv[2];
-    int restarts = argv[3];
+    int restarts = atoi(argv[3]);
     
     initHwd();
 
