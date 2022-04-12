@@ -207,11 +207,10 @@ int main(int argc, char* argv[]) {
 
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("res: [");
+    printf("results:")
     for(int i = 0; i < restarts; i++){
-        printf("%d, ", glo_res[i]);
+        printf("block ID: %d, result: %d\n", glo_res[i*2+1], glo_res[i*2]);
     }
-    printf("]\n");
     free(glo_res);
 
     free(tour); free(distMatrix);
