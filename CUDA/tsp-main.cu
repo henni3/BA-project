@@ -5,9 +5,6 @@
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
 
-#define MAXCITIES 10000
-
-
 int init(int block_size, 
          int cities, 
          int totIter, 
@@ -180,20 +177,41 @@ int main(int argc, char* argv[]) {
     
 
     //run 2 opt kernel 
-    unsigned short *tour, *kerTour;
+    /*
+    unsigned short *tour;
     tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
     for(int i = 0; i < cities; i++){
         tour[i] = i;
     }
-    tour[cities] = 0;
+    tour[cities] = 0;*/
     /*for(int i = 0; i < cities+1; i++){
         printf("CPU tour: %d\n", tour[i]);
     }*/
 
+    unsigned short *tourMatrix;
+    //Create tour matrix
+    cudaMalloc((void**)&tourMatrix, (cities+1)*restarts*sizeof(unsigned short));
+    unsigned short* hostTourMatrix = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
+    unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
+    createTours<<<num_blocks_tour, block_size>>> (tourMatrix, cities, restarts);
+
+    cudaMemcpy(hostTourMatrix, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    printf("Random tours:\n");
+    for(int i = 0; i < restarts; i++){
+        printf("[");
+        for(int j = 0; j < cities+1; j++){
+            printf("%d, ", hostTourMatrix[i*(cities+1)+j]);
+        }
+        printf("]\n");
+    }
+    free(hostTourMatrix);
+
+
+    //unsigned short *kerTour;
     //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
-    cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
-    cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
-    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    //cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
+    //cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
+    /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     
     int *glo_results;
@@ -207,16 +225,17 @@ int main(int argc, char* argv[]) {
 
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("results:");
+    printf("results:\n");
     for(int i = 0; i < restarts; i++){
         printf("block ID: %d, result: %d\n", glo_res[i*2+1], glo_res[i*2]);
     }
     free(glo_res);
+    */
 
-    free(tour); free(distMatrix);
-    cudaFree(is_d); cudaFree(js_d);
-    cudaFree(kerDist); cudaFree(kerTour);
-    cudaFree(glo_results);
+    free(distMatrix);
+    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrix);
+    //cudaFree(kerDist); cudaFree(kerTour);
+    //cudaFree(glo_results); 
     return 0;
 
     

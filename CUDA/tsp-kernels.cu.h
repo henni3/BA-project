@@ -5,7 +5,6 @@ __global__ void mkIndShp(int* index_shp_d, int len){
     if(glb_id < len){
         index_shp_d[glb_id] = len - glb_id;
     }
-
 }
 
 __global__ void convert(int* out_flags, char* in_flags, int totIter) {
@@ -47,7 +46,7 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
-
+//Compute the local optimum cost
 __device__ int sumTourKernel(uint32_t* glo_dist, 
                                 volatile unsigned short *lo_tour, 
                                 int cities, 
@@ -72,27 +71,34 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
     return result_arr[idx];
 }
 
-//Random tour generator basen on SPLASH-2 code
-/*__global__ void createTour (unsigned short* iniTour, int cities, int tourOffset){
-    int currTour, rand, mult, add, mask, idx, to, temp;
-    idx = threadIdx.x;
-    currTour = idx + blockIdx.x * blockDim.x;
-    rand = currTour + tourOffset;
-    mult = 1103515245;
-    add = 12345;
-    mask = 0x7fffffff;
-    for(int t = idx; t < cities; t += block_size){
-        rand = (mult * rand + add) & mask;
-        to = rand % cities;
-        if (to <= 0){
-            to = 1;
+//Random tour generator for all restarts, basen on SPLASH-2 code
+__global__ void createTours(unsigned short* tourMatrix, 
+                            int cities,
+                            int restarts){
+    int rand, glo_id, to, temp;
+    glo_id = threadIdx.x + blockIdx.x * blockDim.x;
+    if(glo_id < restarts){
+        unsigned short localTour[cities+1];
+        for(int i = 0; i < cities; i++){
+            localTour[i] = i;
         }
-        temp = tour[t];
-        tour[t] = tour[to];
-        tour[to] = temp;
+        localTour[cities] = 0;
+        rand = glo_id + blockIdx.x; //blockIdx.x is tourOffset. Check if this is correct
+        for(int i = 0; i < cities; i++){
+            rand = (MULT * rand + ADD) & MASK;
+            to = rand % cities;
+            if (to <= 0){
+                to = 1;
+            }
+            temp = localTour[i];
+            localTour[i] = localTour[to];
+            localTour[to] = temp;
+        }
+        for(int i = 0; i < cities+1; i++){
+            tourMatrix[(cities+1) * glo_id + i] = localTour[i];
+        }
     }
-
-} */
+}
 
 
 __global__ void twoOptKer(uint32_t* glo_dist, 
