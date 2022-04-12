@@ -207,7 +207,7 @@ int main(int argc, char* argv[]) {
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
     cudaFree(kerDist); cudaFree(kerTour);
-    cudaFree(glo_restarts);
+    cudaFree(glo_results);
     return 0;
 
     
