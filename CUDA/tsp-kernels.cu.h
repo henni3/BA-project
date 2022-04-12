@@ -84,7 +84,7 @@ __global__ void createTours(unsigned short* tourMatrix,
         }
         localTour[cities] = 0;
         rand = glo_id + blockIdx.x; //blockIdx.x is tourOffset. Check if this is correct
-        for(int i = 0; i < cities; i++){
+        for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
             if (to <= 0){
