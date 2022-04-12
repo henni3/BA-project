@@ -110,14 +110,15 @@ int init(int block_size,
 
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <block-size> <file-name>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <block-size> <file-name> <number-of-restarts>\n", argv[0]);
         exit(1);
     }
     // Collect input arguments
     int block_size = atoi(argv[1]);
     //printf("block size %d, \n", block_size);
     char* file_name = argv[2];
+    int restarts = argv[3];
     
     initHwd();
 
@@ -178,8 +179,7 @@ int main(int argc, char* argv[]) {
     free(js_h); free(is_h);*/
     
 
-    //run 2 opt kernel
-    unsigned int num_blocks = (totIter + block_size-1)/block_size; 
+    //run 2 opt kernel 
     unsigned short *tour, *kerTour;
     tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
     for(int i = 0; i < cities; i++){
@@ -196,14 +196,10 @@ int main(int argc, char* argv[]) {
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     
-    //*******Experiment!
-    int* num = 0;
-    int n = 0;
-    cudaMalloc((void**)&num, sizeof(int));
-    cudaMemcpy(num, &n, sizeof(int), cudaMemcpyHostToDevice);
-    //*****Experiment
+    int *glo_results;
+    cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
-    twoOptKer<<<5, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, cities, totIter, num);
+    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, kerTour, is_d, js_d, glo_results, cities, totIter);
     cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
@@ -211,7 +207,7 @@ int main(int argc, char* argv[]) {
     free(tour); free(distMatrix);
     cudaFree(is_d); cudaFree(js_d);
     cudaFree(kerDist); cudaFree(kerTour);
-    cudaFree(num);
+    cudaFree(glo_restarts);
     return 0;
 
     

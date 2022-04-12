@@ -1,24 +1,5 @@
 #include <stdio.h>
-
-/*struct Lock { 
-    int *mutex;
-
-    Lock(){
-        int state = 0;
-        cudaMalloc((void**) &mutex, sizeof(int));
-        cudaMemcpy(mutex, &state, sizeof(int), cudaMemcpyHostToDevice);
-    }
-    Lock(){ 
-        cudaFree(mutex);
-    }
-    __device__ void lock (){
-        while(atomicCAS(mutex, 0, 1) != 0); 
-    }
-    __device__ void unlock(){
-        atomicExch(mutex, 0);
-    } 
-};*/
-       
+      
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < len){
@@ -116,10 +97,10 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 
 __global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tour, 
-                          int* glo_is, int* glo_js, 
+                          int* glo_is, int* glo_js,
+                          int* glo_result, 
                           int cities, 
-                          int totIter,
-                          int* num){
+                          int totIter){
     
     int block_size = blockDim.x;
     int idx = threadIdx.x;
@@ -274,17 +255,56 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
-    //EXPERIMENT!!!!!!
+    
+    //Writing results to global memory
+    /*if(idx == 0){
+        glo_result[blockIdx.x * 2] = local_opt_cost;
+        glo_result[blockIdx.x * 2+1] = blockIdx.x;
+    }*/
+
+    
+    
+    /* Writing results to global memory
+    ** THIS DOES NOT WORK AS YOu CAN NOT SYNCRONIZE ACROS GRID.
     if(idx == 0){
-        //atomicAdd(num, 1);
-        num[0] +=1;
-        printf("global idx: %d, local cost: %d\n", glo_id, tempRes[0]);
+        tmp_result[blockIdx.x*2] = local_opt_cost;
+        tmp_result[blockIdx.x*2+1] = blockIdx.x;
+        atomicAdd(blocksWritten, 1);
     }
-    __syncthreads(); //REMOVE AGAIN!
-    if(glo_id == 0){
-        printf("Experiment without atomicAdd: %d\n", num[0]);
+    while(blocks_written[0] < num_block);
+    if(idx == 0){
+        printf("block written: %d, num block: %d", blocks_written, num_block);
     }
-    //EXPERIMENT!!!!!!
+    int tot_threads = (num_block + 1 ) / 2;
+    int tot_elems = num_block;
+    while(1){
+        if(glo_id < num_threads){
+            if (glo_id + num_threads < num_elems){
+                if (tmp_result[glo_id*2] > tmp_result[(glo_id + num_threads)*2]) {
+                    tmp_result[glo_id*2] = tmp_result[(glo_id + num_threads)*2];
+                    tmp_result[glo_id*2+1] = tmp_result[(glo_id + num_threads)*2+1]
+                }
+            }
+        }
+        __syncthreads();
+
+        num_elems = num_threads;
+        num_threads= (num_elems + 1)/ 2;
+        if(num_threads == num_elems){
+            break;
+        }
+    }
+    __syncthreads();
+    if(blockIdx.x == tmp_result[1]){
+        if(idx == 0){
+            glo_result[0] = tmp_result[0];
+            glo_result[1] = tour;
+        }
+    }*/
+     
+    if(idx == 0){
+        printf("global idx: %d, local cost: %d\n", glo_id, local_opt_cost);
+    }
 
 }
 
