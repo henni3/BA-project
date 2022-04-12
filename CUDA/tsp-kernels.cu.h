@@ -97,6 +97,9 @@ __global__ void createTours(unsigned short* tourMatrix,
             tourMatrix[(cities+1) * glo_id + i] = tourMatrix[(cities+1) * glo_id + to];
             tourMatrix[(cities+1) * glo_id + to] = temp;
         }
+        for(int i = 0; i < cities+1; i++){
+            printf("glo_id: %d, elem: %d\n",glo_id, tourMatrix[(cities+1) * glo_id + i]);
+        }
     }
 }
 
