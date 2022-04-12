@@ -78,7 +78,7 @@ __global__ void createTours(unsigned short* tourMatrix,
     int rand, glo_id, to, temp;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
-        unsigned short localTour[cities+1];
+        unsigned short localTour[6]; //This is temperary and must be fixed!
         for(int i = 0; i < cities; i++){
             localTour[i] = i;
         }
