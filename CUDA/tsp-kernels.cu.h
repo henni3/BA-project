@@ -97,9 +97,6 @@ __global__ void createTours(unsigned short* tourMatrix,
             tourMatrix[(cities+1) * glo_id + i] = tourMatrix[(cities+1) * glo_id + to];
             tourMatrix[(cities+1) * glo_id + to] = temp;
         }
-        /*for(int i = 0; i < cities+1; i++){
-            printf("glo_id: %d, elem: %d\n",glo_id, tourMatrix[(cities+1) * glo_id + i]);
-        }*/
     }
 }
 
@@ -125,36 +122,11 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    /*//Test of shared memory
-    int resSize = blockDim.x + cities+1;
-    int totSize = resSize+3;
-    for(i = threadIdx.x; i < totSize; i += blockDim.x){
-        if(i < cities+1){
-            tour[i] = glo_tour[i];
-            printf("shareTour: %d\n", tour[i]);
-        }else if(i > cities && i < resSize){
-            int tmp = (i-(cities+1))*3;
-            tempRes[tmp] = tmp;
-            tempRes[tmp+1] = tmp;  
-            tempRes[tmp+2] = tmp;  
-            //printf("temp res: fst %d, sec %d, thr %d \n", tempRes[tmp], tempRes[tmp+1], tempRes[tmp+2]);
-        }else if(i < totSize){
-            int tmpM = (i-resSize)*3;
-            minChange[tmpM] = tmpM;
-            minChange[tmpM+1] = tmpM;
-            minChange[tmpM+2] = tmpM;
-            printf("minChange: fst %d, sec %d, thr %d\n", minChange[tmpM], minChange[tmpM+1], minChange[tmpM+2]);
-        }
-    }*/
-
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
-    }
-    for(int t = idx; t < cities+1; t += block_size){
-        printf("%d, ",tour[t]);
     }
     if(idx == 0){
         //initialize minChange to shared memory
