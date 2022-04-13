@@ -218,7 +218,7 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
     twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix, is_d, js_d, glo_results, cities, totIter);
-    cudaDeviceSynchronize();
+    //cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
     
