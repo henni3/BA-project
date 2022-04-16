@@ -342,7 +342,7 @@ __global__ void multBlockReduce(int* glo_result,
         int elem1 = glo_result[glo_id*2]; //Need to correct from where we read, determing on from where the multblocks have read.
         if(idx + tot_threads < n){
             int elem2 = glo_result[(glo_id + tot_threads)*2];
-            if(elem1 < elem2){
+            if(elem1 <= elem2){
                 sharedMem[idx*2] = elem1;
                 sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             }else{
@@ -353,9 +353,9 @@ __global__ void multBlockReduce(int* glo_result,
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
         }
+        printf("idx: %d, sharedMem: [%d, %d]\n", idx, sharedMem[idx*2], sharedMem[idx*2+1]);
     }
     __syncthreads();
-    printf("idx: %d, sharedMem: [%d, %d]\n", idx, sharedMem[idx*2], sharedMem[idx*2+1]);
     n = tot_threads;
     //reduce on elements in shared memory
     for(tot_threads = (n+1)/2; tot_threads == n; tot_threads=(n+1)/2){
