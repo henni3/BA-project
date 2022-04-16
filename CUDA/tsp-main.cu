@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 
     //run 2 opt kernel 
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
+    //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
     twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix_d, 
@@ -214,8 +214,8 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(tourMatrix_h, tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     int tourId = glo_res[1];
 
-    printf("Shortest path: %d, tourId: %d\n", glo_res[0], tourId);
-    printf("Tour:\n[");
+    printf("Shortest path: %d\n", glo_res[0]);
+    printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
