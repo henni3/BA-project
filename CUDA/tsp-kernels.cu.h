@@ -238,90 +238,17 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     
-    //Writing results to global memory
+    //Writing local optimum results to global memory
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
     }
-
-    
-    
-    /* Writing results to global memory
-    ** THIS DOES NOT WORK AS YOu CAN NOT SYNCRONIZE ACROS GRID.
-    if(idx == 0){
-        tmp_result[blockIdx.x*2] = local_opt_cost;
-        tmp_result[blockIdx.x*2+1] = blockIdx.x;
-        atomicAdd(blocksWritten, 1);
-    }
-    while(blocks_written[0] < num_block);
-    if(idx == 0){
-        printf("block written: %d, num block: %d", blocks_written, num_block);
-    }
-    int tot_threads = (num_block + 1 ) / 2;
-    int tot_elems = num_block;
-    while(1){
-        if(glo_id < num_threads){
-            if (glo_id + num_threads < num_elems){
-                if (tmp_result[glo_id*2] > tmp_result[(glo_id + num_threads)*2]) {
-                    tmp_result[glo_id*2] = tmp_result[(glo_id + num_threads)*2];
-                    tmp_result[glo_id*2+1] = tmp_result[(glo_id + num_threads)*2+1]
-                }
-            }
-        }
-        __syncthreads();
-
-        num_elems = num_threads;
-        num_threads= (num_elems + 1)/ 2;
-        if(num_threads == num_elems){
-            break;
-        }
-    }
-    __syncthreads();
-    if(blockIdx.x == tmp_result[1]){
-        if(idx == 0){
-            glo_result[0] = tmp_result[0];
-            glo_result[1] = tour;
-        }
-    }*/
 }
 
 /** Reduces all the local optimum cost to find the
  *  global optimum cost.
  *  This is done by parallel reduction across multiple blocks. **/
-/*__global__ void multBlockReduce(int* glo_result, int num_elems){
-    int idx = threadIdx.x;
-    int glo_id = idx + (blockDim.x*2) * blockIdx.x; 
-    extern __shared__ int sharedMem[];    //shared memory
-    
-    //read (and reduce top layer) elements from global into shared memory
-    int elem1 = glo_result[idx*2];
-    int elem2 = glo_result[(glo_idx + blockDim.x)*2];
-    if(elem1 < elem2){
-        sharedMem[idx*2] = elem1;
-        sharedMem[(idx*2)+1] = glo_result[(idx*2)+1];
-    }else{
-        sharedMem[idx*2] = elem2;
-        sharedMem[(idx*2)+1] = glo_result[((glo_idx + blockDim.x)*2)+1];
-    }
-    __syncthreads();
 
-    //reduce on elements in shared memory
-    for(unsigned int i = blockDim.x/2; i > 0; i>>=1){
-        if(idx < i){
-            if(sharedMem[idx*2] > sharedMem[(idx*2)+i]){
-                sharedMem[idx*2] = sharedMem[(idx*2)+i];
-                sharedMem[(idx*2)+1] = sharedMem[(idx*2)+i+1];
-            }
-        }
-        __syncthreads();
-    }
-    if(idx == 0){
-        glo_result[blockIdx.x*2] = sharedMem[0];
-        glo_result[blockIdx.x*2+1] = sharedMem[1];
-    }
-}*/
-
-//NEEDS FIX!! AND IT IS BETTER TO COMBINE MULT AND SINGLE
 __global__ void multBlockReduce(int* glo_result, 
                                 int num_elem){
     int n, idx, glo_id;
@@ -339,7 +266,7 @@ __global__ void multBlockReduce(int* glo_result,
 
     extern __shared__ int sharedMem[];    //shared memory
     if(idx < tot_threads){
-        int elem1 = glo_result[glo_id*2]; //Need to correct from where we read, determing on from where the multblocks have read.
+        int elem1 = glo_result[glo_id*2];
         if(idx + tot_threads < n){
             int elem2 = glo_result[(glo_id + tot_threads)*2];
             if(elem1 <= elem2){
@@ -353,23 +280,16 @@ __global__ void multBlockReduce(int* glo_result,
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
         }
-        printf("idx: %d, blockIdx %d, sharedMem: [%d, %d]\n", idx, blockIdx.x, sharedMem[idx*2], sharedMem[idx*2+1]);
     }
     __syncthreads();
     n = tot_threads;
     tot_threads = (n+1)/2;
-    if(idx == 0){
-        printf("before forloop, n: %d\n\n",n);
-    }
+
     //reduce on elements in shared memory
     for(int i = tot_threads; i > 1; i>>=1){
-        printf("idx: %d, tot_treads: %d, n: %d\n", idx, i, n);
         if(idx < i){
-            printf("idx: %d, tot_treads: %d, n: %d\n", idx, i, n);
             if(idx + i < n){
-                printf("elem1: %d > elem2: %d ?\n", sharedMem[idx*2], sharedMem[(idx + i)*2]);
                 if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
-                    printf("idx: %d in if-statement\n", idx);
                     sharedMem[idx*2] = sharedMem[(idx + i)*2];
                     sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                 }
@@ -384,13 +304,11 @@ __global__ void multBlockReduce(int* glo_result,
     //write to global memory.
     if(idx == 0){
         if(sharedMem[0] <= sharedMem[2]){
-            printf("idx: %d in if-statement\n", idx);
             glo_result[0] = sharedMem[0];
             glo_result[1] = sharedMem[1];
         }else{
             glo_result[0] = sharedMem[2];
             glo_result[1] = sharedMem[3];
         }
- 
     }
 }
