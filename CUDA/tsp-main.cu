@@ -180,37 +180,47 @@ int main(int argc, char* argv[]) {
     
 
     //Create tour matrix
-    unsigned short *tourMatrix;
-    cudaMalloc((void**)&tourMatrix, (cities+1)*restarts*sizeof(unsigned short));
+    unsigned short *tourMatrix_d;
+    cudaMalloc((void**)&tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    createTours<<<num_blocks_tour, block_size>>> (tourMatrix, cities, restarts);
+    createTours<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
 
-    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
-
-    int *glo_results;
-    cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
     //run 2 opt kernel 
-    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix, is_d, js_d, glo_results, cities, totIter);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
+    int *glo_results;
+    cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
+    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix_d, 
+                                                        is_d, js_d, glo_results, 
+                                                        cities, totIter);
     //gpuErrchk( cudaPeekAtLastError() );
-    printf("after twoOptKernel\n");
-        
-    unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
+ 
     
-    //run reduction of all local optimum cost
+    //run reduction of all local optimum cost across multiple blocks
+    unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
     size_t mult_sharedMem = (block_size*2) * sizeof(int);
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
-        printf("num_blocks: %d\n", i);
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
         i++;
     }
+    //run reduction on the last block
     multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
     
+    //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
+    unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tourMatrix_h, tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    int tourId = glo_res[1]
 
-    printf("result: %d, block_id: %d \n", glo_res[0], glo_res[1]);
+    printf("Shortest path: %d, tourId: %d\n", glo_res[0], tourId);
+    printf("Tour:\n[");
+    for(int i = 0; i < cities+1; i++){
+        printf("%d, ", tourMatrix_h[(cities+1)*tourId]);
+    }
+    printf("]\n");
+
     free(glo_res);
 
     free(distMatrix);
