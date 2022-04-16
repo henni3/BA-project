@@ -357,29 +357,40 @@ __global__ void multBlockReduce(int* glo_result,
     }
     __syncthreads();
     n = tot_threads;
+    tot_threads = (n+1)/2;
     if(idx == 0){
         printf("before forloop, n: %d\n\n",n);
     }
     //reduce on elements in shared memory
-    for(int i = (n+1)/2; i == n; i=(n+1)/2){
-        printf("idx: %d, tot_treads: %d, n: %d\n", idx, tot_threads, n);
-        if(idx < tot_threads){
-            printf("idx: %d, tot_treads: %d, n: %d\n", idx, tot_threads, n);
-            if(idx + tot_threads < n){
-                printf("elem1: %d > elem2: %d ?\n", sharedMem[idx*2], sharedMem[(idx*2)+tot_threads]);
-                if(sharedMem[idx*2] > sharedMem[(idx*2)+tot_threads]){
+    for(int i = tot_threads; i > 1; i>>=1){
+        printf("idx: %d, tot_treads: %d, n: %d\n", idx, i, n);
+        if(idx < i){
+            printf("idx: %d, tot_treads: %d, n: %d\n", idx, i, n);
+            if(idx + i < n){
+                printf("elem1: %d > elem2: %d ?\n", sharedMem[idx*2], sharedMem[(idx + i)*2]);
+                if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
                     printf("idx: %d in if-statement\n", idx);
-                    sharedMem[idx*2] = sharedMem[(idx*2)+tot_threads];
-                    sharedMem[(idx*2)+1] = sharedMem[(idx*2)+tot_threads+1];
+                    sharedMem[idx*2] = sharedMem[(idx + i)*2];
+                    sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                 }
             }
         }
         __syncthreads();
         n = i;
+        i++;
     }
     __syncthreads();
+    //Compare the last two elements of the last reduce layer and
+    //write to global memory.
     if(idx == 0){
-        glo_result[0] = sharedMem[0];
-        glo_result[1] = sharedMem[1];
+        if(sharedMem[0] <= sharedMem[2]){
+            printf("idx: %d in if-statement\n", idx);
+            glo_result[0] = sharedMem[0];
+            glo_result[1] = sharedMem[1];
+        }else{
+            glo_result[0] = sharedMem[2];
+            glo_result[1] = sharedMem[3];
+        }
+ 
     }
 }
