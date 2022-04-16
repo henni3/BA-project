@@ -353,7 +353,7 @@ __global__ void multBlockReduce(int* glo_result,
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
         }
-        printf("idx: %d, sharedMem: [%d, %d]\n", idx, sharedMem[idx*2], sharedMem[idx*2+1]);
+        printf("idx: %d, blockIdx %d, sharedMem: [%d, %d]\n", idx, blockIdx.x, sharedMem[idx*2], sharedMem[idx*2+1]);
     }
     __syncthreads();
     n = tot_threads;
