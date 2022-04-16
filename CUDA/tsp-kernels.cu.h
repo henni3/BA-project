@@ -360,8 +360,11 @@ __global__ void multBlockReduce(int* glo_result,
     //reduce on elements in shared memory
     for(tot_threads = (n+1)/2; tot_threads == n; tot_threads=(n+1)/2){
         if(idx < tot_threads){
+            printf("idx: %d, tot_treads: %d, n: %d\n", idx, tot_threads, n);
             if(idx + tot_threads < n){
+                printf("elem1: %d > elem2: %d ?\n", sharedMem[idx*2], sharedMem[(idx*2)+tot_threads]));
                 if(sharedMem[idx*2] > sharedMem[(idx*2)+tot_threads]){
+                    printf("idx: %d in if-statement\n", idx);
                     sharedMem[idx*2] = sharedMem[(idx*2)+tot_threads];
                     sharedMem[(idx*2)+1] = sharedMem[(idx*2)+tot_threads+1];
                 }
