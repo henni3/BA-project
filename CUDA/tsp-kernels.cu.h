@@ -355,6 +355,7 @@ __global__ void multBlockReduce(int* glo_result,
         }
     }
     __syncthreads();
+    printf("idx: %d, sharedMem: [%d, %d]\n", idx, sharedMem[idx*2], sharedMem[idx*2+1]);
     n = tot_threads;
     //reduce on elements in shared memory
     for(tot_threads = (n+1)/2; tot_threads == n; tot_threads=(n+1)/2){
