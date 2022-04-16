@@ -212,19 +212,18 @@ int main(int argc, char* argv[]) {
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
     cudaMemcpy(tourMatrix_h, tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    int tourId = glo_res[1]
+    int tourId = glo_res[1];
 
     printf("Shortest path: %d, tourId: %d\n", glo_res[0], tourId);
     printf("Tour:\n[");
     for(int i = 0; i < cities+1; i++){
-        printf("%d, ", tourMatrix_h[(cities+1)*tourId]);
+        printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
     printf("]\n");
 
-    free(glo_res);
 
-    free(distMatrix);
-    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrix);
+    free(distMatrix); free(glo_res); free(tourMatrix_h);
+    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrix_d);
     cudaFree(kerDist);
     cudaFree(glo_results); 
     return 0;
