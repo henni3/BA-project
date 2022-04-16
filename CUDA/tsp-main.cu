@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
     printf("results:\n");
    
 
-    printf("result: %d, block_id\n", glo_res[0], glo_res[1]);
+    printf("result: %d, block_id: %d \n", glo_res[0], glo_res[1]);
     free(glo_res);
 
     free(distMatrix);
