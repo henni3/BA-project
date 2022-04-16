@@ -196,15 +196,14 @@ int main(int argc, char* argv[]) {
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
         
-    size_t gl_re_sharedMem = (block_size*2) * sizeof(int);
     unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
     //run reduction of all local optimum cost
     size_t mult_sharedMem = (block_size*2) * sizeof(int);
-    for(num_blocks_gl_re; num_blocks_gl_re > 1; num_blocks_gl_re>>=1){
-        multBlockReduce<<<num_blocks_gl_re, block_size, gl_re_sharedMem>>>(glo_results, restarts);
-        num_blocks_gl_re++;
+    for(int i = num_blocks_gl_re; i > 1; i>>=1){
+        multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
+        i++;
     }
-    multBlockReduce<<<1, block_size, gl_re_sharedMem>>>(glo_results, restarts);
+    multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
     
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
