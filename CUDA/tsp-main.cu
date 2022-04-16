@@ -199,8 +199,9 @@ int main(int argc, char* argv[]) {
     unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
     //run reduction of all local optimum cost
     size_t mult_sharedMem = (block_size*2) * sizeof(int);
-    for(int i = num_blocks_gl_re; i > 1; (i+1)>>=1){
+    for(int i = num_blocks_gl_re; i > 1; i>>=1){
         multBlockReduce<<<i, block_size, gl_re_sharedMem>>>(glo_results);
+        i++;
     }
     multBlockReduce<<<1, block_size, gl_re_sharedMem>>>(glo_results);
     
