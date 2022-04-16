@@ -197,9 +197,11 @@ int main(int argc, char* argv[]) {
     printf("after twoOptKernel\n");
         
     unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
+    
     //run reduction of all local optimum cost
     size_t mult_sharedMem = (block_size*2) * sizeof(int);
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
+        printf("num_blocks: %d\n", i);
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
         i++;
     }
@@ -207,8 +209,6 @@ int main(int argc, char* argv[]) {
     
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("results:\n");
-   
 
     printf("result: %d, block_id: %d \n", glo_res[0], glo_res[1]);
     free(glo_res);
