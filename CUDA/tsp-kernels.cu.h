@@ -327,6 +327,8 @@ __global__ void multBlockReduce(int* glo_result,
     int n, idx, glo_id;
     idx = threadIdx.x;
     glo_id = idx + (blockDim.x * 2) * blockIdx.x;
+    
+    //Find limit of how many elements are to be reduced by this block.
     if(num_elem < ((blockDim.x * 2) * (blockIdx.x + 1))){
         n = num_elem - (blockDim.x * 2) * blockIdx.x;
     }else{
@@ -336,31 +338,31 @@ __global__ void multBlockReduce(int* glo_result,
     int tot_threads = (n + 1) / 2;
 
     extern __shared__ int sharedMem[];    //shared memory
-    if(glo_id < tot_threads){
+    if(idx < tot_threads){
         int elem1 = glo_result[glo_id*2]; //Need to correct from where we read, determing on from where the multblocks have read.
-        if(glo_id + tot_threads < n){
+        if(idx + tot_threads < n){
             int elem2 = glo_result[(glo_id + tot_threads)*2];
             if(elem1 < elem2){
-                sharedMem[glo_id*2] = elem1;
-                sharedMem[(glo_id*2)+1] = glo_result[(glo_id*2)+1];
+                sharedMem[idx*2] = elem1;
+                sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             }else{
-                sharedMem[glo_id*2] = elem2;
-                sharedMem[(glo_id*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
+                sharedMem[idx*2] = elem2;
+                sharedMem[(idx*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
             }
         }else{
-            sharedMem[glo_id*2] = elem1;
-            sharedMem[(glo_id*2)+1] = glo_result[(glo_id*2)+1];
+            sharedMem[idx*2] = elem1;
+            sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
         }
     }
     __syncthreads();
     n = tot_threads;
     //reduce on elements in shared memory
     for(tot_threads = (n+1)/2; tot_threads == n; tot_threads=(n+1)/2){
-        if(glo_id < tot_threads){
-            if(glo_id + tot_threads < n){
-                if(sharedMem[glo_id*2] > sharedMem[(glo_id*2)+tot_threads]){
-                    sharedMem[glo_id*2] = sharedMem[(glo_id*2)+tot_threads];
-                    sharedMem[(glo_id*2)+1] = sharedMem[(glo_id*2)+tot_threads+1];
+        if(idx < tot_threads){
+            if(idx + tot_threads < n){
+                if(sharedMem[idx*2] > sharedMem[(idx*2)+tot_threads]){
+                    sharedMem[idx*2] = sharedMem[(idx*2)+tot_threads];
+                    sharedMem[(idx*2)+1] = sharedMem[(idx*2)+tot_threads+1];
                 }
             }
         }
