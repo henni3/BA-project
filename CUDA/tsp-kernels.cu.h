@@ -109,7 +109,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int glo_id = idx + blockIdx.x * block_size;
     int i, j;
     int32_t localMinChange[3];
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
@@ -286,3 +285,91 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }*/
 }
 
+/** Reduces all the local optimum cost to find the
+ *  global optimum cost.
+ *  This is done by parallel reduction across multiple blocks. **/
+/*__global__ void multBlockReduce(int* glo_result, int num_elems){
+    int idx = threadIdx.x;
+    int glo_id = idx + (blockDim.x*2) * blockIdx.x; 
+    extern __shared__ int sharedMem[];    //shared memory
+    
+    //read (and reduce top layer) elements from global into shared memory
+    int elem1 = glo_result[idx*2];
+    int elem2 = glo_result[(glo_idx + blockDim.x)*2];
+    if(elem1 < elem2){
+        sharedMem[idx*2] = elem1;
+        sharedMem[(idx*2)+1] = glo_result[(idx*2)+1];
+    }else{
+        sharedMem[idx*2] = elem2;
+        sharedMem[(idx*2)+1] = glo_result[((glo_idx + blockDim.x)*2)+1];
+    }
+    __syncthreads();
+
+    //reduce on elements in shared memory
+    for(unsigned int i = blockDim.x/2; i > 0; i>>=1){
+        if(idx < i){
+            if(sharedMem[idx*2] > sharedMem[(idx*2)+i]){
+                sharedMem[idx*2] = sharedMem[(idx*2)+i];
+                sharedMem[(idx*2)+1] = sharedMem[(idx*2)+i+1];
+            }
+        }
+        __syncthreads();
+    }
+    if(idx == 0){
+        glo_result[blockIdx.x*2] = sharedMem[0];
+        glo_result[blockIdx.x*2+1] = sharedMem[1];
+    }
+}*/
+
+//NEEDS FIX!! AND IT IS BETTER TO COMBINE MULT AND SINGLE
+__global__ void multBlockReduce(int* glo_result, 
+                                int num_elem){
+    int n, idx, glo_id;
+    idx = threadIdx.x;
+    glo_id = idx + (blockDim.x * 2) * blockIdx.x;
+    if(num_elem < ((blockDim.x * 2) * (blockIdx.x + 1))){
+        n = num_elem - (blockDim.x * 2) * blockIdx.x;
+    }else{
+        n = blockDim.x * 2;
+    }
+    
+    int tot_threads = (n + 1) / 2;
+
+    extern __shared__ int sharedMem[];    //shared memory
+    if(glo_id < tot_threads){
+        int elem1 = glo_result[glo_id*2]; //Need to correct from where we read, determing on from where the multblocks have read.
+        if(glo_id + tot_threads < n){
+            int elem2 = glo_result[(glo_id + tot_threads)*2];
+            if(elem1 < elem2){
+                sharedMem[glo_id*2] = elem1;
+                sharedMem[(glo_id*2)+1] = glo_result[(glo_id*2)+1];
+            }else{
+                sharedMem[glo_id*2] = elem2;
+                sharedMem[(glo_id*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
+            }
+        }else{
+            sharedMem[glo_id*2] = elem1;
+            sharedMem[(glo_id*2)+1] = glo_result[(glo_id*2)+1];
+        }
+    }
+    __syncthreads();
+    n = tot_threads;
+    //reduce on elements in shared memory
+    for(tot_threads = (n+1)/2; tot_threads == n; tot_threads=(n+1)/2){
+        if(glo_id < tot_threads){
+            if(glo_id + tot_threads < n){
+                if(sharedMem[glo_id*2] > sharedMem[(glo_id*2)+tot_threads]){
+                    sharedMem[glo_id*2] = sharedMem[(glo_id*2)+tot_threads];
+                    sharedMem[(glo_id*2)+1] = sharedMem[(glo_id*2)+tot_threads+1];
+                }
+            }
+        }
+        __syncthreads();
+        n = tot_threads;
+    }
+    __syncthreads();
+    if(idx == 0){
+        glo_result[0] = sharedMem[0];
+        glo_result[1] = sharedMem[1];
+    }
+}

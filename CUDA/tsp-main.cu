@@ -116,7 +116,10 @@ int main(int argc, char* argv[]) {
     //printf("block size %d, \n", block_size);
     char* file_name = argv[2];
     int restarts = atoi(argv[3]);
-    
+    if(restarts <= 0){
+        printf("Number of restarts has to be a number larger than 0");
+        exit(1);
+    }
     initHwd();
 
     // Collect information from datafile into distMatrix and cities
@@ -176,59 +179,37 @@ int main(int argc, char* argv[]) {
     free(js_h); free(is_h);*/
     
 
-    //run 2 opt kernel 
-    /*
-    unsigned short *tour;
-    tour = (unsigned short*) malloc((cities+1)*sizeof(unsigned short));
-    for(int i = 0; i < cities; i++){
-        tour[i] = i;
-    }
-    tour[cities] = 0;*/
-    /*for(int i = 0; i < cities+1; i++){
-        printf("CPU tour: %d\n", tour[i]);
-    }*/
-
-    unsigned short *tourMatrix;
     //Create tour matrix
+    unsigned short *tourMatrix;
     cudaMalloc((void**)&tourMatrix, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     createTours<<<num_blocks_tour, block_size>>> (tourMatrix, cities, restarts);
-    
-    /*unsigned short* hostTourMatrix = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(hostTourMatrix, tourMatrix, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    printf("Random tours:\n");
-    for(int i = 0; i < restarts; i++){
-        printf("[");
-        for(int j = 0; j < cities+1; j++){
-            printf("%d, ", hostTourMatrix[i*(cities+1)+j]);
-        }
-        printf("]\n");
-    }
-    free(hostTourMatrix);*/
 
-
-    //unsigned short *kerTour;
-    //tour[0] = 1; tour[1] = 3; tour[2] = 4; tour[3] = 0; tour[4] =2; tour[5] = 1;
-    //cudaMalloc((void**)&kerTour, (cities+1)*sizeof(unsigned short));
-    //cudaMemcpy(kerTour, tour, (cities+1)*sizeof(unsigned short), cudaMemcpyHostToDevice);
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
-    
+
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
+    //run 2 opt kernel 
     twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrix, is_d, js_d, glo_results, cities, totIter);
-    //cudaDeviceSynchronize();
     //gpuErrchk( cudaPeekAtLastError() );
     printf("after twoOptKernel\n");
     
-
+    unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
+    //run reduction of all local optimum cost
+    size_t mult_sharedMem = (block_size*2) * sizeof(int);
+    for(int i = num_blocks_gl_re; i > 1; (i+1)>>=1){
+        multBlockReduce<<<i, block_size, gl_re_sharedMem>>>(glo_results);
+    }
+    multBlockReduce<<<1, block_size, gl_re_sharedMem>>>(glo_results);
+    
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
     printf("results:\n");
-    for(int i = 0; i < restarts; i++){
-        printf("block ID: %d, result: %d\n", glo_res[i*2+1], glo_res[i*2]);
-    }
+   
+
+    printf("result: %d, block_id\n", glo_res[0], glo_res[1]);
     free(glo_res);
 
     free(distMatrix);
