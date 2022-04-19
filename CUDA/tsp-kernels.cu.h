@@ -106,6 +106,7 @@ __global__ void createToursRowWise(unsigned short* tourMatrix,
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
+//!!!!!!!!!!!!!!!!!!!!!!!!!!NOOOOT DONE!!!!!!!!!!!!!!!!!!
 __global__ void createToursColumnWise(unsigned short* tourMatrix, 
                             int cities,
                             int restarts){
@@ -131,6 +132,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
         }
+        //TRANSPOSE MATRIX!!
     }
 }
 
