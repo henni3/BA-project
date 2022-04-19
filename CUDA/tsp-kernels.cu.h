@@ -267,14 +267,14 @@ __global__ void multBlockReduce(int* glo_result,
     extern __shared__ int sharedMem[];    //shared memory
     if(idx < tot_threads){
         int elem1 = glo_result[glo_id*2];
-        /*if((elem1 == 21292) || (elem1 == 21282)){ //test
+        if(elem1 == 21282){ //test
             printf("Global value found: %d\n", elem1);
-        }*/
+        }
         if(idx + tot_threads < n){
             int elem2 = glo_result[(glo_id + tot_threads)*2];
-            /*if((elem2 == 21292) || (elem2 == 21282)){ //test
+            if(elem2 == 21282){ //test
                 printf("Global value found\n: %d", elem2);
-            }*/
+            }
             if(elem1 <= elem2){
                 sharedMem[idx*2] = elem1;
                 sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
@@ -295,12 +295,12 @@ __global__ void multBlockReduce(int* glo_result,
         for(int i = tot_threads; i > 1; i>>=1){
             if(idx < i){
                 if(idx + i < n){
-                    /*if((sharedMem[idx*2] == 21292) || (sharedMem[idx*2] == 21282)){ //test
+                    if(sharedMem[idx*2] == 21282){ //test
                         printf("Shared value found: %d\n", sharedMem[idx*2]);
                     }
-                    if((sharedMem[(idx + i)*2] == 21292) || (sharedMem[(idx + i)*2] == 21282)){ //test
+                    if(sharedMem[(idx + i)*2] == 21282){ //test
                         printf("Shared value found: %d\n", sharedMem[(idx + i)*2]);
-                    }*/
+                    }
                     if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
                         sharedMem[idx*2] = sharedMem[(idx + i)*2];
                         sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
