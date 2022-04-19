@@ -318,15 +318,15 @@ __global__ void multBlockReduce(int* glo_result,
                         printf("Shared value found: %d\n", sharedMem[(idx + i)*2]);
                     }*/
                     if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
-                        if(sharedMem[(idx + i)*2] == 21282){ //test
+                        /*if(sharedMem[(idx + i)*2] == 21282){ //test
                             printf("Shared value found: %d\n", sharedMem[(idx + i)*2]);
-                        }
+                        }*/
                         sharedMem[idx*2] = sharedMem[(idx + i)*2];
                         sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                     }
-                    if(sharedMem[idx*2] == 21282){ //test
+                    /*if(sharedMem[idx*2] == 21282){ //test
                         printf("Shared value found: %d\n", sharedMem[idx*2]);
-                    }
+                    }*/
                 }
             }
             n = i;
