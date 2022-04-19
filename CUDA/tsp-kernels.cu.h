@@ -113,11 +113,11 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
         //Initiate all tours from 0 to cities
-        for(int i = 0; i < (cities+1); i++){
+        for(int i = 0; i < cities; i++){
             tourMatrix[restarts * i + glo_id] = i;
         }
         //The last element in all tours is the same as the first (which is 0).
-        tourMatrix[restarts * (cities+1) + glo_id] = 0;
+        tourMatrix[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
         /*rand = glo_id + blockIdx.x; //blockIdx.x is tourOffset. Check if this is correct

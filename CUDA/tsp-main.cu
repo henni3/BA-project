@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
     }
     printf("]\n\n");
 
-    printf("Tour R:  [");
+    printf("Tour C:  [");
     for(int i = 0; i < restarts; i++){
         printf("[");
         for(int j = 0; j < cities+1; j++){
