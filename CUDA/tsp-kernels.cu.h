@@ -276,7 +276,7 @@ __global__ void multBlockReduce(int* glo_result,
     extern __shared__ int sharedMem[];    //shared memory
     if(idx < tot_threads){
         int elem1 = glo_result[glo_id*2];
-        if(elem1 == 21282){ //test
+        if(idx == 0){ //test
             printf("if-Global value found: %d\n", elem1);
         }
         __syncthreads(); //added
@@ -301,7 +301,7 @@ __global__ void multBlockReduce(int* glo_result,
             }
             //__syncthreads(); //added
         }else{
-            if(elem1 == 21282){ //test
+            if(idx == 0){ //test
                 printf("else-Global value found: %d\n", elem1);
             }
             sharedMem[idx*2] = elem1;
@@ -343,7 +343,7 @@ __global__ void multBlockReduce(int* glo_result,
                 printf("n: %d, i: %d\n", n, i); //testing
             }*/
         }
-        printf("After for loop. idx: %d\n", idx); //testing
+        //printf("After for loop. idx: %d\n", idx); //testing
         __syncthreads();
         //Compare the last two elements of the last reduce layer and
         //write to global memory.
