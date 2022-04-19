@@ -295,6 +295,12 @@ __global__ void multBlockReduce(int* glo_result,
     for(int i = tot_threads; i > 1; i>>=1){
         if(idx < i){
             if(idx + i < n){
+                if((sharedMem[idx*2] == 21292) || (sharedMem[idx*2] == 21282)){ //test
+                    printf("Value found: %d", sharedMem[idx*2]);
+                }
+                if((sharedMem[(idx + i)*2] == 21292) || (sharedMem[(idx + i)*2] == 21282)){ //test
+                    printf("Value found: %d", sharedMem[(idx + i)*2]);
+                }
                 if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
                     sharedMem[idx*2] = sharedMem[(idx + i)*2];
                     sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
