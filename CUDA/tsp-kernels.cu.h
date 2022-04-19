@@ -268,6 +268,8 @@ __global__ void multBlockReduce(int* glo_result,
     tot_threads = (n + 1) / 2;
 
     extern __shared__ int sharedMem[];    //shared memory
+    //Compare element in global memory across two blocks and the smallest
+    //element will be written to shared memory (first reduce layer).
     if(idx < tot_threads){
         int elem1 = glo_result[glo_id*2];
         if(idx + tot_threads < n){
@@ -287,7 +289,8 @@ __global__ void multBlockReduce(int* glo_result,
         n = tot_threads;
         tot_threads = (n+1)/2;
 
-        //reduce on elements in shared memory
+        //reduce on elements in shared memory (second layer to second 
+        //last layer of reduce).
         for(int i = tot_threads; i > 1; i>>=1){
             if(idx < i){
                 if(idx + i < n){
@@ -301,16 +304,14 @@ __global__ void multBlockReduce(int* glo_result,
             i++;
             __syncthreads();
         }
-        __syncthreads();
+        //__syncthreads();
         //Compare the last two elements of the last reduce layer and
         //write to global memory.
         if(idx == 0){
             if(sharedMem[0] > sharedMem[2]){
-                //printf("Final value found: %d\n", sharedMem[2]);
                 glo_result[blockIdx.x*2] = sharedMem[2];
                 glo_result[(blockIdx.x*2)+1] = sharedMem[3];
             }else{
-                //printf("Final value found: %d\n", sharedMem[0]);
                 glo_result[blockIdx.x*2] = sharedMem[0];
                 glo_result[(blockIdx.x*2)+1] = sharedMem[1];
             }
