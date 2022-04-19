@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
         printf("]\n");
     }
     printf("]\n");
-    free(tourMatrixC_h); cudaFree(tourMatrixC_d)
+    free(tourMatrixC_h); cudaFree(tourMatrixC_d);
 
     
     /*int tourId = glo_res[1];
