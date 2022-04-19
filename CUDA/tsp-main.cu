@@ -183,11 +183,11 @@ int main(int argc, char* argv[]) {
     unsigned short *tourMatrixR_d, *tourMatrixC_d;
     cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
+    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts);
 
     //Create tour matrix column wise
     cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts);
 
     //run 2 opt kernel 
     /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
     printf("]\n");*/
 
 
-    free(distMatrix); free(tourMatrix_h); free(glo_res); 
+    free(distMatrix); free(tourMatrix_h); //free(glo_res); 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixR_d);
     cudaFree(kerDist);
     //cudaFree(glo_results); 
