@@ -301,9 +301,7 @@ __global__ void multBlockReduce(int* glo_result,
             }
             //__syncthreads(); //added
         }else{
-            if(idx == 0){ //test
-                printf("else-Global value found: %d\n", elem1);
-            }
+            printf("else-Global value found: %d\n", elem1); //test
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             //__syncthreads(); //added
