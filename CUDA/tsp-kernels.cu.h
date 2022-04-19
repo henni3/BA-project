@@ -299,14 +299,14 @@ __global__ void multBlockReduce(int* glo_result,
                 sharedMem[idx*2] = elem2;
                 sharedMem[(idx*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
             }
-            __syncthreads(); //added
+            //__syncthreads(); //added
         }else{
             if(elem1 == 21282){ //test
                 printf("else-Global value found: %d\n", elem1);
             }
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
-            __syncthreads(); //added
+            //__syncthreads(); //added
         }
         //printf("Before for loop. idx: %d\n", idx); //testing
         __syncthreads();
