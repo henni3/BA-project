@@ -286,7 +286,7 @@ __global__ void multBlockReduce(int* glo_result,
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
         }
-        printf("Before for loop. idx: %d\n", idx);
+        //printf("Before for loop. idx: %d\n", idx); //testing
         __syncthreads();
         n = tot_threads;
         tot_threads = (n+1)/2;
@@ -310,9 +310,9 @@ __global__ void multBlockReduce(int* glo_result,
             __syncthreads();
             n = i;
             i++;
-            printf("In for loop. idx: %d\n", idx);
+            //printf("In for loop. idx: %d\n", idx); //testing
         }
-        printf("After for loop. idx: %d\n", idx);
+        //printf("After for loop. idx: %d\n", idx); //testing
         __syncthreads();
     }
     //Compare the last two elements of the last reduce layer and
