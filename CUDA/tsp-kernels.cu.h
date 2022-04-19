@@ -338,17 +338,16 @@ __global__ void multBlockReduce(int* glo_result,
         }
         //printf("After for loop. idx: %d\n", idx); //testing
         __syncthreads();
-    }
-    //Compare the last two elements of the last reduce layer and
-    //write to global memory.
-    __syncthreads();
-    if(idx == 0){
-        if(sharedMem[0] <= sharedMem[2]){
-            glo_result[0] = sharedMem[0];
-            glo_result[1] = sharedMem[1];
-        }else{
-            glo_result[0] = sharedMem[2];
-            glo_result[1] = sharedMem[3];
+        //Compare the last two elements of the last reduce layer and
+        //write to global memory.
+        if(idx == 0){
+            if(sharedMem[0] <= sharedMem[2]){
+                glo_result[0] = sharedMem[0];
+                glo_result[1] = sharedMem[1];
+            }else{
+                glo_result[0] = sharedMem[2];
+                glo_result[1] = sharedMem[3];
+            }
         }
     }
 }
