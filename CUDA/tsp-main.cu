@@ -220,7 +220,7 @@ int main(int argc, char* argv[]) {
     
     //test tour matrix column wise
     unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(tourMatrix_h, tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tourMatrixC_h, tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
     printf("Tour R:  [");
     for(int i = 0; i < restarts; i++){
@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
     for(int i = 0; i < restarts; i++){
         printf("[");
         for(int j = 0; j < cities+1; j++){
-                printf("%d, ", tourMatrix_h[j*restarts+i]);
+                printf("%d, ", tourMatrixC_h[j*restarts+i]);
         }
         printf("]\n");
     }
@@ -254,7 +254,8 @@ int main(int argc, char* argv[]) {
     printf("]\n");*/
 
 
-    free(distMatrix); free(tourMatrix_h); //free(glo_res); 
+    free(distMatrix); 
+    free(tourMatrix_h); //free(glo_res); 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixR_d);
     cudaFree(kerDist);
     //cudaFree(glo_results); 
