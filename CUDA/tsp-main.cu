@@ -203,7 +203,6 @@ int main(int argc, char* argv[]) {
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
         i++;
-        cudaDeviceSynchronize();
     }
     //run reduction on the last block
     multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
