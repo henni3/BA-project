@@ -265,48 +265,24 @@ __global__ void multBlockReduce(int* glo_result,
     }else{
         n = blockDim.x * 2;
     }
-    
-    /*if(idx == 0){
-        printf("n: %d blockID: %d\n", n, blockIdx.x);
-    }*/
-    
     tot_threads = (n + 1) / 2;
-    //__syncthreads(); //added
 
     extern __shared__ int sharedMem[];    //shared memory
     if(idx < tot_threads){
         int elem1 = glo_result[glo_id*2];
-        /*if(idx == 0){ //test
-            printf("if-Global value found: %d\n", elem1);
-        }*/
-        //__syncthreads(); //added
         if(idx + tot_threads < n){
             int elem2 = glo_result[(glo_id + tot_threads)*2];
-            /*if(elem2 == 21282){ //test
-                printf("Global value found\n: %d", elem2);
-            }*/
-            
             if(elem1 <= elem2){
-                /*if(elem1 == 21282){ //test
-                    printf("Global value found: %d\n", elem1);
-                }*/
                 sharedMem[idx*2] = elem1;
                 sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             }else{
-                /*if(elem2 == 21282){ //test
-                    printf("Global value found\n: %d", elem2);
-                }*/
                 sharedMem[idx*2] = elem2;
                 sharedMem[(idx*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
             }
-            //__syncthreads(); //added
         }else{
-            //printf("else-Global value found: %d\n", elem1); //test
             sharedMem[idx*2] = elem1;
             sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
-            //__syncthreads(); //added
         }
-        //printf("Before for loop. idx: %d\n", idx); //testing
         __syncthreads();
         n = tot_threads;
         tot_threads = (n+1)/2;
@@ -315,43 +291,26 @@ __global__ void multBlockReduce(int* glo_result,
         for(int i = tot_threads; i > 1; i>>=1){
             if(idx < i){
                 if(idx + i < n){
-                    /*if(sharedMem[idx*2] == 21282){ //test
-                        printf("Shared value found: %d\n", sharedMem[idx*2]);
-                    }*/
-                    /*if(sharedMem[(idx + i)*2] == 21282){ //test
-                        printf("Shared value found: %d\n", sharedMem[(idx + i)*2]);
-                    }*/
                     if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
-                        /*if(sharedMem[(idx + i)*2] == 21282){ //test
-                            printf("Shared value found: %d\n", sharedMem[(idx + i)*2]);
-                        }*/
                         sharedMem[idx*2] = sharedMem[(idx + i)*2];
                         sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                     }
-                    //__syncthreads(); //added
-                    /*if(sharedMem[idx*2] == 21282){ //test
-                        printf("Shared value found: %d\n", sharedMem[idx*2]);
-                    }*/
                 }
             }
             n = i;
             i++;
             __syncthreads();
-            /*if(idx == 0){
-                printf("n: %d, i: %d\n", n, i); //testing
-            }*/
         }
-        //printf("After for loop. idx: %d\n", idx); //testing
         __syncthreads();
         //Compare the last two elements of the last reduce layer and
         //write to global memory.
         if(idx == 0){
             if(sharedMem[0] > sharedMem[2]){
-                printf("Final value found: %d\n", sharedMem[2]);
+                //printf("Final value found: %d\n", sharedMem[2]);
                 glo_result[blockIdx.x*2] = sharedMem[2];
                 glo_result[(blockIdx.x*2)+1] = sharedMem[3];
             }else{
-                printf("Final value found: %d\n", sharedMem[0]);
+                //printf("Final value found: %d\n", sharedMem[0]);
                 glo_result[blockIdx.x*2] = sharedMem[0];
                 glo_result[(blockIdx.x*2)+1] = sharedMem[1];
             }
