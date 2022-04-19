@@ -281,7 +281,7 @@ __global__ void multBlockReduce(int* glo_result,
         }*/
         //__syncthreads(); //added
         if(idx + tot_threads < n){
-            int elem2 = glo_result[(glo_id + blockDim.x)*2];
+            int elem2 = glo_result[(glo_id + tot_threads)*2];
             /*if(elem2 == 21282){ //test
                 printf("Global value found\n: %d", elem2);
             }*/
@@ -297,7 +297,7 @@ __global__ void multBlockReduce(int* glo_result,
                     printf("Global value found\n: %d", elem2);
                 }*/
                 sharedMem[idx*2] = elem2;
-                sharedMem[(idx*2)+1] = glo_result[((glo_id + blockDim.x)*2)+1];
+                sharedMem[(idx*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
             }
             //__syncthreads(); //added
         }else{
