@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include "hostSkel.cu.h"
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
@@ -181,9 +182,14 @@ int main(int argc, char* argv[]) {
 
     //Create tour matrix row wise
     unsigned short *tourMatrixR_d; //*tourMatrixC_d;
+    struct timeval randomTime;
     cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts);
+    gettimeofday(&randomTime, NULL);
+    int time = randomTime.tv_usec;
+    printf("time: %d", time);
+    exit(1);
+    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
     /*//Create tour matrix column wise
     cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));

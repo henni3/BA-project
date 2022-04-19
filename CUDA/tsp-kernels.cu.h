@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <sys/time.h>
       
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
@@ -77,9 +76,9 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 //attcheive coalesced access.
 __global__ void createToursRowWise(unsigned short* tourMatrix, 
                             int cities,
-                            int restarts){
+                            int restarts,
+                            int time){
     int rand, glo_id, to, temp;
-    struct timeval randomTime;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
         //Initiate all tours from 0 to cities
@@ -88,11 +87,9 @@ __global__ void createToursRowWise(unsigned short* tourMatrix,
         }
         //The last element in all tours is the same as the first (which is 0).
         tourMatrix[(cities+1) * glo_id + cities] = 0;
-        
-        gettimeofday(&randomTime, NULL);
 
         //Randomize each tour
-        rand = glo_id + blockIdx.x + randomTime.tv_usec; //blockIdx.x is tourOffset. Check if this is correct
+        rand = glo_id + blockIdx.x + time; //blockIdx.x is tourOffset. Check if this is correct
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
