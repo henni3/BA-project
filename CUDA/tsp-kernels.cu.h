@@ -348,12 +348,12 @@ __global__ void multBlockReduce(int* glo_result,
         if(idx == 0){
             if(sharedMem[0] > sharedMem[2]){
                 printf("Final value found: %d\n", sharedMem[2]);
-                glo_result[0] = sharedMem[2];
-                glo_result[1] = sharedMem[3];
+                glo_result[blockIdx.x*2] = sharedMem[2];
+                glo_result[(blockIdx.x*2)+1] = sharedMem[3];
             }else{
                 printf("Final value found: %d\n", sharedMem[0]);
-                glo_result[0] = sharedMem[0];
-                glo_result[1] = sharedMem[1];
+                glo_result[blockIdx.x*2] = sharedMem[0];
+                glo_result[(blockIdx.x*2)+1] = sharedMem[1];
             }
         }
     }
