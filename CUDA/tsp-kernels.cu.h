@@ -325,7 +325,7 @@ __global__ void multBlockReduce(int* glo_result,
                         sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                     }
                     if(sharedMem[idx*2] == 21282){ //test
-                        printf("Shared value found: %d\n", sharedMem[idx*2];
+                        printf("Shared value found: %d\n", sharedMem[idx*2]);
                     }
                 }
             }
