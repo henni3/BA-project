@@ -187,7 +187,6 @@ int main(int argc, char* argv[]) {
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
-    printf("time: %d", time);
     createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
     /*//Create tour matrix column wise
