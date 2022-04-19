@@ -179,15 +179,18 @@ int main(int argc, char* argv[]) {
     free(js_h); free(is_h);*/
     
 
-    //Create tour matrix
-    unsigned short *tourMatrix_d;
-    cudaMalloc((void**)&tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short));
+    //Create tour matrix row wise
+    unsigned short *tourMatrixR_d, *tourMatrixC_d;
+    cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    createTours<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
+    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
 
+    //Create tour matrix column wise
+    cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrix_d, cities, restarts);
 
     //run 2 opt kernel 
-    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
@@ -209,23 +212,52 @@ int main(int argc, char* argv[]) {
     
     //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
+    cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);*/
+    
+    //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    cudaMemcpy(tourMatrix_h, tourMatrix_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    int tourId = glo_res[1];
+    cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    
+    //test tour matrix column wise
+    unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
+    cudaMemcpy(tourMatrix_h, tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    
+    printf("Tour R:  [");
+    for(int i = 0; i < restarts; i++){
+        printf("[");
+        for(int j = 0; j < cities+1; j++){
+                printf("%d, ", tourMatrix_h[i*(cities+1)+j]);
+        }
+        printf("]\n");
+    }
+    printf("]\n\n");
+
+    printf("Tour R:  [");
+    for(int i = 0; i < restarts; i++){
+        printf("[");
+        for(int j = 0; j < cities+1; j++){
+                printf("%d, ", tourMatrix_h[j*restarts+i]);
+        }
+        printf("]\n");
+    }
+    printf("]\n");
+    free(tourMatrixC_h); cudaFree(tourMatrixC_d)
+
+    
+    /*int tourId = glo_res[1];
 
     printf("Shortest path: %d\n", glo_res[0]);
     printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
-    printf("]\n");
+    printf("]\n");*/
 
 
-    free(distMatrix); free(glo_res); free(tourMatrix_h);
-    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrix_d);
+    free(distMatrix); free(tourMatrix_h); free(glo_res); 
+    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixR_d);
     cudaFree(kerDist);
-    cudaFree(glo_results); 
+    //cudaFree(glo_results); 
     return 0;
 
     
