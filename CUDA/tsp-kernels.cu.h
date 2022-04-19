@@ -280,9 +280,9 @@ __global__ void multBlockReduce(int* glo_result,
                 printf("Global value found\n: %d", elem2);
             }*/
             if(elem1 <= elem2){
-                /*if(elem1 == 21282){ //test
+                if(elem1 == 21282){ //test
                     printf("Global value found: %d\n", elem1);
-                }*/
+                }
                 sharedMem[idx*2] = elem1;
                 sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             }else{
