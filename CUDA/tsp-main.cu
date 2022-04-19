@@ -188,7 +188,6 @@ int main(int argc, char* argv[]) {
     gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
     printf("time: %d", time);
-    exit(1);
     createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
     /*//Create tour matrix column wise
