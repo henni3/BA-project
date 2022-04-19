@@ -310,10 +310,11 @@ __global__ void multBlockReduce(int* glo_result,
             __syncthreads();
             n = i;
             i++;
+            printf("In for loop. idx: %d\n", idx);
         }
+        printf("After for loop. idx: %d\n", idx);
+        __syncthreads();
     }
-    printf("After for loop. idx: %d\n", idx);
-    __syncthreads();
     //Compare the last two elements of the last reduce layer and
     //write to global memory.
     if(idx == 0){
