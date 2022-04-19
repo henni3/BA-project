@@ -245,6 +245,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     }
 }
 
+
+
+
+
 /** Reduces all the local optimum cost to find the
  *  global optimum cost.
  *  This is done by parallel reduction across multiple blocks. **/
@@ -275,7 +279,7 @@ __global__ void multBlockReduce(int* glo_result,
             /*if(elem2 == 21282){ //test
                 printf("Global value found\n: %d", elem2);
             }*/
-            if(elem1 <= elem2){
+            if(elem1 < elem2){
                 sharedMem[idx*2] = elem1;
                 sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
             }else{
@@ -307,9 +311,9 @@ __global__ void multBlockReduce(int* glo_result,
                     }
                 }
             }
-            __syncthreads();
             n = i;
             i++;
+            __syncthreads();
             //printf("In for loop. idx: %d\n", idx); //testing
         }
         //printf("After for loop. idx: %d\n", idx); //testing
