@@ -88,7 +88,10 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
     }
 
     result_arr[idx].change = sum;
-    printf("resultarr after init %d \n", result_arr[idx].change);
+    if (blockIdx < 1){
+        printf("resultarr after init %d, with thread %d \n", result_arr[idx].change, idx);
+
+    }
     __syncthreads();
     for (int size = block_size /2; size > 0; size /= 2 ){
         if (idx < size) {
