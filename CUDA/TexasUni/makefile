@@ -12,7 +12,7 @@ compile: $(TEST_TSP)
 
 
 $(TEST_TSP): TSP-GPU11.cu
-	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) tsp-main.cu
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) TSP-GPU11.cu
 
 all: $(TEST_TSP)
 
