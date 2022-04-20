@@ -85,16 +85,15 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         glo_i = lo_tour[i];
         glo_ip1 = lo_tour[i+1];
         sum += glo_dist[glo_i * cities + glo_ip1];
-        if(blockIdx.x < 1){
-            printf("sum is %d with i %d and i+1 %d \n", sum, glo_i, glo_ip1 );
-        }
+        //if(blockIdx.x < 1){
+        //    printf("sum is %d with i %d and i+1 %d \n", sum, glo_i, glo_ip1 );
+        //}
     }
 
     result_arr[idx].change = sum;
-    if (blockIdx.x < 1){
-        printf("resultarr after init %d, with thread %d \n", result_arr[idx].change, idx);
-
-    }
+    //if (blockIdx.x < 1){
+    //    printf("resultarr after init %d, with thread %d \n", result_arr[idx].change, idx);
+    //}
     __syncthreads();
     for (int size = block_size /2; size > 0; size /= 2 ){
         if (idx < size) {
@@ -228,21 +227,21 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
             jp1 = j+1;
-            if (blockIdx.x < 1) {
-                    printf("tour i %d , tour j %d, tour ip1 %d, tour jp1 %d \n", tour[i],tour[j],tour[ip1],tour[jp1]);
-                }
+            //if (blockIdx.x < 1) {
+            //        printf("tour i %d , tour j %d, tour ip1 %d, tour jp1 %d \n", tour[i],tour[j],tour[ip1],tour[jp1]);
+            //    }
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-            if (blockIdx.x < 1) {
-                    printf(" change is %d \n", change);
-                }
+            //if (blockIdx.x < 1) {
+            //        printf(" change is %d \n", change);
+            //    }
             //Each thread shall hold the best local change found
             if(change < localMinChange.change){
-                if (blockIdx.x < 1) {
-                    printf("best change found %d \n", change);
-                }
+                //if (blockIdx.x < 1) {
+                //    printf("best change found %d \n", change);
+                //}
                 localMinChange.change = change;
                 localMinChange.i = i;
                 localMinChange.j = j;
@@ -254,9 +253,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             tempRes[idx].change = localMinChange.change;
             tempRes[idx].i = localMinChange.i;
             tempRes[idx].j = localMinChange.j;
-            if (blockIdx.x < 1) {
-                    printf("tempre change :D %d, with idx %d\n", tempRes[idx].change, idx);
-                }
+            //if (blockIdx.x < 1) {
+            //        printf("tempre change :D %d, with idx %d\n", tempRes[idx].change, idx);
+            //    }
         }
         __syncthreads();
         
@@ -298,9 +297,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             //printf("we get here \n");
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-                if (blockIdx.x < 1) {
-                    printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
-                }
+                //if (blockIdx.x < 1) {
+                //    printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
+                //}
 
             }
             __syncthreads();
@@ -331,9 +330,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
-    if(idx < 1){
-        printf("local opt cost %d \n", local_opt_cost);
-    }
+    //if(idx < 1){
+    //    printf("local opt cost %d \n", local_opt_cost);
+    //}
     
     
     //Writing local optimum results to global memory
