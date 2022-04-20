@@ -251,9 +251,9 @@ class minInd {
                 }
             }
             else {
-                    res.change = t1.change;
-                    res.i = t1.i;
-                    res.j = t1.j;
+                    res.change = t2.change;
+                    res.i = t2.i;
+                    res.j = t2.j;
             }
             return res;
             
