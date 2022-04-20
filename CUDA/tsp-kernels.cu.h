@@ -99,12 +99,12 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
     for (int size = block_size /2; size > 0; size /= 2 ){
         if (idx < size) {
             result_arr[idx].change += result_arr[idx+size].change;
-            printf("rsult arr %d \n", result_arr[idx].change );
+            //printf("rsult arr %d \n", result_arr[idx].change );
         }
         __syncthreads();
     }
     if (idx < 1) {
-        printf("computed result is %d \n", result_arr[idx].change);
+        //printf("computed result is %d \n", result_arr[idx].change);
     }
     return result_arr[idx].change;
 }
@@ -200,6 +200,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
+        printf("tour is %d \n", tour[t]);
     }
     if(idx == 0){
         //initialize minChange to shared memory
