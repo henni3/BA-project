@@ -209,7 +209,7 @@ class ChangeTuple {
         change = value; i = i_v;  j = j_v;
     } 
 
-    __device__ __host__ inline ChangeTuple(const ChangeTuple& CT) volatile {
+    __device__ __host__ inline ChangeTuple(const ChangeTuple& CT)  {
         change = CT.change; i = CT.i; j = CT.j;
 
     }
@@ -223,29 +223,32 @@ class ChangeTuple {
 
 class minInd {
     public:
-        typedef int32_t inpElTp;
+        typedef ChangeTuple inpElTp;
         typedef ChangeTuple RedElTP;
         static const bool commutative = true;
         static __device__ __host__ inline inpElTp identInp(){return 0;}
         static __device__ __host__ inline RedElTP mapFun(const ChangeTuple& el){return el;}
         static __device__ __host__ inline ChangeTuple identity() {return ChangeTuple(0,0,0); }
         static __device__ __host__ inline ChangeTuple apply(volatile ChangeTuple& t1, volatile ChangeTuple& t2) {
+            ChangeTuple res = ChangeTuple();
             if (t1.change < t2.change) {
-                return ChangeTuple(t1.change, t1.i, t1.j);
+                res = ChangeTuple(t1.change, t1.i, t1.j);
             }
-            else if (t1.change = t2.change){
+            else if (t1.change == t2.change){
                 if(t1.i < t2.i){
-                    return ChangeTuple(t1.change, t1.i, t1.j);
+                    res =  ChangeTuple(t1.change, t1.i, t1.j);
                 }
                 if (t1.i == t2.i) {
                     if (t1.j < t2.j) {
-                        return ChangeTuple(t1.change, t1.i,t1.j);
+                        res =  ChangeTuple(t1.change, t1.i,t1.j);
                     }
                 }
             }
             else {
-                return ChangeTuple(t2.change, t2.i, t2.j);
+                res = ChangeTuple(t2.change, t2.i, t1.j)
             }
+            return res;
+            
         }
         static __device__ __host__ inline ChangeTuple remVolatile(volatile ChangeTuple& t) {
             ChangeTuple res; res.change = t.change; res.i = t.i; res.j = t.j; return res;
