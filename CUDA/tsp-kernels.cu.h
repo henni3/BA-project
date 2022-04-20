@@ -95,7 +95,7 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         __syncthreads();
     }
     if (idx < 1) {
-        printf("computed result is %d", result_arr[idx].change);
+        printf("computed result is %d \n", result_arr[idx].change);
     }
     return result_arr[idx].change;
 }
@@ -304,7 +304,10 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
-    printf("local opt cost %d \n", local_opt_cost);
+    if(idx < 1){
+        printf("local opt cost %d \n", local_opt_cost);
+    }
+    
     
     //Writing local optimum results to global memory
     if(idx == 0){
