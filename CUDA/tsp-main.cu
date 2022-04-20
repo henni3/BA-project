@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
                                                         is_d, js_d, glo_results, 
                                                         cities, totIter);
     //gpuErrchk( cudaPeekAtLastError() );
