@@ -190,7 +190,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
     volatile ChangeTuple* minChange = tempRes + block_size;        //minChange holds the current best change (cos?)
     volatile unsigned short* tour =
-                 (volatile unsigned short*)(minChange);  //tour for this climber
+                 (volatile unsigned short*)(minChange + 1);  //tour for this climber
     if(minChange == NULL){
         printf("pointer error\n");
     }
