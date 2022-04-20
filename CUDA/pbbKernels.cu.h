@@ -232,20 +232,28 @@ class minInd {
         static __device__ __host__ inline ChangeTuple apply(volatile ChangeTuple& t1, volatile ChangeTuple& t2) {
             ChangeTuple res = ChangeTuple();
             if (t1.change < t2.change) {
-                res = ChangeTuple(t1.change, t1.i, t1.j);
+                res.change = t1.change;
+                res.i = t1.i,
+                res.j = t1.j
             }
             else if (t1.change == t2.change){
                 if(t1.i < t2.i){
-                    res =  ChangeTuple(t1.change, t1.i, t1.j);
+                    res.change = t1.change;
+                    res.i = t1.i,
+                    res.j = t1.j
                 }
                 if (t1.i == t2.i) {
                     if (t1.j < t2.j) {
-                        res = ChangeTuple(t1.change, t1.i,t1.j);
+                        res.change = t1.change;
+                        res.i = t1.i,
+                        res.j = t1.j
                     }
                 }
             }
             else {
-                res = ChangeTuple(t2.change, t2.i, t1.j);
+                    res.change = t1.change;
+                    res.i = t1.i,
+                    res.j = t1.j
             }
             return res;
             
