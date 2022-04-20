@@ -234,6 +234,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     glo_dist[tour[j]*cities+tour[jp1]]);
             //Each thread shall hold the best local change found
             if(change < localMinChange.change){
+                if (blockIdx.x < 1) {
+                    printf("best change found %d \n", change);
+                }
                 localMinChange.change = change;
                 localMinChange.i = i;
                 localMinChange.j = j;
@@ -245,6 +248,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             tempRes[idx].change = localMinChange.change;
             tempRes[idx].i = localMinChange.i;
             tempRes[idx].j = localMinChange.j;
+            if (blockIdx.x < 1) {
+                    printf("tempre change :D %d, with idx %d\n", tempRes[idx].change, idx);
+                }
         }
         __syncthreads();
         
@@ -283,10 +289,13 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     }
                 }
             }*/
-            printf("we get here \n");
+            //printf("we get here \n");
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-                printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
+                if (blockIdx.x < 1) {
+                    printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
+                }
+
             }
             __syncthreads();
 
