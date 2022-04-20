@@ -297,9 +297,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             //printf("we get here \n");
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-                //if (blockIdx.x < 1) {
-                //    printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
-                //}
+                if (blockIdx.x < 1) {
+                    printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
+                }
 
             }
             __syncthreads();
