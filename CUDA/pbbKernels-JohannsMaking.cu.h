@@ -199,16 +199,29 @@ class minInd {
         static __device__ __host__ inline ChangeTuple identity() {return ChangeTuple(0,0,0); }
         static __device__ __host__ inline ChangeTuple apply(volatile ChangeTuple& t1, volatile ChangeTuple& t2) {
             if (t1.change < t2.change) {
-                return ChangeTuple(t1.change, t1.i, t1.j)
+                return ChangeTuple(t1.change, t1.i, t1.j);
             }
             else if (t1.change = t2.change){
                 if(t1.i < t2.i){
-                    return ChangeTuple(t1.change, t1.i, t1.j)
+                    return ChangeTuple(t1.change, t1.i, t1.j);
                 }
-                if (t1.j, t2.j)
+                if (t1.i == t2.i) {
+                    if (t1.j < t2.j) {
+                        return ChangeTuple(t1.change, t1.i,t1.j);
+                    }
+                }
+            }
+            else {
+                return ChangeTuple(t2.change, t2.i, t2.j);
             }
         }
+        static __device__ __host__ inline ChangeTuple remVolatile(volatile ChangeTuple& t) {
+            ChangeTuple res; res.change = t.change; res.i = t.i; res.j = t.j; return res;
+        }
 
+        static __device__ __host__ inline bool equals(ChangeTuple& t1, ChangeTuple& t2){
+            return (t1.change == t2.change && t1.i == t2.i && t1.j == t2.j);
+        }
 };
 /**
  * Representation of the MSSP operator, so that it can work the generically
