@@ -282,6 +282,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     }
                 }
             }*/
+            printf("we get here \n");
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
                 printf("tempres change %d tempres i %d tempres j %d \n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j );
