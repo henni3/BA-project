@@ -310,7 +310,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                 break;
             }
         }
-        if (blockIdx.x < 1) {
+        if (blockIdx.x < 1 && idx < 1) {
                     printf("best change found is %d with i %d and j %d \n", tempRes[0].change, tempRes[0].i, tempRes[0].j);
                 }
         //Prepare information for swapping
