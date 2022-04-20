@@ -233,27 +233,27 @@ class minInd {
             ChangeTuple res = ChangeTuple();
             if (t1.change < t2.change) {
                 res.change = t1.change;
-                res.i = t1.i,
-                res.j = t1.j
+                res.i = t1.i;
+                res.j = t1.j;
             }
             else if (t1.change == t2.change){
                 if(t1.i < t2.i){
                     res.change = t1.change;
-                    res.i = t1.i,
-                    res.j = t1.j
+                    res.i = t1.i;
+                    res.j = t1.j;
                 }
                 if (t1.i == t2.i) {
                     if (t1.j < t2.j) {
                         res.change = t1.change;
-                        res.i = t1.i,
-                        res.j = t1.j
+                        res.i = t1.i;
+                        res.j = t1.j;
                     }
                 }
             }
             else {
                     res.change = t1.change;
-                    res.i = t1.i,
-                    res.j = t1.j
+                    res.i = t1.i;
+                    res.j = t1.j;
             }
             return res;
             
