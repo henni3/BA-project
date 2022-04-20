@@ -297,9 +297,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             //printf("we get here \n");
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-                if (blockIdx.x < 1 && idx < 10) {
-                    printf("tempres change %d tempres i %d tempres j %d  and idx %d\n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j, idx );
-                }
+               // if (blockIdx.x < 1 && idx < 10) {
+               //     printf("tempres change %d tempres i %d tempres j %d  and idx %d\n", tempRes[idx].change,tempRes[idx].i, tempRes[idx].j, idx );
+               // }
 
             }
             __syncthreads();
@@ -310,9 +310,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                 break;
             }
         }
-        if (blockIdx.x < 1 && idx < 1) {
-                    printf("best change found is %d with i %d and j %d \n", tempRes[0].change, tempRes[0].i, tempRes[0].j);
-                }
+        //if (blockIdx.x < 1 && idx < 1) {
+        //            printf("best change found is %d with i %d and j %d \n", tempRes[0].change, tempRes[0].i, tempRes[0].j);
+        //        }
         //Prepare information for swapping
         int temp, swapCities;
         i = tempRes[0].i + 1;
