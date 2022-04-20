@@ -85,6 +85,9 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         glo_i = lo_tour[i];
         glo_ip1 = lo_tour[i+1];
         sum += glo_dist[glo_i * cities + glo_ip1];
+        if(blockIdx.x < 1){
+            printf("sum is %d with i %d and i+1 %d \n", sum, glo_i, glo_ip1 );
+        }
     }
 
     result_arr[idx].change = sum;
