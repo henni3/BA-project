@@ -205,6 +205,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     if(idx == 0){
         //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
+        minChange[0].change = -1;
     }
     
     __syncthreads();
