@@ -200,7 +200,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
-        printf("tour is %d, with idx %d \n", tour[t], idx);
+        //printf("tour is %d, with idx %d \n", tour[t], idx);
     }
     if(idx == 0){
         //initialize minChange to shared memory
@@ -228,6 +228,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             j = glo_js[ind] + i + 2;
             ip1 = i+1;
             jp1 = j+1;
+            if (blockIdx.x < 1) {
+                    printf("tour i %d , tour j %d, tour ip1 %d, tour jp1\n", tour[i],tour[j],tour[ip1]tour[jp1]);
+                }
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
