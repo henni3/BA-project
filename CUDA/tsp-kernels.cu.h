@@ -86,11 +86,14 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         glo_ip1 = lo_tour[i+1];
         sum += glo_dist[glo_i * cities + glo_ip1];
     }
+
     result_arr[idx].change = sum;
+    printf("resultarr after init %d \n", result_arr[idx].change);
     __syncthreads();
     for (int size = block_size /2; size > 0; size /= 2 ){
         if (idx < size) {
             result_arr[idx].change += result_arr[idx+size].change;
+            print("rsult arr %d \n", result_arr[idx].change )
         }
         __syncthreads();
     }
