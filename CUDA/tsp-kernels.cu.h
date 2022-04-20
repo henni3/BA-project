@@ -293,14 +293,14 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             tour[j - (t - i)] = temp;
         }
         if(idx < 1){
-            minChange[idx].change = tempRes[idx].change
+            minChange[idx].change = tempRes[idx].change;
             minChange[idx].j = tempRes[idx].j;
             minChange[idx].i = tempRes[idx].i;
         }
         __syncthreads();
     }
     
-    int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
+    int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
     
     //Writing local optimum results to global memory
     if(idx == 0){
