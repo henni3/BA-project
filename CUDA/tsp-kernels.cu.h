@@ -95,7 +95,7 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         __syncthreads();
     }
     if (idx < 1) {
-        printf("computed result is %d", result_arr[idx].change)
+        printf("computed result is %d", result_arr[idx].change);
     }
     return result_arr[idx].change;
 }
