@@ -129,15 +129,17 @@ int main(int argc, char* argv[]) {
     // Collect information from datafile into distMatrix and cities
     uint32_t* distMatrix, *kerDist;
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
+    printf("After distMatrix\n");
     int cities = fileToDistM(file_name, distMatrix);
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
+    printf("After cities\n");
     distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
     cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
-    printf("After distMatrix()\n");
+    printf("After ker\n");
     
     
     /*printf("cities: %d \n", cities );
