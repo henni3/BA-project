@@ -79,6 +79,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         create_dist_array(distM, X_positions, Y_positions, type, cities);
         free(X_positions);  free(Y_positions);
     }
+    fclose();
     memcpy(save_array,distM,sizeof(uint32_t) * cities * cities);
     free(distM);
     return cities;
