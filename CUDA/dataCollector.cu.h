@@ -36,13 +36,13 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         printf("Source file not found\n");
         return EXIT_FAILURE;
     }
-    X_positions = (float*) malloc(sizeof(float) * cities);
-    Y_positions = (float*) malloc(sizeof(float) * cities);
-
     printf("After opening file\n");
     char buf[MAXLINE];
     uint32_t cities, read3, type, *distM;
     float read1,read2, *X_positions, *Y_positions;
+    X_positions = (float*) malloc(sizeof(float) * cities);
+    Y_positions = (float*) malloc(sizeof(float) * cities);
+    
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
             fscanf(source, "%d", &cities);
