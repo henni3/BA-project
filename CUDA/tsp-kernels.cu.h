@@ -187,6 +187,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
     //Preparing data for the 2 opt algorithm
     int ip1, jp1, change;
+
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
@@ -280,7 +281,11 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
-    
+
+    //copy best local shared memory black to global memory
+    for(int t = idx; t < cities+1; t += block_size){
+        glo_tours[blockIdx.x * (cities+1) + t] = tour[t];
+    }
     
     //Writing local optimum results to global memory
     if(idx == 0){
@@ -428,6 +433,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
     
+    //copy best local shared memory black to global memory
+    for(int t = idx; t < cities+1; t += block_size){
+        glo_tours[blockIdx.x * (cities+1) + t] = tour[t];
+    }
     //Writing local optimum results to global memory
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
