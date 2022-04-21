@@ -42,7 +42,9 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
     float read1,read2, *X_positions, *Y_positions;
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
+            printf("we get here \n" );
             fscanf(source, "%d", &cities);
+            printf("cities %d \n", cities);
             distM = (uint32_t*) malloc(sizeof(uint32_t) * cities * cities);
             X_positions = (float*) malloc(sizeof(float) * cities);
             Y_positions = (float*) malloc(sizeof(float) * cities);
