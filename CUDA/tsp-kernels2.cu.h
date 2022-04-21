@@ -148,7 +148,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                 acc += cities - (2 + ind);
                 if (gen < acc) {
                     i = ind;
-                    j = (i+2) + (gen - pre)
+                    j = (i+2) + (gen - pre);
                     ip1 = i+1;
                     jp1 = j+1;
                     change = glo_dist[tour[i]*cities+tour[j]] + 
