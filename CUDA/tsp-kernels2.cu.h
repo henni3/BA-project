@@ -140,12 +140,12 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
-       int pre, acc;
+        int pre, acc;
         for(int gen = idx; gen < totIter; gen += block_size){
             acc = 0;
             pre = 0;
             for (int ind = 0; ind < cities-2; ind++){
-                acc += cities - (2 + ind)
+                acc += cities - (2 + ind);
                 if (gen < acc) {
                     i = ind;
                     j = (i+2) + (gen - pre)
