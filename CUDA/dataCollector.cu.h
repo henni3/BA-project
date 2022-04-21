@@ -81,6 +81,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         create_dist_array(distM, X_positions, Y_positions, type, cities);
         printf("After create_dist_array\n");
         free(X_positions);  free(Y_positions);
+        printf("After free\n");
     }
     printf("After type!=MATRIX\n");
     fclose(source);
