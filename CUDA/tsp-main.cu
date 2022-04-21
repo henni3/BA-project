@@ -215,7 +215,8 @@ int main(int argc, char* argv[]) {
     }
     //run reduction on the last block
     multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
-    
+    cudaDeviceSynchronize();
+
     //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
@@ -223,7 +224,6 @@ int main(int argc, char* argv[]) {
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    cudaDeviceSynchronize();
 
     
     /*//test tour matrix column wise
