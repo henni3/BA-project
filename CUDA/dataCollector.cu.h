@@ -40,13 +40,12 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
     char buf[MAXLINE];
     uint32_t cities, read3, type, *distM;
     float read1,read2, *X_positions, *Y_positions;
-    X_positions = (float*) malloc(sizeof(float) * cities);
-    Y_positions = (float*) malloc(sizeof(float) * cities);
-    
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
             fscanf(source, "%d", &cities);
             distM = (uint32_t*) malloc(sizeof(uint32_t) * cities * cities);
+            X_positions = (float*) malloc(sizeof(float) * cities);
+            Y_positions = (float*) malloc(sizeof(float) * cities);
         } else if(strncmp("EUC_2D", buf,6) == 0){
             type = EUCLIDIAN;
         } else if(strncmp("GEO:", buf,3) == 0){
