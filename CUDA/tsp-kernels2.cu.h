@@ -90,13 +90,12 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         }
         __syncthreads();
     }
-    return result_arr[idx].chang
+    return result_arr[idx].change;
 }
 
 
 __global__ void twoOptKer2(uint32_t* glo_dist, 
-                          unsigned short *glo_tours, 
-                          int* glo_is, int* glo_js,
+                          unsigned short *glo_tours,
                           int* glo_result, 
                           int cities, 
                           int totIter){
@@ -141,21 +140,31 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
-        for(int ind = idx; ind < totIter; ind += block_size){
-            i = glo_is[ind];
-            j = glo_js[ind] + i + 2;
-            ip1 = i+1;
-            jp1 = j+1;
-            change = glo_dist[tour[i]*cities+tour[j]] + 
-                    glo_dist[tour[ip1]*cities+tour[jp1]] -
-                    (glo_dist[tour[i]*cities+tour[ip1]] +
-                    glo_dist[tour[j]*cities+tour[jp1]]);
-            //Each thread shall hold the best local change found
-            if(change < localMinChange.change){
-                localMinChange.change = change;
-                localMinChange.i = i;
-                localMinChange.j = j;
+       int pre, acc;
+        for(int gen = idx; gen < totIter; gen += block_size){
+            acc = 0;
+            pre = 0;
+            for (int ind = 0; ind < cities-2; ind++){
+                acc += cities - (2 + ind)
+                if (gen < acc) {
+                    i = ind;
+                    j = (i+2) + (gen - pre)
+                    ip1 = i+1;
+                    jp1 = j+1;
+                    change = glo_dist[tour[i]*cities+tour[j]] + 
+                            glo_dist[tour[ip1]*cities+tour[jp1]] -
+                            (glo_dist[tour[i]*cities+tour[ip1]] +
+                            glo_dist[tour[j]*cities+tour[jp1]]);
+                //Each thread shall hold the best local change found
+                if(change < localMinChange.change){
+                    localMinChange.change = change;
+                    localMinChange.i = i;
+                    localMinChange.j = j;
+                    }
+                }
+                pre = acc;
             }
+
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
