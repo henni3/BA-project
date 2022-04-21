@@ -90,7 +90,7 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
         }
         __syncthreads();
     }
-    return result_arr[idx].change;
+    return result_arr[idx].chang
 }
 
 
