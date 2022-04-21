@@ -131,6 +131,7 @@ int main(int argc, char* argv[]) {
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
     printf("After distMatrix\n");
     int cities = fileToDistM(file_name, distMatrix);
+    printf("After fileToDist\n");
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);

@@ -36,6 +36,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         printf("Source file not found\n");
         return EXIT_FAILURE;
     }
+    printf("After opening file\n");
     char buf[MAXLINE];
     uint32_t cities, read3, type, *distM;
     float read1,read2, *X_positions, *Y_positions;
@@ -72,6 +73,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         }
         
     }
+    printf("After While\n");
     if (type != MATRIX) {
         for (uint32_t i = 0; i < cities; i++){
         //printf("X , Y  pos value is: %f , %f \n", X_positions[i], Y_positions[i] );
@@ -79,6 +81,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         create_dist_array(distM, X_positions, Y_positions, type, cities);
         free(X_positions);  free(Y_positions);
     }
+    printf("After type!=MATRIX\n");
     fclose(source);
     memcpy(save_array,distM,sizeof(uint32_t) * cities * cities);
     free(distM);
