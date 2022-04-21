@@ -122,25 +122,20 @@ int main(int argc, char* argv[]) {
         printf("Number of restarts has to be a number larger than 0");
         exit(1);
     }
-    printf("Before initHxd()\n");
     initHwd();
-    printf("After initHxd()\n");
 
     // Collect information from datafile into distMatrix and cities
     uint32_t* distMatrix, *kerDist;
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
-    printf("After distMatrix\n");
     int cities = fileToDistM(file_name, distMatrix);
     printf("After fileToDist\n");
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
-    printf("After cities\n");
     distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
     cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
-    printf("After ker\n");
     
     
     /*printf("cities: %d \n", cities );
