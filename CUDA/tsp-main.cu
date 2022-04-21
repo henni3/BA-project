@@ -14,7 +14,6 @@ int init(int block_size,
     int len, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
     int *flag_int, *oneArr, *seg_sc_tmp_int;
     char *flags_d, *d_tmp_flag; 
-    printf("hej17\n");
     //Calculate the length of shape array
     len = cities - 2;
     //Calculate block size
@@ -54,7 +53,6 @@ int init(int block_size,
     }
     printf("]\n \n");
     free(scan);*/
-    printf("hej\n");
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
@@ -128,7 +126,6 @@ int main(int argc, char* argv[]) {
     uint32_t* distMatrix, *kerDist;
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(file_name, distMatrix);
-    printf("After fileToDist\n");
     if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
