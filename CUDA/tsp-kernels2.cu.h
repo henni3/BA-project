@@ -161,6 +161,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     localMinChange.i = i;
                     localMinChange.j = j;
                     }
+                break;
                 }
                 pre = acc;
             }
