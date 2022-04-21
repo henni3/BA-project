@@ -19,7 +19,7 @@ $(TEST_TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKe
 	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) tsp-main.cu
 
 $(TEST_TSP2):dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-kernels2.cu.h tsp-main2.cu
-	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) tsp-main2.cu
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP2) tsp-main2.cu
 
 all: $(TEST_PBB) $(TEST_TSP) $(TEST_TSP2)
 
