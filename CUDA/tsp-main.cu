@@ -45,7 +45,7 @@ int init(int block_size,
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
     //gpuErrchk( cudaPeekAtLastError() );
-    //cudaDeviceSynchronize();
+  
     /*int* scan = (int*) malloc(len*sizeof(int));
     cudaMemcpy(scan, index_shp_sc_d, len*sizeof(int), cudaMemcpyDeviceToHost);
     printf("scan: [");
@@ -222,6 +222,8 @@ int main(int argc, char* argv[]) {
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
+
     
     /*//test tour matrix column wise
     unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
