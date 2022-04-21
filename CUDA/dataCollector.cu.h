@@ -39,6 +39,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
     printf("After opening file\n");
     char buf[MAXLINE];
     uint32_t cities, read3, type, *distM;
+    cities = 0;
     float read1,read2, *X_positions, *Y_positions;
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
