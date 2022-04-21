@@ -51,7 +51,7 @@ __global__ void minusOne(int totIter, int* in_arr) {
 __global__ void zip(int* array1, int* array2, int size){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < size){
-        array1[idx] = (array1[idx] << 16) | array2[idx];
+        array1[glb_id] = (array1[glb_id] << 16) | array2[glb_id];
     }
 }
 
