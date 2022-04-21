@@ -48,6 +48,13 @@ __global__ void minusOne(int totIter, int* in_arr) {
     }
 }
 
+__global__ void zip(int* array1, int* array2, int size){
+    int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
+    if(glb_id < size){
+        array1[idx] = (array1[idx] << 16) | array2[idx];
+    }
+}
+
 //Compute the local optimum cost
 __device__ int sumTourKernel(uint32_t* glo_dist, 
                                 volatile unsigned short *lo_tour, 
@@ -167,7 +174,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
 
 __global__ void twoOptKer2(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
-                          int* glo_is, int* glo_js,
+                          int* glo_is,
                           int* glo_result, 
                           int cities, 
                           int totIter){
@@ -214,8 +221,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            i = glo_is[ind];
-            j = glo_js[ind] + i + 2;
+            int num = glo_is[ind];
+            i = num >> 16;
+            j = (num & 0xffff) + i + 2;
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 

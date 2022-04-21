@@ -96,6 +96,9 @@ int init(int block_size,
     sgmScanInc<Add<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
     // 3. minus each element of js_d array with one to get the final js_d array
     minusOne<<< num_blocks, block_size >>> (totIter, js_d);
+    zip<<< num_blocks, block_size>>> (is_d,js_d,totIter);
+
+
     cudaDeviceSynchronize();
 
     
@@ -156,6 +159,7 @@ int main(int argc, char* argv[]) {
 
 
     init(block_size, cities, totIter, is_d, js_d);
+    cudaFree(js_d);
 
     /*int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
@@ -198,7 +202,7 @@ int main(int argc, char* argv[]) {
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
     twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
-                                                        is_d, js_d, glo_results, 
+                                                        is_d, glo_results, 
                                                         cities, totIter);
     //gpuErrchk( cudaPeekAtLastError() );
  
