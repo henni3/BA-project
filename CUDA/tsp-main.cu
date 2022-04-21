@@ -109,7 +109,6 @@ int init(int block_size,
 
 
 int main(int argc, char* argv[]) {
-    printf("main\n");
     if (argc != 4) {
         printf("Usage: %s <block-size> <file-name> <number-of-restarts>\n", argv[0]);
         exit(1);
@@ -123,7 +122,9 @@ int main(int argc, char* argv[]) {
         printf("Number of restarts has to be a number larger than 0");
         exit(1);
     }
+    printf("Before initHxd()\n");
     initHwd();
+    printf("After initHxd()\n");
 
     // Collect information from datafile into distMatrix and cities
     uint32_t* distMatrix, *kerDist;
@@ -136,7 +137,7 @@ int main(int argc, char* argv[]) {
     distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
     cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
-
+    printf("After distMatrix()\n");
     
     
     /*printf("cities: %d \n", cities );
