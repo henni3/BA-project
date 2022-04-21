@@ -1,7 +1,7 @@
 NAME : nrw1379
 COMMENT : 1379 Orte in Nordrhein-Westfalen (Bachem/Wottawa)
 TYPE : TSP
-DIMENSION : 1379
+DIMENSION: 1379
 EDGE_WEIGHT_TYPE : EUC_2D
 NODE_COORD_SECTION
     1    2918    6528
