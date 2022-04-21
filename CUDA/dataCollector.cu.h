@@ -36,18 +36,12 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         printf("Source file not found\n");
         return EXIT_FAILURE;
     }
-    printf("After opening file\n");
     char buf[MAXLINE];
     uint32_t cities, read3, type, *distM;
-    cities = 0;
     float read1,read2, *X_positions, *Y_positions;
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
-            printf("we get here \n" );
-            while (cities <= 0) {
-                fscanf(source, "%d", &cities);
-            }
-            printf("cities %d \n", cities);
+            fscanf(source, "%d", &cities);
             distM = (uint32_t*) malloc(sizeof(uint32_t) * cities * cities);
             X_positions = (float*) malloc(sizeof(float) * cities);
             Y_positions = (float*) malloc(sizeof(float) * cities);
@@ -77,8 +71,7 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
             break;
         }
         
-    }
-    printf("After While\n");
+    };
     if (type != MATRIX) {
         /*for (uint32_t i = 0; i < cities; i++){
             printf("X , Y  pos value is: %f , %f \n", X_positions[i], Y_positions[i] );
@@ -86,11 +79,8 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
         create_dist_array(distM, X_positions, Y_positions, type, cities);
     }
 
-    printf("After type!=MATRIX\n");
     fclose(source);
     memcpy(save_array,distM,sizeof(uint32_t) * cities * cities);
-    printf("Before free\n");
     free(distM); free(X_positions);  free(Y_positions);
-    printf("After free\n");
     return cities;
 } 
