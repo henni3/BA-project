@@ -84,6 +84,8 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
     printf("After type!=MATRIX\n");
     fclose(source);
     memcpy(save_array,distM,sizeof(uint32_t) * cities * cities);
+    printf("Before free\n");
     free(distM); free(X_positions);  free(Y_positions);
+    printf("After free\n");
     return cities;
 } 
