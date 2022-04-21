@@ -14,7 +14,7 @@ int init(int block_size,
     int len, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
     int *flag_int, *oneArr, *seg_sc_tmp_int;
     char *flags_d, *d_tmp_flag; 
-    
+    printf("hej17\n");
     //Calculate the length of shape array
     len = cities - 2;
     //Calculate block size
@@ -54,7 +54,7 @@ int init(int block_size,
     }
     printf("]\n \n");
     free(scan);*/
-
+    printf("hej\n");
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
@@ -109,6 +109,7 @@ int init(int block_size,
 
 
 int main(int argc, char* argv[]) {
+    printf("main\n");
     if (argc != 4) {
         printf("Usage: %s <block-size> <file-name> <number-of-restarts>\n", argv[0]);
         exit(1);
