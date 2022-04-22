@@ -266,7 +266,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                 break;
             }
         }*/
-        scanIncBlock<minInd>(tempRes,(unsigned int) idx);
+        scanIncBlock<minInd<ChangeTuple>>(tempRes,(unsigned int) idx);
         ChangeTuple best = minInd::remVolatile(tempRes[block_size-1]);
         //Prepare information for swapping
         int temp, swapCities;
