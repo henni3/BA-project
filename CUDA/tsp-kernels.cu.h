@@ -267,12 +267,12 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             }
         }*/
         scanIncBlock<minInd>(tempRes,(unsigned int) idx);
-        ChangeTuple best = ChangeTuple(tempRes[block_size.x - 1]);
+        ChangeTuple best = minInd::remVolatile(tempRes[block_size-1]);
         //Prepare information for swapping
         int temp, swapCities;
-        i = tempRes[0].i + 1;
-        j = tempRes[0].j;
-        swapCities = (((j - tempRes[0].i) + 1) / 2) + i; //the ceiling of j/2 plus i
+        i = best.i + 1;
+        j = best.j;
+        swapCities = (((j - best.i) + 1) / 2) + i; //the ceiling of j/2 plus i
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
             temp = tour[t];
