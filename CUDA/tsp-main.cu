@@ -252,7 +252,7 @@ int main(int argc, char* argv[]) {
     //unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     //cudaMemcpy(tourMatrixC_h, tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
-    printf("Tour R:  [");
+    /*printf("Tour R:  [");
     for(int i = 0; i < restarts; i++){
         printf("[");
         for(int j = 0; j < cities+1; j++){
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     }
     printf("]\n\n");
 
-    /*printf("Tour C:  [");
+    printf("Tour C:  [");
     for(int i = 0; i < restarts; i++){
         printf("[");
         for(int j = 0; j < cities+1; j++){
