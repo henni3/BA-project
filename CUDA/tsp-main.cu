@@ -197,13 +197,14 @@ int main(int argc, char* argv[]) {
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixC_d, tourMatrixR_d, (cities+1), restarts);
     //run 2 opt kernel 
-    /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
     twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
+    /*
     //testing timer for twoOptKer2
     int REPEAT = 0;
     int elapsed;
@@ -230,7 +231,7 @@ int main(int argc, char* argv[]) {
  
     
     //run reduction of all local optimum cost across multiple blocks
-    /*unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
+    unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
     size_t mult_sharedMem = (block_size*2) * sizeof(int);
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
@@ -243,7 +244,7 @@ int main(int argc, char* argv[]) {
     //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    */
+    
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
@@ -274,7 +275,7 @@ int main(int argc, char* argv[]) {
     free(tourMatrixC_h); */cudaFree(tourMatrixC_d);
 
     
-    /*int tourId = glo_res[1];
+    int tourId = glo_res[1];
 
     printf("Shortest path: %d\n", glo_res[0]);
     printf("Tour:  [");
@@ -282,12 +283,12 @@ int main(int argc, char* argv[]) {
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
     printf("]\n");
-    */
+    
 
-    free(distMatrix); free(tourMatrix_h); //free(glo_res); 
+    free(distMatrix); free(tourMatrix_h); free(glo_res); 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixR_d); 
     cudaFree(kerDist);
-    //cudaFree(glo_results);
+    cudaFree(glo_results);
     return 0;
 
     
