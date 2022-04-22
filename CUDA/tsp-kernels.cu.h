@@ -145,7 +145,8 @@ __global__ void createToursRowWise(unsigned short* tourMatrix,
 //!!!!!!!!!!!!!!!!!!!!!!!!!!NOOOOT DONE!!!!!!!!!!!!!!!!!!
 __global__ void createToursColumnWise(unsigned short* tourMatrix, 
                             int cities,
-                            int restarts){
+                            int restarts,
+                            int time){
     int rand, glo_id, to, temp;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
@@ -157,7 +158,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         tourMatrix[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
-        rand = glo_id + blockIdx.x; //blockIdx.x is tourOffset. Check if this is correct
+        rand = glo_id + blockIdx.x + time; //blockIdx.x is tourOffset. Check if this is correct
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
@@ -168,7 +169,6 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
         }
-        //TRANSPOSE MATRIX!!
     }
 }
 
