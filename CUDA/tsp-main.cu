@@ -205,7 +205,12 @@ int main(int argc, char* argv[]) {
     int REPEAT = 0;
     int elapsed;
     struct timeval ker1_start, ker1_end, ker1_diff, ker2_start, ker2_end, ker2_diff;
-   /* gettimeofday(&ker2_start, NULL); 
+    //Dry run
+    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+                                                        is_d, glo_results, 
+                                                        cities, totIter);
+    
+    gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
         twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
                                                         is_d, glo_results, 
@@ -217,7 +222,7 @@ int main(int argc, char* argv[]) {
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
     printf("ker2: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-    */
+
     size_t sharedMem = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     REPEAT = 9;
     gettimeofday(&ker1_start, NULL); 
