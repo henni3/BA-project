@@ -6,16 +6,6 @@
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
 
-int timeval_subtract(struct timeval *result, struct timeval *t2, struct timeval *t1)
-{
-    unsigned int resolution=1000000;
-    long int diff = (t2->tv_usec + resolution * t2->tv_sec) - (t1->tv_usec + resolution * t1->tv_sec);
-    result->tv_sec = diff / resolution;
-    result->tv_usec = diff % resolution;
-    return (diff<0);
-}
-
-
 int init(int block_size, 
          int cities, 
          int totIter, 
@@ -226,7 +216,7 @@ int main(int argc, char* argv[]) {
     gettimeofday(&ker2_end, NULL); 
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     int elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
-    printf("Optimized Program runs on GPU in: %lu microsecs, repeats: %d\n", elapsed, REPEAT);
+    printf("Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
 
     //gpuErrchk( cudaPeekAtLastError() );
  
