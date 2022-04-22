@@ -210,21 +210,8 @@ int main(int argc, char* argv[]) {
                                                         is_d, glo_results, 
                                                         cities, totIter);
     
-    gettimeofday(&ker2_start, NULL); 
-    while(REPEAT < 10){
-        twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
-                                                        is_d, glo_results, 
-                                                        cities, totIter);
-        REPEAT++;
-    }
-    cudaDeviceSynchronize();
-    gettimeofday(&ker2_end, NULL); 
-    timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
-    elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
-    printf("ker2: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-
     size_t sharedMem = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
-    REPEAT = 9;
+
     gettimeofday(&ker1_start, NULL); 
     while(REPEAT < 10){
         twoOptKer<<<restarts, block_size, sharedMem>>> (kerDist, tourMatrixR_d, 
@@ -237,6 +224,20 @@ int main(int argc, char* argv[]) {
     timeval_subtract(&ker1_diff, &ker1_end, &ker1_start);
     elapsed = (ker1_diff.tv_sec*1e6+ker1_diff.tv_usec) / REPEAT; 
     printf("ker1: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+
+    REPEAT = 0;
+    gettimeofday(&ker2_start, NULL); 
+    while(REPEAT < 10){
+        twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+                                                        is_d, glo_results, 
+                                                        cities, totIter);
+        REPEAT++;
+    }
+    cudaDeviceSynchronize();
+    gettimeofday(&ker2_end, NULL); 
+    timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
+    elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
+    printf("ker2: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
 
     //gpuErrchk( cudaPeekAtLastError() );
  
