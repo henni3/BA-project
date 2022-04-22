@@ -184,24 +184,25 @@ int main(int argc, char* argv[]) {
     
 
     //Create tour matrix row wise
-    unsigned short *tourMatrixR_d, *tourMatrixC_d;
+    unsigned short *tourMatrixIn_d, *tourMatrixTrans_d;
     struct timeval randomTime;
-    cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
+    cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
+    cudaMalloc((void**)&tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short));
+
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
-    //createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
     //Create tour matrix column wise
-    cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts, time);
-    transposeTiled<unsigned short, TILE>(tourMatrixC_d, tourMatrixR_d, (cities+1), restarts);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    cudaFree(tourMatrixIn_d);
     //run 2 opt kernel 
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
     /*
@@ -210,13 +211,13 @@ int main(int argc, char* argv[]) {
     int elapsed;
     struct timeval ker2_start, ker2_end, ker2_diff;
     //Dry run
-    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
     REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
-        twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+        twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
         REPEAT++;
@@ -247,13 +248,10 @@ int main(int argc, char* argv[]) {
     
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
     //test tour matrix column wise
-    //unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    //cudaMemcpy(tourMatrixC_h, tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    
-    /*printf("Tour R:  [");
+    /*printf("Tour:  [");
     for(int i = 0; i < restarts; i++){
         printf("[");
         for(int j = 0; j < cities+1; j++){
@@ -261,18 +259,7 @@ int main(int argc, char* argv[]) {
         }
         printf("]\n");
     }
-    printf("]\n\n");
-
-    printf("Tour C:  [");
-    for(int i = 0; i < restarts; i++){
-        printf("[");
-        for(int j = 0; j < cities+1; j++){
-                printf("%d, ", tourMatrixC_h[j*restarts+i]);
-        }
-        printf("]\n");
-    }
-    printf("]\n");
-    free(tourMatrixC_h); */cudaFree(tourMatrixC_d);
+    printf("]\n\n");*/
 
     
     int tourId = glo_res[1];
@@ -286,7 +273,7 @@ int main(int argc, char* argv[]) {
     
 
     free(distMatrix); free(tourMatrix_h); free(glo_res); 
-    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixR_d); 
+    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); 
     cudaFree(kerDist);
     cudaFree(glo_results);
     return 0;
