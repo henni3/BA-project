@@ -20,7 +20,7 @@ void transposeTiled ( ElTp*              inp_d,
    cudaDeviceSynchronize();
 }
 
-template<class ElTp, int T>
+/*template<class ElTp, int T>
 void transposeNaive ( ElTp*              inp_d,  
                       ElTp*              out_d, 
                       const unsigned int height, 
@@ -36,6 +36,6 @@ void transposeNaive ( ElTp*              inp_d,
    matTransposeKer<ElTp> <<< grid, block >>>
                           (inp_d, out_d, height, width);
    cudaDeviceSynchronize();
-}
+}*/
 
 #endif // TRANSPOSE
