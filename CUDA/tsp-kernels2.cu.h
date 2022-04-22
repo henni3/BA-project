@@ -155,7 +155,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                             glo_dist[tour[ip1]*cities+tour[jp1]] -
                             (glo_dist[tour[i]*cities+tour[ip1]] +
                             glo_dist[tour[j]*cities+tour[jp1]]);
-                //Each thread shall hold the best local change found
+                    //Each thread shall hold the best local change found
                     if(change < localMinChange.change){
                         localMinChange.change = change;
                         localMinChange.i = i;
