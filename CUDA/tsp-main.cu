@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
     
 
     //Create tour matrix row wise
-    unsigned short *tourMatrixR_d; *tourMatrixC_d;
+    unsigned short *tourMatrixR_d, *tourMatrixC_d;
     struct timeval randomTime;
     cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
@@ -242,11 +242,10 @@ int main(int argc, char* argv[]) {
     //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-    
+    */
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    */
     
     //test tour matrix column wise
     //unsigned short* tourMatrixC_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
