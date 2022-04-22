@@ -228,11 +228,8 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
-            //if(num_threads == num_elems){
-            //    break;
-            //}
         }
-        scanIncBlock<minInd>((typename minInd::RedElTP*) tempRes,(unsigned int) idx);
+        //scanIncBlock<minInd>((typename minInd::RedElTP*) tempRes,(unsigned int) idx);
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
