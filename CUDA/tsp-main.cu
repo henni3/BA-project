@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
     
 
     //Create tour matrix row wise
-    unsigned short *tourMatrixR_d;// *tourMatrixC_d;
+    unsigned short *tourMatrixR_d, *tourMatrixC_d;
     struct timeval randomTime;
     cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
