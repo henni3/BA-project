@@ -4,6 +4,36 @@
 #include <cuda_runtime.h>
 
 /**
+ * ADDED TRANSPOSE KERNEL FROM transpose-kernels.cu.h FROM 
+ * WEEKLY-3 IN PMPH
+ */
+// blockDim.y = T; blockDim.x = T
+// each block transposes a square T
+template <class ElTp, int T> 
+__global__ void matTransposeTiledKer(ElTp* A, ElTp* B, int heightA, int widthA) {
+  extern __shared__ char sh_mem1[];
+  volatile ElTp* tile = (volatile ElTp*)sh_mem1;
+  //__shared__ float tile[T][T+1];
+
+  int x = blockIdx.x * T + threadIdx.x;
+  int y = blockIdx.y * T + threadIdx.y;
+
+  if( x < widthA && y < heightA )
+      tile[threadIdx.y*(T+1) + threadIdx.x] = A[y*widthA + x];
+
+  __syncthreads();
+
+  x = blockIdx.y * T + threadIdx.x; 
+  y = blockIdx.x * T + threadIdx.y;
+
+  if( x < heightA && y < widthA )
+      B[y*heightA + x] = tile[threadIdx.x*(T+1) + threadIdx.y];
+}
+
+
+
+
+/**
  * Naive memcpy kernel, for the purpose of comparing with
  * a more "realistic" bandwidth number.
  */
