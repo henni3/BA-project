@@ -266,7 +266,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                 break;
             }
         }*/
-        scanIncBlock<minInd>(tempRes,idx);
+        scanIncBlock<minInd>(tempRes,(unsigned int) idx);
         ChangeTuple best = tempRes[num_elems];
         //Prepare information for swapping
         int temp, swapCities;
