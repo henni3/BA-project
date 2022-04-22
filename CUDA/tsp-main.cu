@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
     //Create tour matrix column wise
     cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts, time);
-    //transposeTiled<unsigned short, TILE>(tourMatrixC_d, tourMatrixR_d, (cities+1), restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixC_d, tourMatrixR_d, (cities+1), restarts);
     //run 2 opt kernel 
     /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
