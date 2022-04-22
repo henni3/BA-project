@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
     //testing timer for twoOptKer2
     int REPEAT = 0;
     int elapsed;
-    struct timeval ker2_start, ker2_end, ker2_diff;//ker1_start, ker1_end, ker1_diff;
+    struct timeval ker2_start, ker2_end, ker2_diff, ker1_start, ker1_end, ker1_diff;
     //Dry run
     /*twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
                                                         is_d, glo_results, 
