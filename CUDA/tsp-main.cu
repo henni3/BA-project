@@ -190,11 +190,11 @@ int main(int argc, char* argv[]) {
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
-    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
+    //createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
     //Create tour matrix column wise
-    //cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
-    //createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts, time);
+    cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts, time);
     //transposeTiled<unsigned short, TILE>(tourMatrixC_d, tourMatrixR_d, (cities+1), restarts);
     //run 2 opt kernel 
     /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
@@ -271,7 +271,7 @@ int main(int argc, char* argv[]) {
         printf("]\n");
     }
     printf("]\n");
-    free(tourMatrixC_h); cudaFree(tourMatrixC_d);*/
+    free(tourMatrixC_h); */cudaFree(tourMatrixC_d);
 
     
     /*int tourId = glo_res[1];
