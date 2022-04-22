@@ -29,6 +29,29 @@ void log2UB(uint32_t n, uint32_t* ub, uint32_t* lg) {
 }
 
 /**
+ * ADDED TRANSPOSE HOST FROM transpose-host.cu.h FROM 
+ * WEEKLY-3 IN PMPH
+ */
+template<class ElTp, int T>
+void transposeTiled ( ElTp*              inp_d,  
+                      ElTp*              out_d, 
+                      const unsigned int height, 
+                      const unsigned int width
+) {
+   // 1. setup block and grid parameters
+   unsigned int sh_mem_size = T * (T+1) * sizeof(ElTp); 
+   int  dimy = (height+T-1) / T; 
+   int  dimx = (width +T-1) / T;
+   dim3 block(T, T, 1);
+   dim3 grid (dimx, dimy, 1);
+
+   //2. execute the kernel
+   matTransposeTiledKer<ElTp,T><<< grid, block, sh_mem_size >>>
+                       (inp_d, out_d, height, width); 
+   cudaDeviceSynchronize();
+}
+
+/**
  * `N` is the input-array length
  * `B` is the CUDA block size
  * This function attempts to virtualize the computation so

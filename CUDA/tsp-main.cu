@@ -5,7 +5,6 @@
 #include "hostSkel.cu.h"
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
-#include "transpose-host.cu.h"
 
 int init(int block_size, 
          int cities, 
