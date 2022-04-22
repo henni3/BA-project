@@ -254,7 +254,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        while(1){
+        /*while(1){
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
             }
@@ -265,8 +265,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             if(num_threads == num_elems){
                 break;
             }
-        }
-        //scanIncBlock<minInd>(tempRes,(unsigned int) idx);
+        }*/
+        scanIncBlock<minInd>(tempRes,(unsigned int) idx);
+        ChangeTuple best = ChangeTuple(tempRes[block_size.x - 1]);
         //Prepare information for swapping
         int temp, swapCities;
         i = tempRes[0].i + 1;
