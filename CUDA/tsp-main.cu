@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
     gettimeofday(&ker2_end, NULL); 
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     int elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
-    printf("Optimized Program runs on GPU in: %lu microsecs, repeats: %d\n", elapsed, REPEAT);
+    printf("Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
 
     //gpuErrchk( cudaPeekAtLastError() );
  
