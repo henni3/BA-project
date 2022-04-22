@@ -196,7 +196,7 @@ int main(int argc, char* argv[]) {
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts);*/
 
     //run 2 opt kernel 
-    //size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
                                                         is_d, glo_results, 
                                                         cities, totIter);
     */
-    size_t sharedMem = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
+    /*size_t sharedMem = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
 
     gettimeofday(&ker1_start, NULL); 
     while(REPEAT < 10){
@@ -224,8 +224,8 @@ int main(int argc, char* argv[]) {
     timeval_subtract(&ker1_diff, &ker1_end, &ker1_start);
     elapsed = (ker1_diff.tv_sec*1e6+ker1_diff.tv_usec) / REPEAT; 
     printf("ker1: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-
-    /*REPEAT = 0;
+    */
+    REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
         twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
@@ -238,7 +238,7 @@ int main(int argc, char* argv[]) {
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
     printf("ker2: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-    */
+    
     //gpuErrchk( cudaPeekAtLastError() );
  
     
