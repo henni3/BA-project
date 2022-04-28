@@ -200,8 +200,14 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             //printf("glo: %d, next: %d\n",ind, next);
             int i2 = (cities-2) - (next-1);
             int j2 = (i+2) + (ind-(totIter-((next*(next-1))/2)));
-            assert(i == i2);
-            assert(j == j2);
+            if ( i != i2){
+                printf("somethigns goes wrong with i calculation \n");
+            }
+            if (j != j2){
+                printf("somethin goes wrong with j calculation \n");
+            }
+            //assert(i == i2);
+            //assert(j == j2);
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
