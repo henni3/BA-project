@@ -17,10 +17,10 @@ double lat_calc(float x){
 }
 int geo_float_to_int(float x1, float x2, float y1, float y2){
     double lat1 = lat_calc(x1);
-    double long1 = lat_calc(y1);
+    double lot1 = lat_calc(y1);
     double lat2 = lat_calc(x2);
-    double long2 = lat_calc(y2);
-    double q1 = cos(long1 - long2);
+    double lot2 = lat_calc(y2);
+    double q1 = cos(lot1 - lot2);
     double q2 = cos(lat1 - lat2);
     double q3 = cos(lat1 + lat2);
     int dist = (int) (RRR * acos(0.5 * ((1.0+q1)*q2 -(1.0-q1)*q3)) + 1.0);
