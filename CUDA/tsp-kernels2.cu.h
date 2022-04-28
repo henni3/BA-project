@@ -1,46 +1,14 @@
 #include <stdio.h>
+#include <math.h>
 
-float fastsqrt(float val) {
-int tmp = *(int *)&val;
-tmp -= 1<<23;
-tmp = tmp >> 1;
-tmp += 1<<29;
-return *(float *)&tmp;
+__device__ float fastsqrt(float val) {
+    int tmp = *(int *)&val;
+    tmp -= 1<<23;
+    tmp = tmp >> 1;
+    tmp += 1<<29;
+    return *(float *)&tmp;
 }   
 
-//Random tour generator for all restarts, basen on SPLASH-2 code
-//With each thread accessing row wise in the matrix. This does not
-//attcheive coalesced access.
-__global__ void createToursRowWise(unsigned short* tourMatrix, 
-                            int cities,
-                            int restarts,
-                            int time){
-    int rand, glo_id, to, temp;
-    glo_id = threadIdx.x + blockIdx.x * blockDim.x;
-    if(glo_id < restarts){
-        //Initiate all tours from 0 to cities
-        for(int i = 0; i < cities; i++){
-            tourMatrix[(cities+1) * glo_id + i] = i;
-        }
-        //The last element in all tours is the same as the first (which is 0).
-        tourMatrix[(cities+1) * glo_id + cities] = 0;
-
-        //Randomize each tour
-        rand = glo_id + blockIdx.x + time; //blockIdx.x is tourOffset. Check if this is correct
-        for(int i = 1; i < cities; i++){
-            rand = (MULT * rand + ADD) & MASK;
-            to = rand % cities;
-            if (to <= 0){
-                to = 1;
-            }
-            temp = tourMatrix[(cities+1) * glo_id + i];
-            tourMatrix[(cities+1) * glo_id + i] = tourMatrix[(cities+1) * glo_id + to];
-            tourMatrix[(cities+1) * glo_id + to] = temp;
-        }
-    }
-}
-
-#include <math.h>
 
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
@@ -149,7 +117,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
-            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
+            tmp = (((-1-(fastsqrt((float) d)))/2)*(-1))+0.9999;
             next = (int) tmp;
             i = (cities-2) - (next-1);
             j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
