@@ -147,6 +147,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j;
+    int change, d;
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
@@ -186,10 +187,21 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
+        float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             int num = glo_is[ind];
             i = num >> 16;
             j = (num & 0xffff) + i + 2;
+            d = 1-(4*(-2*(totIter-ind)));
+            //printf("glo: %d, d: %d\n",ind, d);
+            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
+            //printf("glo: %d, tmp: %f\n",ind, tmp);
+            next = (int) tmp;
+            assert(i == i2);
+            assert(j == j2);
+            //printf("glo: %d, next: %d\n",ind, next);
+            i2 = (cities-2) - (next-1);
+            j2 = (i+2) + (ind-(totIter-((next*(next-1))/2)));
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
