@@ -40,14 +40,15 @@ __global__ void createToursRowWise(unsigned short* tourMatrix,
     }
 }
 
+#include <math.h>
 
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
-//!!!!!!!!!!!!!!!!!!!!!!!!!!NOOOOT DONE!!!!!!!!!!!!!!!!!!
 __global__ void createToursColumnWise(unsigned short* tourMatrix, 
                             int cities,
-                            int restarts){
+                            int restarts,
+                            int time){
     int rand, glo_id, to, temp;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
@@ -59,7 +60,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         tourMatrix[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
-        rand = glo_id + blockIdx.x; //blockIdx.x is tourOffset. Check if this is correct
+        rand = glo_id + blockIdx.x + time; //blockIdx.x is tourOffset. Check if this is correct
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
@@ -70,7 +71,6 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
         }
-        //TRANSPOSE MATRIX!!
     }
 }
 
@@ -107,9 +107,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                           int* glo_result, 
                           int cities, 
                           int totIter){
-    int block_size = blockDim.x;
-    int idx = threadIdx.x;
-    int i, j;
+    int next, i, j, d, ip1, jp1, change, block_size, idx;
+    block_size = blockDim.x;
+    idx = threadIdx.x;
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
@@ -121,8 +121,6 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    //Preparing data for the 2 opt algorithm
-    int ip1, jp1, change;
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
@@ -145,35 +143,27 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         /***
         The 2 opt move
         Each thread calculates the local changes of the given i and j indexes.
-        The i and j index are collected (with a stride of block size) from the 
-        global i array and in the global j array to acheive coalesecing.
+        The i and j index calculated depending on which thread is calculating it.
         ***/
-        int pre, acc;
-        for(int gen = idx; gen < totIter; gen += block_size){
-            acc = 0;
-            pre = 0;
-            for (int ind = 0; ind < cities-2; ind++){
-                acc += cities - (2 + ind);
-                if (gen < acc) {
-                    i = ind;
-                    j = (i+2) + (gen - pre);
-                    ip1 = i+1;
-                    jp1 = j+1;
-                    change = glo_dist[tour[i]*cities+tour[j]] + 
-                            glo_dist[tour[ip1]*cities+tour[jp1]] -
-                            (glo_dist[tour[i]*cities+tour[ip1]] +
-                            glo_dist[tour[j]*cities+tour[jp1]]);
-                    //Each thread shall hold the best local change found
-                    if(change < localMinChange.change){
-                        localMinChange.change = change;
-                        localMinChange.i = i;
-                        localMinChange.j = j;
-                        }
-                    break;
-                }
-                pre = acc;
+        float tmp;
+        for(int ind = idx; ind < totIter; ind += block_size){
+            d = 1-(4*(-2*(totIter-ind)));
+            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
+            next = (int) tmp;
+            i = (cities-2) - (next-1);
+            j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
+            ip1 = i+1;
+            jp1 = j+1;
+            change = glo_dist[tour[i]*cities+tour[j]] + 
+                    glo_dist[tour[ip1]*cities+tour[jp1]] -
+                    (glo_dist[tour[i]*cities+tour[ip1]] +
+                    glo_dist[tour[j]*cities+tour[jp1]]);
+            //Each thread shall hold the best local change found
+            if(change < localMinChange.change){
+                localMinChange.change = change;
+                localMinChange.i = i;
+                localMinChange.j = j;
             }
-
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
