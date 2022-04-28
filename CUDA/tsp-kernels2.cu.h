@@ -107,7 +107,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
-            tmp = (((-1-(sqrt(d)))/2)*(-1))+0.9999;
+            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
             next = (int) tmp;
             i = (cities-2) - (next-1);
             j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
