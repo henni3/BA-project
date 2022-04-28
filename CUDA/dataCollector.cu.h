@@ -80,8 +80,6 @@ uint32_t fileToDistM(char* filename, uint32_t* save_array){
             type = EUCLIDIAN;
         } else if(strncmp("GEO:", buf,3) == 0){
             type = GEO;
-            printf("Does not support GEO currently \n.");
-            exit(1);
         } else if(strncmp("EXPLICIT", buf,8) == 0){
             type = MATRIX;
         } else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
