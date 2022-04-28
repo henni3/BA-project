@@ -1,6 +1,7 @@
 COMPILER?=nvcc
-OPT_FLAGS?=-O3 -arch=compute_35
+OPT_FLAGS?=-O3 -arch=compute_35 --use_fast_math
 LDFLAGS?=-lOpenCL
+
 
 TEST_PBB=test-pbb
 TEST_TSP=test-tsp
