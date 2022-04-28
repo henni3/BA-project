@@ -81,13 +81,13 @@ int main(int argc, char* argv[]) {
     struct timeval ker2_start, ker2_end, ker2_diff;
     //Dry run
     twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-                                                        is_d, glo_results, 
+                                                        glo_results, 
                                                         cities, totIter);
     REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
         twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-                                                        is_d, glo_results, 
+                                                        glo_results, 
                                                         cities, totIter);
         REPEAT++;
     }
