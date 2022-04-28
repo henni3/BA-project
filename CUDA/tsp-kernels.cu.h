@@ -160,7 +160,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
 
     //Preparing data for the 2 opt algorithm
-    int ip1, jp1, change;
+    int ip1, jp1;
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
@@ -196,12 +196,12 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             //printf("glo: %d, d: %d\n",ind, d);
             tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
             //printf("glo: %d, tmp: %f\n",ind, tmp);
-            next = (int) tmp;
+            int next = (int) tmp;
+            //printf("glo: %d, next: %d\n",ind, next);
+            int i2 = (cities-2) - (next-1);
+            int j2 = (i+2) + (ind-(totIter-((next*(next-1))/2)));
             assert(i == i2);
             assert(j == j2);
-            //printf("glo: %d, next: %d\n",ind, next);
-            i2 = (cities-2) - (next-1);
-            j2 = (i+2) + (ind-(totIter-((next*(next-1))/2)));
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
