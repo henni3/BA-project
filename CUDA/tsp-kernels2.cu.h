@@ -66,7 +66,8 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                           int* glo_result, 
                           int cities, 
                           int totIter){
-    int next, i, j, d, ip1, jp1, change, block_size, idx;
+    int change, d;
+    unsigned int = next, i, j, ip1, jp1, block_size, idx;
     block_size = blockDim.x;
     idx = threadIdx.x;
     ChangeTuple localMinChange;
