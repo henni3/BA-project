@@ -49,47 +49,27 @@ int main(int argc, char* argv[]) {
     //Calculate total number of iterations
     int totIter = ((cities-1) * (cities-2))/2;
 
-    /*int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
-    cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
-    int k = 0;
-    printf("is: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", is_h[i]);
-        k++;
-    }
-    printf("]\n");
-    printf("k = %d\n", k);
 
-    int* js_h = (int*) malloc(totIter*sizeof(int));
-    cudaMemcpy(js_h, js_d, totIter*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("js: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", js_h[i]);
-    }
-    printf("]\n");
-    free(js_h); free(is_h);*/
-    
-
-    //Create tour matrix row wise
-    unsigned short *tourMatrixR_d; //*tourMatrixC_d;
+    //Prepare for column wise tour
+    unsigned short *tourMatrixIn_d, *tourMatrixTrans_d;
     struct timeval randomTime;
-    cudaMalloc((void**)&tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short));
+    cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
+    cudaMalloc((void**)&tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short));
+
     unsigned int num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
-    createToursRowWise<<<num_blocks_tour, block_size>>> (tourMatrixR_d, cities, restarts, time);
 
-    /*//Create tour matrix column wise
-    cudaMalloc((void**)&tourMatrixC_d, (cities+1)*restarts*sizeof(unsigned short));
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixC_d, cities, restarts);*/
+    //Create tour matrix column wise
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    cudaFree(tourMatrixIn_d);
 
     //run 2 opt kernel 
-    //size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + (block_size*3) * sizeof(int) + 3*sizeof(int);
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
-    //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixR_d, 
+    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         glo_results, 
                                                         cities, totIter);
     //gpuErrchk( cudaPeekAtLastError() );
@@ -112,7 +92,7 @@ int main(int argc, char* argv[]) {
     
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(tourMatrix_h, tourMatrixR_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
 
     
     /*//test tour matrix column wise
@@ -152,11 +132,9 @@ int main(int argc, char* argv[]) {
 
 
     free(distMatrix); free(tourMatrix_h); free(glo_res); 
-    cudaFree(tourMatrixR_d);
+    cudaFree(tourMatrixTrans_d);
     cudaFree(kerDist);
     cudaFree(glo_results); 
     printf("done\n");
-    return 0;
-
-    
+    return 0;  
 }
