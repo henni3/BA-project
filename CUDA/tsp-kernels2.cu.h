@@ -1,5 +1,13 @@
 #include <stdio.h>
 
+float fastsqrt(float val) {
+int tmp = *(int *)&val;
+tmp -= 1<<23;
+tmp = tmp >> 1;
+tmp += 1<<29;
+return *(float *)&tmp;
+}   
+
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing row wise in the matrix. This does not
 //attcheive coalesced access.
@@ -187,7 +195,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        while(1){
+        while(num_threads != num_elems){
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
             }
@@ -195,9 +203,6 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
-            if(num_threads == num_elems){
-                break;
-            }
         }
         //Prepare information for swapping
         int temp, swapCities;
