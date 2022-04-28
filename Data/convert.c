@@ -5,8 +5,28 @@
 
 #define MAXLINE 8192
 #define MAXCITIES 10000
-
+#define PI 3.141592
+#define RRR 6378.388
 enum DATA_TYPE {EUCLIDIAN,GEO,MATRIX};
+enum MATRIX_TYPE {UPPER_ROW, UPPER_ROW_DIAG, UPPER_COL, UPPER_COL_DIAG};
+
+double lat_calc(float x){
+    int deg = (int) (x + 0.5);
+    double min = x - deg;
+    double lat = PI * (deg + 5.0 * min / 3.0) / 180.0;
+    return lat;
+}
+int geo_float_to_int(float x1, float x2, float y1, float y2){
+    double lat1 = lat_calc(x1);
+    double long1 = lat_calc(y1);
+    double lat2 = lat_calc(x2);
+    double long2 = lat_calc(y2);
+    double q1 = cos(long1 - long2);
+    double q2 = cos(lat1 - lat2);
+    double q3 = cos(lat1 + lat2);
+    int dist = (int) (RRR * acos(0.5 * ((1.0+q1)*q2 -(1.0-q1)*q3)) + 1.0);
+    return dist;
+}
 
 int euclidain_float_to_int(float x1, float x2, float y1, float y2) {
     float dx = x1 - x2;
@@ -26,10 +46,42 @@ void create_dist_array (int* dist_array, float* xs, float* ys, int type, int cit
                 dist_array[j * cities + i] = euclidian;
             }
         }      
-    }else{
+    }
+    else if (type == GEO){
+        int geo;
+        for(int i = 0; i < cities; i++){
+            for(int j = 0; j < cities; j++){
+                geo = geo_float_to_int(xs[i], xs[j], ys[i], ys[j]);
+                dist_array[i * cities + j] = geo;
+                dist_array[j * cities + i] = geo;
+            }
+        }      
+    }
+    else{
         printf("This type is not supported \n.");
         exit(1);
     }
+}
+
+int dertimine_matrix_type(char* descript){
+    int return_val;
+    if (strncmp("UPPER_ROW",descript,9) == 0){
+        return_val = UPPER_ROW;
+    }
+    else if ((strncmp("UPPER_DIAG_ROW",descript,14) == 0)){
+        return_val = UPPER_ROW_DIAG;
+    }
+    else if ((strncmp("UPPER_COL",descript,9) == 0)){
+        return_val = UPPER_COL;
+    }
+    else if ((strncmp("UPPER_DIAG_COL",descript,14) == 0)){
+        return_val = UPPER_COL_DIAG;
+    }
+    else {
+        printf("error on match \n");
+        exit(1);
+    }
+    return return_val;
 }
 
 int fileToDistM(char* filename, int* save_array){
@@ -39,7 +91,7 @@ int fileToDistM(char* filename, int* save_array){
         return EXIT_FAILURE;
     }
     char buf[MAXLINE];
-    int cities, read3, type, *distM;
+    int cities, read3, type, *distM, m_type, ch;
     float read1,read2, *X_positions, *Y_positions;
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
@@ -49,11 +101,18 @@ int fileToDistM(char* filename, int* save_array){
             type = EUCLIDIAN;
         } else if(strncmp("GEO:", buf,3) == 0){
             type = GEO;
-            printf("Does not support GEO currently \n.");
-            exit(1);
         } else if(strncmp("EXPLICIT", buf,8) == 0){
             type = MATRIX;
-        } else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
+        } else if(strncmp("EDGE_WEIGHT_FORMAT", buf,18)== 0){
+            ch = fgetc(source);
+            while (ch != ':')
+            {
+                ch = fgetc(source);
+            }
+            fscanf(source,"%s", buf);
+            m_type = dertimine_matrix_type(buf);
+        }
+         else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
             X_positions = malloc(sizeof(float) * cities);
             Y_positions = malloc(sizeof(float) * cities);
             int i = 0;
@@ -63,12 +122,15 @@ int fileToDistM(char* filename, int* save_array){
                 i++;
             }
         }else if (strncmp("EDGE_WEIGHT_SECTION",buf,19) == 0){
-            for (int i = 0; i < cities; i++){
-                for (int j = 0; j < cities; j++) {
-                    fscanf(source, "%d", &read3);
-                    distM[i*cities + j] = read3;
-                }
+            if (type = MATRIX){
+                for (int i = 0; i < cities; i++){
+                    for (int j = 0; j < cities; j++) {
+                        fscanf(source, "%d", &read3);
+                        distM[i*cities + j] = read3;
+                    }
+                }  
             }
+            
         }else if (strncmp("EOF", buf, 3) == 0) {
             break;
         }
