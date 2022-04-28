@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive

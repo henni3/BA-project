@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <sys/time.h>
 #include "hostSkel.cu.h"
 #include "tsp-kernels2.cu.h"
