@@ -201,10 +201,10 @@ int main(int argc, char* argv[]) {
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    /*twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
-                                                        cities, totIter);
-    /*
+                                                        cities, totIter);*/
+    
     //testing timer for twoOptKer2
     int REPEAT = 0;
     int elapsed;
@@ -225,8 +225,8 @@ int main(int argc, char* argv[]) {
     gettimeofday(&ker2_end, NULL); 
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
-    printf("ker2: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-    */
+    printf("ker1: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+
     //gpuErrchk( cudaPeekAtLastError() );
  
     
