@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         glo_results, 
                                                         cities, totIter);
-    REPEAT = 0;
+    REPEAT = 9;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
         twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
