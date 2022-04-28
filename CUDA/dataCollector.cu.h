@@ -4,8 +4,28 @@
 #include <math.h>
 
 #define MAXLINE 8192
+#define PI 3.141592
+#define RRR 6378.388
 
 enum DATA_TYPE {EUCLIDIAN,GEO,MATRIX};
+
+double lat_calc(float x){
+    int deg = (int) (x + 0.5);
+    double min = x - deg;
+    double lat = PI * (deg + 5.0 * min / 3.0) / 180.0;
+    return lat;
+}
+int geo_float_to_int(float x1, float x2, float y1, float y2){
+    double lat1 = lat_calc(x1);
+    double long1 = lat_calc(y1);
+    double lat2 = lat_calc(x2);
+    double long2 = lat_calc(y2);
+    double q1 = cos(long1 - long2);
+    double q2 = cos(lat1 - lat2);
+    double q3 = cos(lat1 + lat2);
+    int dist = (int) (RRR * acos(0.5 * ((1.0+q1)*q2 -(1.0-q1)*q3)) + 1.0);
+    return dist;
+}
 
 uint32_t euclidain_float_to_int(float x1, float x2, float y1, float y2) {
     float dx = x1 - x2;
@@ -24,7 +44,18 @@ void create_dist_array (uint32_t* dist_array, float* xs, float* ys, uint32_t typ
                 dist_array[j * cities + i] = euclidian;
             }
         }      
-    }else{
+    }
+    else if (type == GEO){
+        int geo;
+        for(int i = 0; i < cities; i++){
+            for(int j = 0; j < cities; j++){
+                geo = geo_float_to_int(xs[i], xs[j], ys[i], ys[j]);
+                dist_array[i * cities + j] = geo;
+                dist_array[j * cities + i] = geo;
+            }
+        }      
+    }
+    else{
         printf("This type is not supported \n.");
         exit(1);
     }

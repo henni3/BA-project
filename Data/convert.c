@@ -91,7 +91,7 @@ int fileToDistM(char* filename, int* save_array){
         return EXIT_FAILURE;
     }
     char buf[MAXLINE];
-    int cities, read3, type, *distM, m_type, ch;
+    int cities, read3, type, *distM;
     float read1,read2, *X_positions, *Y_positions;
     while(fscanf(source, "%s", buf)) {
         if (strncmp("DIMENSION", buf,9) == 0 ) {
@@ -103,16 +103,7 @@ int fileToDistM(char* filename, int* save_array){
             type = GEO;
         } else if(strncmp("EXPLICIT", buf,8) == 0){
             type = MATRIX;
-        } else if(strncmp("EDGE_WEIGHT_FORMAT", buf,18)== 0){
-            ch = fgetc(source);
-            while (ch != ':')
-            {
-                ch = fgetc(source);
-            }
-            fscanf(source,"%s", buf);
-            m_type = dertimine_matrix_type(buf);
-        }
-         else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
+        } else if(strncmp("NODE_COORD_SECTION",buf,18) == 0){
             X_positions = malloc(sizeof(float) * cities);
             Y_positions = malloc(sizeof(float) * cities);
             int i = 0;
@@ -122,7 +113,7 @@ int fileToDistM(char* filename, int* save_array){
                 i++;
             }
         }else if (strncmp("EDGE_WEIGHT_SECTION",buf,19) == 0){
-            if (type = MATRIX){
+            if (type == MATRIX){
                 for (int i = 0; i < cities; i++){
                     for (int j = 0; j < cities; j++) {
                         fscanf(source, "%d", &read3);
