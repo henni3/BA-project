@@ -117,11 +117,11 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
-            printf("glo: %d, d: %d\n",ind, d);
-            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
-            printf("glo: %d, tmp: %f\n",ind, tmp);
+            //printf("glo: %d, d: %d\n",ind, d);
+            tmp = (((-1-(fastsqrt((float) d)))/2)*(-1))+0.9999;
+            //printf("glo: %d, tmp: %f\n",ind, tmp);
             next = (int) tmp;
-            printf("glo: %d, next: %d\n",ind, next);
+            //printf("glo: %d, next: %d\n",ind, next);
             i = (cities-2) - (next-1);
             j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
             ip1 = i+1;

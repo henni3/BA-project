@@ -83,14 +83,14 @@ int main(int argc, char* argv[]) {
     twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         glo_results, 
                                                         cities, totIter);
-    REPEAT = 9;
+    REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
-    /*while(REPEAT < 10){
+    while(REPEAT < 10){
         twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         glo_results, 
                                                         cities, totIter);
         REPEAT++;
-    }*/
+    }
     cudaDeviceSynchronize();
     gettimeofday(&ker2_end, NULL); 
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
