@@ -208,8 +208,8 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             }
             //assert(i == i2);
             //assert(j == j2);
-            ip1 = i+1;
-            jp1 = j+1;
+            ip1 = i2+1;
+            jp1 = j2+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
