@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 
 
     //testing timer for twoOptKer2
-    int REPEAT = 0;
+    int REPEAT;
     int elapsed;
     struct timeval ker2_start, ker2_end, ker2_diff;
     //Dry run
