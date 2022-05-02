@@ -196,6 +196,7 @@ int main(int argc, char* argv[]) {
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     cudaFree(tourMatrixIn_d);
+    printf("size of change tuple = %d \n", sizeof(ChangeTuple));
     //run 2 opt kernel 
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
     //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
