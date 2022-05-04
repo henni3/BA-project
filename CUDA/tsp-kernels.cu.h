@@ -189,27 +189,27 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
         ***/
         float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
-            int num = glo_is[ind];
-            i = num >> 16;
-            j = (num & 0xffff) + i + 2;
+            //int num = glo_is[ind];
+            //i = num >> 16;
+            //j = (num & 0xffff) + i + 2;
             d = 1-(4*(-2*(totIter-ind)));
             //printf("glo: %d, d: %d\n",ind, d);
             tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
             //printf("glo: %d, tmp: %f\n",ind, tmp);
             int next = (int) tmp;
             //printf("glo: %d, next: %d\n",ind, next);
-            int i2 = (cities-2) - (next-1);
-            int j2 = (i2+2) + (ind-(totIter-((next*(next-1))/2)));
-            if ( i != i2){
+            i = (cities-2) - (next-1);
+            j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
+            /*if ( i != i2){
                 printf("somethigns goes wrong with i calculation \n");
             }
             if (j != j2){
                 printf("somethin goes wrong with j calculation \n");
-            }
+            }*/
             //assert(i == i2);
             //assert(j == j2);
-            ip1 = i2+1;
-            jp1 = j2+1;
+            ip1 = i+1;
+            jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
