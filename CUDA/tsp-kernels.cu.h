@@ -199,7 +199,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             int next = (int) tmp;
             //printf("glo: %d, next: %d\n",ind, next);
             int i2 = (cities-2) - (next-1);
-            int j2 = (i+2) + (ind-(totIter-((next*(next-1))/2)));
+            int j2 = (i2+2) + (ind-(totIter-((next*(next-1))/2)));
             if ( i != i2){
                 printf("somethigns goes wrong with i calculation \n");
             }

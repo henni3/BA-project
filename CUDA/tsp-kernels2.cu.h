@@ -123,10 +123,11 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             next = (int) tmp;
             //printf("glo: %d, next: %d\n",ind, next);
             i = (cities-2) - (next-1);
-            j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
+            j = (i+2) + (ind-(totIter-((next*(next-1))/2))); //n>>1
             ip1 = i+1;
             jp1 = j+1;
             //printf("glo: %d, i: %d, j: %d\n",ind, i,j);
+
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
