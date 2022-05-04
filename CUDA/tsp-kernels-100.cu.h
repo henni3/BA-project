@@ -220,6 +220,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     shared_Dist[tour[ip1]*cities+tour[jp1]] -
                     (shared_Dist[tour[i]*cities+tour[ip1]] +
                     shared_Dist[tour[j]*cities+tour[jp1]]);
+            printf("change is %d \n", change);
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
