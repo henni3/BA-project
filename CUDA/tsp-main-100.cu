@@ -204,7 +204,7 @@ int main(int argc, char* argv[]) {
     printf("size of change tuple = %d \n", sizeof(ChangeTuple));
     //run 2 opt kernel 
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple) + cities * cities;
-    //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
+    printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
     /*twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
