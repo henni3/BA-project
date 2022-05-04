@@ -132,6 +132,7 @@ int main(int argc, char* argv[]) {
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * CITIES * CITIES);
     printf("we get before file to distM \n");
     int cities = fileToDistM(file_name, distMatrix);
+    printf("we get after file to distM \n");
     if( cities > CITIES){
         printf("too many cities :( \n");
         exit(1);
