@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
     twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
-    
+    cudaDeviceSynchronize();
     //testing timer for twoOptKer2
     /*int REPEAT;
     int elapsed;
