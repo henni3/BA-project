@@ -151,7 +151,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile int* shared_Dist = (volatile int*)&totShared;
-    volatile ChangeTuple* tempRes = (volatile ChangeTuple*) shared_dist + cities * cities;       //tempRes holds the best local changes found by each thread
+    volatile ChangeTuple* tempRes = (volatile ChangeTuple*) shared_Dist + cities * cities;       //tempRes holds the best local changes found by each thread
     volatile ChangeTuple* minChange = tempRes + block_size;        //minChange holds the current best change (cos?)
     volatile unsigned short* tour =
                  (volatile unsigned short*)(minChange + 1);  //tour for this climber
