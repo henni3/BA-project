@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
 
     // Collect information from datafile into distMatrix and cities
     uint32_t* distMatrix, *kerDist;
-    distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * CITIES * CITIES);
+    distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
     printf("we get before file to distM \n");
     int cities = fileToDistM(file_name, distMatrix);
     printf("we get after file to distM \n");
