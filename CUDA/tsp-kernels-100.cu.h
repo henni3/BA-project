@@ -164,7 +164,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
     //copy gloabal dist to shared memory
     for (int t = idx; t < cities * cities; t += block_size) {
-        shared_Dist[t] = glo_dist[t];
+        shared_Dist[t] = glo_dist[blockIdx.x * cities * cities + t];
         //printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
     }
 
