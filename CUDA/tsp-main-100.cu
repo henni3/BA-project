@@ -130,6 +130,7 @@ int main(int argc, char* argv[]) {
     // Collect information from datafile into distMatrix and cities
     uint32_t* distMatrix, *kerDist;
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * CITIES * CITIES);
+    printf("we get before file to distM \n");
     int cities = fileToDistM(file_name, distMatrix);
     if( cities > CITIES){
         printf("too many cities :( \n");
