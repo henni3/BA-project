@@ -133,11 +133,8 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
             //Each thread shall hold the best local change found
-            if(change < localMinChange.change){
-                localMinChange.change = change;
-                localMinChange.i = i;
-                localMinChange.j = j;
-            }
+            ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
+            localMinChange = minInd::apply(localMinChange,check);
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
@@ -168,11 +165,12 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
         }
+        ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
-        i = tempRes[0].i + 1;
-        j = tempRes[0].j;
-        swapCities = (((j - tempRes[0].i) + 1) / 2) + i; //the ceiling of j/2 plus i
+        i = best.i + 1;
+        j = best.j;
+        swapCities = (((j - best.i) + 1) / 2) + i; //the ceiling of j/2 plus i
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
             temp = tour[t];
@@ -188,7 +186,11 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
-    
+
+    //copy best local shared memory black to global memory
+    for(int t = idx; t < cities+1; t += block_size){
+        glo_tours[blockIdx.x * (cities+1) + t] = tour[t];
+    }
     
     //Writing local optimum results to global memory
     if(idx == 0){
