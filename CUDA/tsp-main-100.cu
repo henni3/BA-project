@@ -207,7 +207,7 @@ int main(int argc, char* argv[]) {
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
     
