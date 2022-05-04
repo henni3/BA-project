@@ -164,14 +164,15 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
     //copy gloabal dist to shared memory
     for (int t = idx; t < cities * cities; t += block_size) {
-        //shared_Dist[t] = glo_dist[t];
-        //printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
+        shared_Dist[t] = glo_dist[t];
+        printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
     }
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
     }
+    printf("tour thing %d, with idx %d ting \n", tour[idx], idx);
     if(idx == 0){
         //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
