@@ -148,7 +148,10 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int change, d;
-    printf("we get here ? \n");
+    if (idx < 2){
+        printf("we get here ? \n");
+    }
+
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile uint32_t* shared_Dist = (volatile uint32_t*)&totShared;
@@ -159,17 +162,25 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     if(minChange == NULL){
         printf("pointer error\n");
     }
-    printf("we get here 2 \n");
+    if (idx < 2){
+        printf("we get here 2 ? \n");
+    }
 
     //Preparing data for the 2 opt algorithm
     int ip1, jp1;
 
     //copy gloabal dist to shared memory
+    if (idx < 2){
+        printf("we get here 3 \n");
+    }
     for (int t = idx; t < cities * cities; t += block_size) {
         shared_Dist[t] = glo_dist[t];
         printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
     }
 
+    if (idx < 2){
+        printf("we get here 3 ? \n");
+    }
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
