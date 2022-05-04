@@ -203,7 +203,7 @@ int main(int argc, char* argv[]) {
     cudaFree(tourMatrixIn_d);
     printf("size of change tuple = %d \n", sizeof(ChangeTuple));
     //run 2 opt kernel 
-    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple) + cities * cities * sizeof(int);
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple) + cities * cities * sizeof(uint32_t);
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
