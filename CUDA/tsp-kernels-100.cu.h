@@ -138,7 +138,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
     }
 }
 
-__global__ void twoOptKer2(uint32_t* glo_dist, 
+__global__ void twoOptKer3(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
                           int* glo_is,
                           int* glo_result, 
