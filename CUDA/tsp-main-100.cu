@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include "hostSkel.cu.h"
-#include "tsp-kernels.cu.h"
+#include "tsp-kernels-100.cu.h"
 #include "dataCollector.cu.h"
 
 #define CITIES 100
