@@ -167,7 +167,7 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
         
     printf("Shortest path: %d\n", glo_res_h[0]);
-    printf("Tour ID: %d",glo_res_h[1]);
+    printf("Tour ID: %d", tourId);
     /*printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
