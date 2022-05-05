@@ -183,7 +183,10 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
     }
-    printf("tour thing %d, with idx %d ting \n", tour[idx], idx);
+    if (idx < cities + 1){
+        printf("tour thing %d, with idx %d ting \n", tour[idx], idx);
+    }
+
     if(idx == 0){
         //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
