@@ -150,7 +150,6 @@ int main(int argc, char* argv[]) {
         }
         //run reduction on the last block
         multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
-        scaninc<
 
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
