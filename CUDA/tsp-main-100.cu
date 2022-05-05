@@ -77,7 +77,6 @@ int main(int argc, char* argv[]) {
     }
     // Collect input arguments
     int block_size = atoi(argv[1]);
-    //printf("block size %d, \n", block_size);
     char* file_name = argv[2];
     int restarts = atoi(argv[3]);
     if(restarts <= 0){
@@ -97,17 +96,6 @@ int main(int argc, char* argv[]) {
     distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
     cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
-    
-    
-    /*printf("cities: %d \n", cities );
-    printf("matrix: \n");
-    for (int i = 0; i < cities; i++){
-        for (int j = 0; j < cities; j++){
-            printf("%d ", distMatrix[i *cities + j]);
-        }
-        printf("\n");
-    }
-    printf("\n");*/
 
 
     //Calculate total number of iterations
@@ -120,28 +108,6 @@ int main(int argc, char* argv[]) {
 
 
     init(block_size, cities, totIter, is_d, js_d);
-    //cudaFree(js_d);
-
-    /*int* is_h = (int*) malloc(totIter*sizeof(uint32_t));
-    cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
-    int k = 0;
-    printf("is: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", is_h[i]);
-        k++;
-    }
-    printf("]\n");
-    printf("k = %d\n", k);
-
-    int* js_h = (int*) malloc(totIter*sizeof(int));
-    cudaMemcpy(js_h, js_d, totIter*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("js: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", js_h[i]);
-    }
-    printf("]\n");
-    free(js_h); free(is_h);*/
-    
 
     //Prepare for column wise tour
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d;
@@ -163,18 +129,11 @@ int main(int argc, char* argv[]) {
     printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
     int *glo_results;
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    //twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-    //                                                    is_d, glo_results, 
-    //                                                    cities, totIter);
 
     //testing timer for twoOptKer2
     int REPEAT;
     int elapsed;
     struct timeval ker2_start, ker2_end, ker2_diff;
-    //Dry run
-    twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-                                                        is_d, glo_results, 
-                                                        cities, totIter);
     REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
@@ -187,9 +146,7 @@ int main(int argc, char* argv[]) {
     gettimeofday(&ker2_end, NULL); 
     timeval_subtract(&ker2_diff, &ker2_end, &ker2_start);
     elapsed = (ker2_diff.tv_sec*1e6+ker2_diff.tv_usec) / REPEAT; 
-    printf("ker1: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
-    //gpuErrchk( cudaPeekAtLastError() );
- 
+    printf("kernel 100 tour: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT); 
     
     //run reduction of all local optimum cost across multiple blocks
     unsigned int num_blocks_gl_re = (num_blocks_tour+1)/2;
@@ -200,7 +157,6 @@ int main(int argc, char* argv[]) {
     }
     //run reduction on the last block
     multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
-    cudaDeviceSynchronize();
 
     //print results
     int* glo_res = (int*) malloc(2*restarts*sizeof(int));
@@ -209,18 +165,6 @@ int main(int argc, char* argv[]) {
     //tour matrix row wise
     unsigned short* tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    
-    //test tour matrix column wise
-    /*printf("Tour:  [");
-    for(int i = 0; i < restarts; i++){
-        printf("[");
-        for(int j = 0; j < cities+1; j++){
-                printf("%d, ", tourMatrix_h[i*(cities+1)+j]);
-        }
-        printf("]\n");
-    }
-    printf("]\n\n");*/
-
     
     int tourId = glo_res[1];
 
