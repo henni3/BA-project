@@ -179,6 +179,4 @@ int main(int argc, char* argv[]) {
     cudaFree(kerDist);
     cudaFree(glo_results);
     return 0;
-
-    
 }
