@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     //testing timer for cities 100 program
-    REPEAT = 9;
+    REPEAT = 0;
     gettimeofday(&start, NULL); 
     while(REPEAT < 10){
         init(block_size, cities, totIter, is_d, js_d);
