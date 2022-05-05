@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
         size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
 
         twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-                                                        is_d, glo_results, 
+                                                        glo_results, 
                                                         cities, totIter);
         //run reduction of all local optimum cost across multiple blocks
         num_blocks_gl_re = (num_blocks_tour+1)/2;
