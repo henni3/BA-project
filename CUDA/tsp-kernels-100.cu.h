@@ -55,30 +55,6 @@ __global__ void zip(int* array1, int* array2, int size){
     }
 }
 
-//Compute the local optimum cost
-__device__ int sumTourKernel(uint32_t* glo_dist, 
-                                volatile unsigned short *lo_tour, 
-                                int cities, 
-                                volatile int* result_arr){    
-    int idx = threadIdx.x;
-    int block_size = blockDim.x;
-    int sum = 0;
-    int glo_i, glo_ip1; 
-    for(int i = idx; i < cities; i += block_size){
-        glo_i = lo_tour[i];
-        glo_ip1 = lo_tour[i+1];
-        sum += glo_dist[glo_i * cities + glo_ip1];
-    }
-    result_arr[idx] = sum;
-    __syncthreads();
-    for (int size = block_size /2; size > 0; size /= 2 ){
-        if (idx < size) {
-            result_arr[idx] += result_arr[idx+size];
-        }
-        __syncthreads();
-    }
-    return result_arr[idx];
-}
 
 __device__ int sumTourKernel2(uint32_t* glo_dist, 
                                 volatile unsigned short *lo_tour, 
@@ -264,9 +240,9 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
 
     //copy best local shared memory black to global memory
-    /*for(int t = idx; t < cities+1; t += block_size){
+    for(int t = idx; t < cities+1; t += block_size){
         glo_tours[blockIdx.x * (cities+1) + t] = tour[t];
-    }*/
+    }
     
     //Writing local optimum results to global memory
     if(idx == 0){

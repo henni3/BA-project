@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
         printf("too many cities :( \n");
         exit(1);
     }
-    distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t)* cities * cities);
+    distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t) * cities * cities);
     cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
 
