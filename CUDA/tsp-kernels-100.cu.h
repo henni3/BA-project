@@ -122,7 +122,7 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int i, j, change;
+    int i, j, change, ip1, jp1;
 
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
@@ -135,29 +135,24 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    //Preparing data for the 2 opt algorithm
-    int ip1, jp1;
-
     //copy gloabal dist to shared memory
     for (int t = idx; t < cities * cities; t += block_size) {
         shared_Dist[t] = glo_dist[t];
-        //printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
     }
+
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
     }
-    //if (idx < cities + 1){
-    //    printf("tour thing %d, with idx %d ting \n", tour[idx], idx);
-    //}
 
+    //initialize minChange to shared memory
     if(idx == 0){
-        //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
         minChange[0].change = -1;
     }
     
     __syncthreads();
+
     //Computation for one climber
     while(minChange[0].change < 0){
         if(idx < 1){
@@ -182,7 +177,7 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
                     shared_Dist[tour[ip1]*cities+tour[jp1]] -
                     (shared_Dist[tour[i]*cities+tour[ip1]] +
                     shared_Dist[tour[j]*cities+tour[jp1]]);
-            //printf("change is %d \n", change);
+
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
@@ -216,19 +211,21 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
         }
-        //scanIncBlock<minInd>((typename minInd::RedElTP*) tempRes,(unsigned int) idx);
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
+        
         //Prepare information for swapping
         int temp, swapCities;
         i = best.i + 1;
         j = best.j;
         swapCities = (((j - best.i) + 1) / 2) + i; //the ceiling of j/2 plus i
+       
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
+        
         if(idx < 1){
             minChange[idx].change = tempRes[idx].change;
             minChange[idx].j = tempRes[idx].j;

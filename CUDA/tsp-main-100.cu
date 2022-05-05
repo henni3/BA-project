@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
         //Prepare for column wise tour
         num_blocks_tour = (restarts + block_size-1)/block_size; 
         gettimeofday(&randomTime, NULL);
-        int time = randomTime.tv_usec;
+        int time = 0;//randomTime.tv_usec;
         //Create tour matrix column wise
         createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
         transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
@@ -154,9 +154,6 @@ int main(int argc, char* argv[]) {
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
         
-        //tour matrix row wise
-        cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-        
         tourId = glo_res_h[1];
         REPEAT++;
     }
@@ -166,12 +163,16 @@ int main(int argc, char* argv[]) {
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / REPEAT; 
     printf("kernel 100 tour: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
     
+    //tour matrix row wise
+    cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+        
     printf("Shortest path: %d\n", glo_res_h[0]);
-    printf("Tour:  [");
+    printf("Tour ID: %d",glo_res_h[1]);
+    /*printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
-    printf("]\n");
+    printf("]\n");*/
     
 
     free(distMatrix); free(tourMatrix_h); free(glo_res_h); 
