@@ -97,10 +97,6 @@ int init(int block_size,
     // 3. minus each element of js_d array with one to get the final js_d array
     minusOne<<< num_blocks, block_size >>> (totIter, js_d);
     zip<<< num_blocks, block_size>>> (is_d,js_d,totIter);
-
-
-    cudaDeviceSynchronize();
-
     
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
