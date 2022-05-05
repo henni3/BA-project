@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
     //testing timer for cities 100 program
     REPEAT = 0;
     gettimeofday(&start, NULL); 
-    while(REPEAT < 10){
+    while(REPEAT < 1){
         init(block_size, cities, totIter, is_d, js_d);
 
         //Prepare for column wise tour
