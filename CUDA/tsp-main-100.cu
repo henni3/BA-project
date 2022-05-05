@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     //testing timer for cities 100 program
-    REPEAT = 0;
+    REPEAT = 9;
     gettimeofday(&start, NULL); 
     while(REPEAT < 10){
         init(block_size, cities, totIter, is_d, js_d);
@@ -129,7 +129,6 @@ int main(int argc, char* argv[]) {
         num_blocks_tour = (restarts + block_size-1)/block_size; 
         gettimeofday(&randomTime, NULL);
         int time = randomTime.tv_usec;
-
         //Create tour matrix column wise
         createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
         transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
@@ -138,13 +137,10 @@ int main(int argc, char* argv[]) {
         //run 2 opt kernel 
         size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple) + cities * cities * sizeof(uint32_t);
         //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
-    
 
         twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
-    
-        
         //run reduction of all local optimum cost across multiple blocks
         num_blocks_gl_re = (num_blocks_tour+1)/2;
         mult_sharedMem = (block_size*2) * sizeof(int);
