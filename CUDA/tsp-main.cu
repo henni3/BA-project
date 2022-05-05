@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
     gettimeofday(&end, NULL); 
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / REPEAT; 
-    printf("kernel 100 tour: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+    printf("Original kernel: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
     
     printf("Shortest path: %d\n", glo_res_h[0]);
     printf("Tour:  [");

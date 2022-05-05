@@ -62,7 +62,7 @@ __device__ int sumTourKernel2(uint32_t* glo_dist,
 }
 
 
-__global__ void twoOptKer2(uint32_t* glo_dist, 
+__global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours,
                           int* glo_result, 
                           int cities, 
