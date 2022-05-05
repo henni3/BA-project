@@ -5,7 +5,7 @@ LDFLAGS?=-lOpenCL
 
 TEST_PBB=test-pbb
 TEST_TSP=test-tsp
-TEST_TSPC=test-tspC
+TEST_TSPC=test-tsp-cal
 TEST_TSP100=test-tsp100
 
 .PHONY: clean all run

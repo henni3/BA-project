@@ -158,6 +158,5 @@ int main(int argc, char* argv[]) {
     cudaFree(tourMatrixTrans_d);
     cudaFree(kerDist);
     cudaFree(glo_results); 
-    printf("done\n");
     return 0;  
 }
