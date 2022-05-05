@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include "hostSkel.cu.h"
-#include "tsp-kernels2.cu.h"
+#include "tsp-kernels-cal.cu.h"
 #include "dataCollector.cu.h"
 
 int main(int argc, char* argv[]) {
