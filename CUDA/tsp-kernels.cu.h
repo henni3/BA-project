@@ -143,7 +143,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int* glo_is,
                           int* glo_result, 
                           int cities, 
-                          int totIter){
+                          int totIter, int* re_array){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change;
@@ -281,6 +281,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
+        re_array[blockIdx.x] = repeats;
     }
 }
 

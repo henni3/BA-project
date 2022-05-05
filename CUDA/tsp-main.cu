@@ -112,6 +112,8 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
+    int* restart_array;
+    cudaMalloc((void**)&restart_array, restarts * sizeof(int));
 
     //CPU malloc
     glo_res_h = (int*) malloc(2*restarts*sizeof(int));
@@ -138,7 +140,7 @@ int main(int argc, char* argv[]) {
 
         twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
-                                                        cities, totIter);
+                                                        cities, totIter, restart_array);
         //run reduction of all local optimum cost across multiple blocks
         num_blocks_gl_re = (num_blocks_tour+1)/2;
         mult_sharedMem = (block_size*2) * sizeof(int);
@@ -148,9 +150,20 @@ int main(int argc, char* argv[]) {
         }
         //run reduction on the last block
         multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
+        scaninc<
 
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
+        int* host_restart = (int*) malloc(restarts * sizeof(int));
+        cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
+        int re_sum = 0;
+        for (int i = 0; i < restarts; i++){
+            re_sum += host_restart[i];
+        }
+        printf("average nr. of restarts is %d \n", re_sum / 100000);
+        cudaFree(restart_array);
+        free(host_restart);
+
         
         //tour matrix row wise
         cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
