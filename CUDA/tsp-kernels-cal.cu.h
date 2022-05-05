@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-
-__device__ float fastsqrt(float val) {
-    int tmp = *(int *)&val;
-    tmp -= 1<<23;
-    tmp = tmp >> 1;
-    tmp += 1<<29;
-    return *(float *)&tmp;
-}   
-
+ 
 
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
