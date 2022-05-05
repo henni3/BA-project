@@ -222,7 +222,7 @@ int main(int argc, char* argv[]) {
     REPEAT = 0;
     gettimeofday(&ker2_start, NULL); 
     while(REPEAT < 10){
-        twoOptKer2<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+        twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
                                                         cities, totIter);
         REPEAT++;
