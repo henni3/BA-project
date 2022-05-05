@@ -175,7 +175,7 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     }
     for (int t = idx; t < cities * cities; t += block_size) {
         shared_Dist[t] = glo_dist[t];
-        printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
+        //printf("shared dist is %d on posisition %d \n", shared_Dist[t], t);
     }
 
     if (idx < 2){
