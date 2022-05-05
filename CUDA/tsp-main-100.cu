@@ -16,6 +16,7 @@ int init(int block_size,
     int len, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
     int *flag_int, *oneArr, *seg_sc_tmp_int;
     char *flags_d, *d_tmp_flag; 
+    
     //Calculate the length of shape array
     len = cities - 2;
     //Calculate block size
@@ -33,58 +34,20 @@ int init(int block_size,
     cudaMalloc((void**)&d_tmp_flag,     totIter*sizeof(char));
     //Create shape array for index
     mkIndShp<<< num_blocks, block_size >>> (index_shp_d, len);
-    //cudaDeviceSynchronize();
-    /*int* indSha = (int*) malloc(len*sizeof(int));
-    cudaMemcpy(indSha, index_shp_d, len*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("indSha: [");
-    for(int i = 0; i < len; i++){
-        printf("%d, ", indSha[i]);
-    }
-    printf("]\n \n");
-    free(indSha);*/
+
     // Make flag array
     // 1. scan the shape array
     scanInc<Add<int> > (block_size, len, index_shp_sc_d, index_shp_d, d_tmp_int);
-    //gpuErrchk( cudaPeekAtLastError() );
-  
-    /*int* scan = (int*) malloc(len*sizeof(int));
-    cudaMemcpy(scan, index_shp_sc_d, len*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("scan: [");
-    for(int i = 0; i < len; i++){
-        printf("%d, ", scan[i]);
-    }
-    printf("]\n \n");
-    free(scan);*/
+    
     // 2. create an array of zeros
     replicate0<<< num_blocks, block_size >>> (totIter, flags_d);
     
     // 3. scatter the flag array
     mkFlags<<< num_blocks_shp, block_size >>>(len, index_shp_sc_d, flags_d); // was totIter
-    //gpuErrchk( cudaPeekAtLastError() );
-    //gpuErrchk( cudaDeviceSynchronize() );
+
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
     convert<<< num_blocks, block_size >>> (flag_int, flags_d, totIter);
     
-    
-    /*int* flag = (int*) malloc(totIter*sizeof(int));
-    cudaMemcpy(flag, flag_int, totIter*sizeof(int), cudaMemcpyDeviceToHost);
-    printf("flag: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", flag[i]);
-    }
-    printf("]\n \n");
-    free(flag);
-
-    
-    char* flag_c = (char*) malloc(totIter*sizeof(char));
-    cudaMemcpy(flag_c, flags_d, totIter*sizeof(char), cudaMemcpyDeviceToHost);
-    printf("flag_c: [");
-    for(int i = 0; i < totIter; i++){
-        printf("%d, ", flag_c[i]);
-    }
-    printf("]\n");
-    free(flag_c);*/
-
     //Make is array
     // 1. scan the flag array
     scanInc<Add<int> > (block_size, totIter, is_d, flag_int, d_tmp_int);
