@@ -413,7 +413,7 @@ void run(char *filename, int tours, int SMs)
   struct timeval start, end, diff;
   REPEAT = 0;
   gettimeofday(&start, NULL);
-  while(REPEAT < 10){
+  while(REPEAT < 1){
     ResetKernel<<<SMs*3, 512>>>();
     best = 0x7fffffff;
     tour = 0;
