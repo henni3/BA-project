@@ -148,9 +148,7 @@ __global__ void twoOptKer3(uint32_t* glo_dist,
     int idx = threadIdx.x;
     int i, j;
     int change, d;
-    if (idx < 2){
-        printf("we get here ? \n");
-    }
+    printf("we get here ? \n");
 
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
