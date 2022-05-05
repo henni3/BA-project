@@ -146,8 +146,8 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int i, j;
-    int change;
+    int i, j, change;
+    int repeats = 0;
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
@@ -176,6 +176,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         if(idx < 1){
+            repeats++;
             minChange[0] = ChangeTuple();
         }
         // reset each threads local min change
@@ -269,6 +270,9 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
+    if (idx < 1){
+        printf("nr. of repeats is %d for block %d \n", repeats, blockIdx.x);
+    }
 
     //copy best local shared memory black to global memory
     for(int t = idx; t < cities+1; t += block_size){
