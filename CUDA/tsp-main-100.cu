@@ -16,7 +16,7 @@ int init(int block_size,
     int len, *index_shp_d, *index_shp_sc_d, *d_tmp_int;
     int *flag_int, *oneArr, *seg_sc_tmp_int;
     char *flags_d, *d_tmp_flag; 
-    
+
     //Calculate the length of shape array
     len = cities - 2;
     //Calculate block size
@@ -62,10 +62,6 @@ int init(int block_size,
     // 3. minus each element of js_d array with one to get the final js_d array
     minusOne<<< num_blocks, block_size >>> (totIter, js_d);
     zip<<< num_blocks, block_size>>> (is_d,js_d,totIter);
-
-
-    cudaDeviceSynchronize();
-
     
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
