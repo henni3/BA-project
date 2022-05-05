@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
     // Collect information from datafile into distMatrix and cities    
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
     cities = fileToDistM(file_name, distMatrix);
-    if( cities > CITIES){
+    if( cities > MAXCITIES){
         printf("too many cities :( \n");
         exit(1);
     }
