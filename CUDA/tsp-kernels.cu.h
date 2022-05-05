@@ -164,7 +164,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
-        tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
+        tour[t] = glo_tours[blockIdx.x * (cities+1) + t]; 
     }
     if(idx == 0){
         //initialize minChange to shared memory
@@ -270,9 +270,7 @@ __global__ void twoOptKer2(uint32_t* glo_dist,
     }
     
     int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
-    if (idx < 1){
-        printf("nr. of repeats is %d for block %d \n", repeats, blockIdx.x);
-    }
+
 
     //copy best local shared memory black to global memory
     for(int t = idx; t < cities+1; t += block_size){
