@@ -380,7 +380,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         __syncthreads();
     }
     
-    int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
+    int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
 
     //copy best local shared memory black to global memory
     for(int t = idx; t < cities+1; t += block_size){
