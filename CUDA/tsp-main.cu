@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
         //Prepare for column wise tour
         num_blocks_tour = (restarts + block_size-1)/block_size; 
         gettimeofday(&randomTime, NULL);
-        int time = randomTime.tv_usec * 10;
+        int time = randomTime.tv_usec * REPEAT;
         //Create tour matrix column wise
         createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
         transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
