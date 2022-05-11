@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
     //CPU malloc
     glo_res_h = (int*) malloc(2*restarts*sizeof(int));
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
+    int* host_restart = (int*) malloc(restarts * sizeof(int));
 
     //testing timer for cities 100 program
     REPEAT = 0;
@@ -84,7 +85,6 @@ int main(int argc, char* argv[]) {
 
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-        int* host_restart = (int*) malloc(restarts * sizeof(int));
         cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
         int re_sum = 0;
         for (int i = 0; i < restarts; i++){
@@ -92,8 +92,6 @@ int main(int argc, char* argv[]) {
         }
         float average = (float) re_sum /  (float) restarts;
         printf("average nr. of restarts is %f, for %d climbers \n", average, restarts);
-        cudaFree(restart_array);
-        free(host_restart);
 
         
         //tour matrix row wise
@@ -115,6 +113,8 @@ int main(int argc, char* argv[]) {
     }
     printf("]\n");
     
+    free(host_restart);
+    cudaFree(restart_array);
     cudaFree(tourMatrixIn_d);
     free(distMatrix); free(tourMatrix_h); free(glo_res_h); 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); 
