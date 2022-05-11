@@ -58,7 +58,8 @@ int main(int argc, char* argv[]) {
     
     //Testing the original program version
     if(1 == version){
-        //Dry run program
+        printf("restarts is being used currently \n");
+       /* //Dry run program
         run_original(tourMatrixIn_d, tourMatrixTrans_d, 
                 is_d, kerDist, glo_results, 
                 block_size, cities, restarts, totIter);
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
             tourId = glo_res_h[1];
         }
         cudaDeviceSynchronize();
-        gettimeofday(&end, NULL);
+        gettimeofday(&end, NULL);*/
     
     //Testing the program optimised for 100 cities version
     }else if(2 == version){
