@@ -52,6 +52,7 @@ __global__ void zip(int* array1, int* array2, int size){
 }
 
 
+//Compute the local optimum cost
 __device__ int sumTourKernel(uint32_t* glo_dist, 
                                 volatile unsigned short *lo_tour, 
                                 int cities, 
