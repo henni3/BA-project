@@ -347,7 +347,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         }else{
             num_elems = block_size;
         }
-        num_threads = (num_elems + 1 ) >> 1;
+        num_threads = (num_elems + 1)/2;
 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
@@ -358,14 +358,14 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             __syncthreads();
 
             num_elems = num_threads;
-            num_threads = (num_elems + 1) >> 1;
+            num_threads = (num_elems + 1)/2;
         }
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
         i = best.i + 1;
         j = best.j;
-        swapCities = (((j - best.i) + 1) >> 1) + i; //the ceiling of j/2 plus i
+        swapCities = (((j - best.i) + 1)/2) + i; //the ceiling of j/2 plus i
         //swap
         for(int t = idx + i; t < swapCities; t += block_size){
             temp = tour[t];
