@@ -38,6 +38,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         if(idx < 1){
+            printf("%d nr of swaps \n ", repeats);
             repeats++;
             minChange[0] = ChangeTuple();
         }
