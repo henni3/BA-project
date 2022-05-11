@@ -1,3 +1,5 @@
+#include <math.h>
+
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;
     if(glb_id < len){

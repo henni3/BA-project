@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/time.h>
-#include "hostSkel.cu.h"
-#include "tsp-kernels-cal.cu.h"
-#include "dataCollector.cu.h"
+#include "tsp-main-helper.cu.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
@@ -70,7 +64,7 @@ int main(int argc, char* argv[]) {
         //run 2 opt kernel 
         size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple);
 
-        twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+        twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         glo_results, 
                                                         cities, totIter);
         //run reduction of all local optimum cost across multiple blocks

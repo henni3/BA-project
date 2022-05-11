@@ -67,7 +67,7 @@ int init(int block_size,
     return 0;
 }
 
-void run_kernels(unsigned short *tourMatrixIn_d, 
+void run_100cities(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
@@ -88,7 +88,7 @@ void run_kernels(unsigned short *tourMatrixIn_d,
                             sizeof(ChangeTuple) + 
                             cities * cities * sizeof(uint32_t);
 
-    twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    twoOptKer100Cities<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                     is_d, glo_results, 
                                                     cities, totIter);
 
