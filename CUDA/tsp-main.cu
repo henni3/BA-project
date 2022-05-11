@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
     //testing timer for cities 100 program
     REPEAT = 0;
     gettimeofday(&start, NULL); 
-    while(REPEAT < 2){
+    while(REPEAT < 100){
         init(block_size, cities, totIter, is_d, js_d);
 
         //Prepare for column wise tour
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
     printf("]\n");
-    
+
     free(host_restart);
     cudaFree(restart_array);
     cudaFree(tourMatrixIn_d);
