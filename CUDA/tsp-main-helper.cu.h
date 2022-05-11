@@ -6,7 +6,7 @@
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
 
-int init(int block_size, 
+void init(int block_size, 
          int cities, 
          int totIter, 
          int* is_d, 
@@ -64,14 +64,51 @@ int init(int block_size,
     //free cuda memory
     cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
-    return 0;
+}
+
+void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int restarts){
+    int num_blocks_gl_re = (num_blocks_tour+1)/2;
+    int mult_sharedMem = (block_size*2) * sizeof(int);
+    for(int i = num_blocks_gl_re; i > 1; i>>=1){
+        multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
+        i++;
+    }
+    //run reduction on the last block
+    multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
+}
+
+void run_original(unsigned short *tourMatrixIn_d, 
+                 unsigned short *tourMatrixTrans_d,
+                 int *is_d, uint32_t* kerDist, int *glo_results,
+                 int block_size, int cities, int restarts, int totIter){
+    int num_blocks_tour, time;
+    struct timeval randomTime;
+
+    //Prepare for column wise tour
+    num_blocks_tour = (restarts + block_size-1)/block_size; 
+    gettimeofday(&randomTime, NULL);
+    int time = randomTime.tv_usec;
+    //Create tour matrix column wise
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    cudaFree(tourMatrixIn_d);
+    //compute shared memory size
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
+                            block_size * sizeof(ChangeTuple) + 
+                            sizeof(ChangeTuple);
+    //run 2 opt kernel 
+    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+                                                    is_d, glo_results, 
+                                                    cities, totIter, restart_array);
+    //run reduction of all local optimum cost across multiple blocks
+    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
 }
 
 void run_100cities(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    int num_blocks_tour, num_blocks_gl_re, time;
+    int num_blocks_tour, time;
     struct timeval randomTime;
 
     //Prepare for column wise tour
@@ -81,24 +118,42 @@ void run_100cities(unsigned short *tourMatrixIn_d,
     //Create tour matrix column wise
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
-
-    //run 2 opt kernel 
+    //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
                             sizeof(ChangeTuple) + 
                             cities * cities * sizeof(uint32_t);
-
+    //Run 2 opt kernel
     twoOptKer100Cities<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                     is_d, glo_results, 
                                                     cities, totIter);
 
-    //run reduction of all local optimum cost across multiple blocks
-    num_blocks_gl_re = (num_blocks_tour+1)/2;
-    size_t mult_sharedMem = (block_size*2) * sizeof(int);
-    for(int i = num_blocks_gl_re; i > 1; i>>=1){
-        multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
-        i++;
-    }
-    //run reduction on the last block
-    multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
+    //Run reduction of all local optimum cost across multiple blocks
+    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
+}
+
+void run_calculatedIandJ(unsigned short *tourMatrixIn_d, 
+                 unsigned short *tourMatrixTrans_d,
+                 uint32_t* kerDist, int *glo_results,
+                 int block_size, int cities, int restarts, int totIter){
+    int num_blocks_tour, time;
+    struct timeval randomTime;
+
+    //Prepare for column wise tour
+    num_blocks_tour = (restarts + block_size-1)/block_size; 
+    gettimeofday(&randomTime, NULL);
+    int time = randomTime.tv_usec;
+    //Create tour matrix column wise
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    //Compute shared memory size
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
+                            block_size * sizeof(ChangeTuple) + 
+                            sizeof(ChangeTuple);
+    //run 2 opt kernel 
+    twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+                                                    glo_results, 
+                                                    cities, totIter);
+    //Run reduction of all local optimum cost across multiple blocks
+    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
 }
