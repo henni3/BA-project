@@ -1,4 +1,5 @@
 #include "tsp-ker-helper.cu.h"
+
 __global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
                           int* glo_is,
@@ -54,22 +55,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             int num = glo_is[ind];
             i = num >> 16;
             j = (num & 0xffff) + i + 2;
-            //d = 1-(4*(-2*(totIter-ind)));
-            //printf("glo: %d, d: %d\n",ind, d);
-            //tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
-            //printf("glo: %d, tmp: %f\n",ind, tmp);
-            //int next = (int) tmp;
-            //printf("glo: %d, next: %d\n",ind, next);
-            //i = (cities-2) - (next-1);
-            //j = (i+2) + (ind-(totIter-((next*(next-1))/2)));
-            /*if ( i != i2){
-                printf("somethigns goes wrong with i calculation \n");
-            }
-            if (j != j2){
-                printf("somethin goes wrong with j calculation \n");
-            }*/
-            //assert(i == i2);
-            //assert(j == j2);
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
@@ -130,7 +115,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         __syncthreads();
     }
     
-    int local_opt_cost = sumTourKernel2(glo_dist, tour, cities, tempRes);
+    int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
 
 
     //copy best local shared memory black to global memory
