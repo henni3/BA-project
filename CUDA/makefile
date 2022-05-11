@@ -6,12 +6,12 @@ LDFLAGS?=-lOpenCL
 TEST_PBB=test-pbb
 TEST_TSP=test-tsp
 TEST_TSP100=test-tsp100
-
+TEST_TSPC=test-tspC
 .PHONY: clean all run
 
 default: compile run
 
-compile: $(TEST_PBB) $(TEST_TSP) $(TEST_TSP100)
+compile: $(TEST_PBB) $(TEST_TSP) $(TEST_TSP100) $(TEST_TSPC)
 
 $(TEST_PBB): testPBB.cu hostSkel.cu.h pbbKernels.cu.h constants.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(TEST_PBB) testPBB.cu
