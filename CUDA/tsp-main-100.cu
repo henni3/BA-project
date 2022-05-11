@@ -159,6 +159,7 @@ int main(int argc, char* argv[]) {
                 is_d, kerDist, glo_results, 
                 block_size, cities, restarts, totIter);
     
+    cudaDeviceSynchronize();
     //testing time for cities 100 program
     gettimeofday(&start, NULL); 
     for(int i = 0; i < GPU_RUNS; i++){
