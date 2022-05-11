@@ -96,7 +96,7 @@ void run_kernels(unsigned short *tourMatrixIn_d,
 
     //run reduction of all local optimum cost across multiple blocks
     num_blocks_gl_re = (num_blocks_tour+1)/2;
-    mult_sharedMem = (block_size*2) * sizeof(int);
+    size_t mult_sharedMem = (block_size*2) * sizeof(int);
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
         i++;
@@ -122,11 +122,10 @@ int main(int argc, char* argv[]) {
     initHwd();
 
     //Create varibales
-    struct timeval randomTime, start, end, diff;
+    struct timeval start, end, diff;
     uint32_t* distMatrix, *kerDist;
     int cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, elapsed;
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d, *tourMatrix_h;
-    size_t mult_sharedMem;
 
 
     // Collect information from datafile into distMatrix and cities    
