@@ -439,8 +439,8 @@ void run(char *filename, int tours, int SMs)
   cudaDeviceSynchronize();
   gettimeofday(&end, NULL); 
   timeval_subtract(&diff, &end, &start);
-  elapsed = (diff.tv_sec*1e6+diff.tv_usec) / REPEAT; 
-  printf("Texas solution: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+  elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
+  printf("Texas solution: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, GPU_RUNS);
  
 
   printf("GPU min cost = %d\n", best);
