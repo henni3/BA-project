@@ -408,12 +408,10 @@ void run(char *filename, int tours, int SMs)
   if (cudaSuccess != cudaMemcpy(lgdist, dist, sizeof(int) * cities * cities, cudaMemcpyHostToDevice)) fprintf(stderr, "copying of dist to device failed\n");  CudaTest("dist copy to device failed");
 
   //time taking
-  int REPEAT;
   int elapsed;
   struct timeval start, end, diff;
-  REPEAT = 0;
   gettimeofday(&start, NULL);
-  while(REPEAT < 1){
+  for(int i = 0; i < GPU_RUNS; i++){
     ResetKernel<<<SMs*3, 512>>>();
     best = 0x7fffffff;
     tour = 0;
@@ -437,13 +435,12 @@ void run(char *filename, int tours, int SMs)
       fprintf(stderr, "city count must be <= 110\n");
       exit(-1);
     }
-    REPEAT++;
   }
   cudaDeviceSynchronize();
   gettimeofday(&end, NULL); 
   timeval_subtract(&diff, &end, &start);
-  elapsed = (diff.tv_sec*1e6+diff.tv_usec) / REPEAT; 
-  printf("Texas solution: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+  elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
+  printf("Texas solution: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, GPU_RUNS);
  
 
   printf("GPU min cost = %d\n", best);

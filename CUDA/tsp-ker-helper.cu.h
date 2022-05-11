@@ -71,7 +71,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 
     result_arr[idx].change = sum;
     __syncthreads();
-    for (int size = block_size /2; size > 0; size /= 2 ){
+    for (int size = block_size >> 1; size > 0; size >>= 1 ){
         if (idx < size) {
             result_arr[idx].change += result_arr[idx+size].change;
 
@@ -132,7 +132,7 @@ __global__ void multBlockReduce(int* glo_result,
     }else{
         n = blockDim.x * 2;
     }
-    tot_threads = (n + 1) / 2;
+    tot_threads = (n + 1) >> 1;
 
     extern __shared__ int sharedMem[];    //shared memory
     //Compare element in global memory across two blocks and the smallest
