@@ -358,7 +358,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             __syncthreads();
 
             num_elems = num_threads;
-            num_threads= (num_elems + 1)/ 2;
+            num_threads= (num_elems + 1) >> 1;
         }
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
