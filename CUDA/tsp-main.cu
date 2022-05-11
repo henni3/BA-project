@@ -88,10 +88,10 @@ int main(int argc, char* argv[]) {
         int* host_restart = (int*) malloc(restarts * sizeof(int));
         cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
         int re_sum = 0;
-        for (int i = 0; i < restarts; i++){
-            re_sum += host_restart[i];
-        }
-        printf("average nr. of restarts is %d \n", re_sum / 100000);
+       // for (int i = 0; i < restarts; i++){
+       //     re_sum += host_restart[i];
+       // }
+       // printf("average nr. of restarts is %d \n", re_sum / 100000);
         cudaFree(restart_array);
         free(host_restart);
 
