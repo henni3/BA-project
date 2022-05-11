@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
             re_sum += host_restart[i];
         }
         float average = re_sum / restarts;
-        printf("average nr. of restarts is %d, for %d climbers \n", (re_sum / restarts), restarts);
+        printf("average nr. of restarts is %f, for %d climbers \n", average, restarts);
         cudaFree(restart_array);
         free(host_restart);
 
