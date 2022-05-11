@@ -1,5 +1,3 @@
-#include "tsp-ker-helper.cu.h"
-
 __global__ void twoOptKer3(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
                           int* glo_is,

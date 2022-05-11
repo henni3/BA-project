@@ -4,7 +4,6 @@
 #include <sys/time.h>
 #include "hostSkel.cu.h"
 #include "tsp-kernels-100.cu.h"
-#include "tsp-ker-helper.cu.h"
 #include "dataCollector.cu.h"
 
 int init(int block_size, 
