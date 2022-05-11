@@ -69,6 +69,41 @@ int init(int block_size,
     return 0;
 }
 
+void run_kernels(unsigned short *tourMatrixIn_d, 
+                 unsigned short *tourMatrixTrans_d,
+                 int *is_d, uint32_t* kerDist, int *glo_results,
+                 int block_size, int cities, int restarts, int totIter){
+    int num_blocks_tour, num_blocks_gl_re, time;
+    struct timeval randomTime;
+
+    //Prepare for column wise tour
+    num_blocks_tour = (restarts + block_size-1)/block_size;
+    gettimeofday(&randomTime, NULL);
+    time = randomTime.tv_usec;
+    //Create tour matrix column wise
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+
+    //run 2 opt kernel 
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
+                            block_size * sizeof(ChangeTuple) + 
+                            sizeof(ChangeTuple) + 
+                            cities * cities * sizeof(uint32_t);
+
+    twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+                                                    is_d, glo_results, 
+                                                    cities, totIter);
+
+    //run reduction of all local optimum cost across multiple blocks
+    num_blocks_gl_re = (num_blocks_tour+1)/2;
+    mult_sharedMem = (block_size*2) * sizeof(int);
+    for(int i = num_blocks_gl_re; i > 1; i>>=1){
+        multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
+        i++;
+    }
+    //run reduction on the last block
+    multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
+}
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
@@ -88,8 +123,8 @@ int main(int argc, char* argv[]) {
 
     //Create varibales
     struct timeval randomTime, start, end, diff;
-    uint32_t* distMatrix, *kerDist, num_blocks_tour, num_blocks_gl_re;
-    int cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, REPEAT, elapsed;
+    uint32_t* distMatrix, *kerDist;
+    int cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, elapsed;
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d, *tourMatrix_h;
     size_t mult_sharedMem;
 
@@ -116,67 +151,43 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
     //CPU malloc
-    glo_res_h = (int*) malloc(2*restarts*sizeof(int));
+    glo_res_h = (int*) malloc(2*sizeof(int));
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
-    //testing timer for cities 100 program
-    REPEAT = 0;
+    //testing time for cities 100 program
     gettimeofday(&start, NULL); 
-    while(REPEAT < 1){
+    for(int i = 0; i < GPU_RUNS; i++){
+        //run program
         init(block_size, cities, totIter, is_d, js_d);
+        run_kernels(tourMatrixIn_d, tourMatrixTrans_d, 
+                    is_d, kerDist, glo_results, 
+                    block_size, cities, restarts, totIter);
 
-        //Prepare for column wise tour
-        num_blocks_tour = (restarts + block_size-1)/block_size; 
-        gettimeofday(&randomTime, NULL);
-        int time = 0;//randomTime.tv_usec;
-        //Create tour matrix column wise
-        createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
-        transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
-        cudaFree(tourMatrixIn_d);
-        //printf("size of change tuple = %d \n", sizeof(ChangeTuple));
-        //run 2 opt kernel 
-        size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + block_size * sizeof(ChangeTuple) + sizeof(ChangeTuple) + cities * cities * sizeof(uint32_t);
-        //printf("sharedmemSize used in twoOptKer : %d \n", sharedMemSize);
-
-        twoOptKer3<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
-                                                        is_d, glo_results, 
-                                                        cities, totIter);
-        //run reduction of all local optimum cost across multiple blocks
-        num_blocks_gl_re = (num_blocks_tour+1)/2;
-        mult_sharedMem = (block_size*2) * sizeof(int);
-        for(int i = num_blocks_gl_re; i > 1; i>>=1){
-            multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
-            i++;
-        }
-        //run reduction on the last block
-        multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
-
-        //print results
-        cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-        
+        //get results
+        cudaMemcpy(glo_res_h, glo_results, 2*sizeof(int), cudaMemcpyDeviceToHost);
         tourId = glo_res_h[1];
-        REPEAT++;
     }
+
     cudaDeviceSynchronize();
     gettimeofday(&end, NULL); 
     timeval_subtract(&diff, &end, &start);
-    elapsed = (diff.tv_sec*1e6+diff.tv_usec) / REPEAT; 
-    printf("kernel 100 tour: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, REPEAT);
+    elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
+    printf("kernel 100 tour: Optimized Program runs on GPU in: %lu milisecs, repeats: %d\n", elapsed/1000, GPU_RUNS);
     
-    //tour matrix row wise
+    //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-        
+    
+    //print results
     printf("Shortest path: %d\n", glo_res_h[0]);
-    //printf("Tour ID: %d", tourId);
     printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
     printf("]\n");
     
-
-    free(distMatrix); free(tourMatrix_h); free(glo_res_h); 
-    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); 
+    //Clean up
+    free(distMatrix); free(tourMatrix_h); free(glo_res_h);  
+    cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); cudaFree(tourMatrixIn_d);
     cudaFree(kerDist);
     cudaFree(glo_results);
     return 0;

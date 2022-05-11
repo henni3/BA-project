@@ -12,6 +12,7 @@
 //#define WORKGROUP_SIZE      128
 //#define MAX_WORKGROUP_SIZE  1024
 
+#define GPU_RUNS            1
 #define RUNS_GPU            100
 #define RUNS_CPU            5
 #define NUM_BLOCKS_SCAN     1024
