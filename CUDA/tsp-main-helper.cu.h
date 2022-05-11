@@ -67,7 +67,7 @@ void init(int block_size,
 }
 
 void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int restarts){
-    int num_blocks_gl_re = (num_blocks_tour+1) >> 1;
+    int num_blocks_gl_re = (num_blocks_tour+1)/2;
     int mult_sharedMem = (block_size*2) * sizeof(int);
     for(int i = num_blocks_gl_re; i > 1; i>>=1){
         multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
@@ -77,7 +77,7 @@ void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int res
     multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
 }
 
-/*void run_original(unsigned short *tourMatrixIn_d, 
+void run_original(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
@@ -102,7 +102,7 @@ void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int res
                                                     cities, totIter);
     //run reduction of all local optimum cost across multiple blocks
     multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
-}*/
+}
 
 void run_100cities(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
