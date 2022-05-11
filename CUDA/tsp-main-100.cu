@@ -153,6 +153,12 @@ int main(int argc, char* argv[]) {
     glo_res_h = (int*) malloc(2*sizeof(int));
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
+    //Dry run program
+    init(block_size, cities, totIter, is_d, js_d);
+    run_kernels(tourMatrixIn_d, tourMatrixTrans_d, 
+                is_d, kerDist, glo_results, 
+                block_size, cities, restarts, totIter);
+    
     //testing time for cities 100 program
     gettimeofday(&start, NULL); 
     for(int i = 0; i < GPU_RUNS; i++){
