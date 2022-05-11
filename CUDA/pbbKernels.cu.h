@@ -265,7 +265,7 @@ class minInd {
                 res.change = t1.change;
                 res.i = t1.i;
                 res.j = t1.j;
-            }/*
+            }
             else if (t1.change == t2.change){
                 if(t1.i < t2.i){
                     res.change = t1.change;
@@ -279,7 +279,7 @@ class minInd {
                         res.j = t1.j;
                     }
                 }
-            }*/
+            }
             else {
                     res.change = t2.change;
                     res.i = t2.i;
