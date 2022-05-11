@@ -19,6 +19,7 @@
 #define ELEMS_PER_THREAD    8
 #define TILE                32
 #define MAXCITIES           10000
+#define CITIES              100
 #define MULT                1103515245
 #define ADD                 12345
 #define MASK                0x7fffffff
