@@ -57,9 +57,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             j = (num & 0xffff) + i + 2;
             ip1 = i+1;
             jp1 = j+1; */
-             d = 1-(4*(-2*(totIter-ind)));
-            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
-            next = (int) tmp;
+            int d = 1-(4*(-2*(totIter-ind)));
+            float tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
+            int next = (int) tmp;
             i = (cities-2) - (next-1);
             j = (i+2) + (ind-(totIter-((next*(next-1))/2))); //n>>1
             ip1 = i+1;
