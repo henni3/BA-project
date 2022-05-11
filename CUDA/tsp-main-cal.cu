@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
 
     //Calculate total number of iterations
-    totIter = ((cities-1) * (cities-2))/2;
+    totIter = ((cities-1) * (cities-2)) >> 1;
 
     //Cuda malloc
     cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
                                                         glo_results, 
                                                         cities, totIter);
         //run reduction of all local optimum cost across multiple blocks
-        num_blocks_gl_re = (num_blocks_tour+1)/2;
+        num_blocks_gl_re = (num_blocks_tour+1) >> 1;
         mult_sharedMem = (block_size*2) * sizeof(int);
         for(int i = num_blocks_gl_re; i > 1; i>>=1){
             multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
