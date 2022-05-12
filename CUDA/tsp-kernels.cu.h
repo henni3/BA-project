@@ -210,7 +210,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
             tempRes[idx].i = localMinChange.i;
             tempRes[idx].j = localMinChange.j;
         }
-        //__syncthreads();
+        __syncthreads();
         
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
@@ -224,10 +224,10 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(num_threads != num_elems){
-            __syncthreads();
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
             }
+            __syncthreads();
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
         }
