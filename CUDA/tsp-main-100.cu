@@ -58,7 +58,6 @@ int main(int argc, char* argv[]) {
     
     //Testing the original program version
     if(1 == version){
-        printf("restarts is being used currently \n");
         //Dry run program
         run_original(tourMatrixIn_d, tourMatrixTrans_d, 
                 is_d, kerDist, glo_results, 
