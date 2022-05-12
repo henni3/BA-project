@@ -205,11 +205,10 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         }
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
-        if(idx < totIter){
-            tempRes[idx].change = localMinChange.change;
-            tempRes[idx].i = localMinChange.i;
-            tempRes[idx].j = localMinChange.j;
-        }
+        
+        tempRes[idx].change = localMinChange.change;
+        tempRes[idx].i = localMinChange.i;
+        tempRes[idx].j = localMinChange.j;
         __syncthreads();
         
         //Preparation for the reduction on all local minimum changes.
