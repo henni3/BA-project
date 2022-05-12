@@ -1,6 +1,7 @@
 #include "tsp-ker-helper.cu.h"
 #include <sys/time.h>
 #include "constants.cu.h"
+#include <stdio.h>
 
 __global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
