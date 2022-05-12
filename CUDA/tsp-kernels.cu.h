@@ -71,7 +71,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             //tempRes[idx].change = localMinChange.change;
             //tempRes[idx].i = localMinChange.i;
             //tempRes[idx].j = localMinChange.j;
-            tempRes[idx] = volatile ChangeTuple(localMinChange);
+            tempRes[idx] = ChangeTuple(localMinChange);
         }
         __syncthreads();
         
