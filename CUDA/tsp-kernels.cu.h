@@ -75,7 +75,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         __syncthreads();
         
         //Preparation for the reduction on all local minimum changes.
-        int num_elems, num_threads;
+        /*int num_elems, num_threads;
         if(totIter < block_size){
             num_elems = totIter;
         }else{
@@ -93,9 +93,13 @@ __global__ void twoOptKer(uint32_t* glo_dist,
 
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
+        }*/
+        ChangeTuple elm  = scanIncBlock<minInd>(tempRes, idx);
+        if ( idx == blockDim.x-1 ){
+            tempRes[0] = elm;
         }
-        //scanIncBlock<minInd>((typename minInd::RedElTP*) tempRes,(unsigned int) idx);
-        ChangeTuple best = minInd::remVolatile(tempRes[0]);
+        ChangeTuple best = tempRes[0];
+        //ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
         i = best.i + 1;
