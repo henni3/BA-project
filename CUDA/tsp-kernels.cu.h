@@ -98,7 +98,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         if ( idx == blockDim.x-1 ){
             tempRes[0] = elm;
         }
-        ChangeTuple best = tempRes[0];
+        ChangeTuple best = ChangeTuple(tempRes[0]);
         //ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
