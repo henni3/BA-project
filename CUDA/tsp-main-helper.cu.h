@@ -91,7 +91,6 @@ void run_original(unsigned short *tourMatrixIn_d,
     //Create tour matrix column wise
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
-    cudaFree(tourMatrixIn_d);
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
