@@ -288,7 +288,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     __syncthreads(); //added
     gettimeofday(&endFinal, NULL);
     if(idx == 0){
-        int elapsed
+        int elapsed;
         timeval_subtract(&diffIni, &endIni, &startIni);
         timeval_subtract(&diffFor, &endFor, &startFor);
         timeval_subtract(&diffRed, &endRed, &startRed);
