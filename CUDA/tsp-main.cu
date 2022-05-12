@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
-        cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
+        //cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
         //int re_sum = 0;
         //for (int i = 0; i < restarts; i++){
         //    re_sum += host_restart[i];
