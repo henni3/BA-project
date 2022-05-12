@@ -407,6 +407,33 @@ void run(char *filename, int tours, int SMs)
   if (cudaSuccess != cudaMalloc((void **)&lgdist, sizeof(int) * cities * cities)) fprintf(stderr, "could not allocate gdist\n");  CudaTest("couldn't allocate gdist");
   if (cudaSuccess != cudaMemcpy(lgdist, dist, sizeof(int) * cities * cities, cudaMemcpyHostToDevice)) fprintf(stderr, "copying of dist to device failed\n");  CudaTest("dist copy to device failed");
 
+  //dry run
+  ResetKernel<<<SMs*3, 512>>>();
+  best = 0x7fffffff;
+  tour = 0;
+  if (cities <= 110) {
+    blocks = min(tours, TOURS110);
+    while (tours > tour) {
+      Reset110Kernel<<<1, 1>>>(SMs*2*512);
+      TSP110Kernel<<<SMs, 1024>>>(lgdist, lgresult, tour, cities, blocks, lgtours);
+
+      if (cudaSuccess != cudaMemcpy(result, lgresult, sizeof(int) * 2, cudaMemcpyDeviceToHost)) fprintf(stderr, "copying of result from device failed\n");  CudaTest("result copy from device failed");
+      if (best > result[0]) {
+        best = result[0];
+        if (cudaSuccess != cudaMemcpy(result, lgresult, sizeof(int) * (cities + 3), cudaMemcpyDeviceToHost)) fprintf(stderr, "copying of result from device failed\n");  CudaTest("result copy from device failed");
+      }
+
+      tour += blocks;
+      blocks = min(tours-tour, TOURS110);
+    }
+  }
+  else {
+    fprintf(stderr, "city count must be <= 110\n");
+    exit(-1);
+  }
+
+  cudaDeviceSynchronize();
+
   //time taking
   int elapsed;
   struct timeval start, end, diff;
