@@ -158,7 +158,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    ChangeTuple tmpMinChange;
+    ChangeTuple tmpMinChange = ChangeTuple();
 
     //copy gloabal dist to shared memory
     for (int t = idx; t < cities * cities; t += block_size) {
