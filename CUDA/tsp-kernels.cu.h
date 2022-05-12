@@ -148,12 +148,14 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
     volatile ChangeTuple* minChange = tempRes + block_size; //minChange holds the current best change (cos?)
-     volatile uint32_t* shared_Dist = (volatile uint32_t*) (minChange + 1);       
+    volatile uint32_t* shared_Dist = (volatile uint32_t*) (minChange + 1);       
     volatile unsigned short* tour =
                  (volatile unsigned short*)(shared_Dist + cities * cities);  //tour for this climber
     if(minChange == NULL){
         printf("pointer error\n");
     }
+
+    ChangeTuple tmpMinChange;
 
     //copy gloabal dist to shared memory
     for (int t = idx; t < cities * cities; t += block_size) {
@@ -166,18 +168,14 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     }
 
     //initialize minChange to shared memory
-    if(idx == 0){
-        minChange[0] = ChangeTuple();
-        minChange[0].change = -1;
-    }
-    
+    tmpMinChange.change = -1;
+
     __syncthreads();
 
     //Computation for one climber
-    while(minChange[0].change < 0){
-        if(idx < 1){
-            minChange[0] = ChangeTuple();
-        }
+    while(tmpMinChange.change < 0){
+        tmpMinChange = ChangeTuple();
+
         // reset each threads local min change
         localMinChange = ChangeTuple();
         
@@ -209,7 +207,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
             tempRes[idx].i = localMinChange.i;
             tempRes[idx].j = localMinChange.j;
         }
-        __syncthreads();
+        //__syncthreads();
         
         //Preparation for the reduction on all local minimum changes.
         int num_elems, num_threads;
@@ -223,11 +221,10 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         while(num_threads != num_elems){
+            __syncthreads();
             if (idx < num_threads){
                 tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
             }
-            __syncthreads();
-
             num_elems = num_threads;
             num_threads= (num_elems + 1)/ 2;
         }
@@ -246,11 +243,9 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
             tour[j - (t - i)] = temp;
         }
         
-        if(idx < 1){
-            minChange[idx].change = tempRes[idx].change;
-            minChange[idx].j = tempRes[idx].j;
-            minChange[idx].i = tempRes[idx].i;
-        }
+        tmpMinChange.change = tempRes[idx].change;
+        tmpMinChange.j = tempRes[idx].j;
+        tmpMinChange.i = tempRes[idx].i;
         __syncthreads();
     }
     
