@@ -246,9 +246,9 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
             tour[j - (t - i)] = temp;
         }
         
-        tmpMinChange.change = tempRes[idx].change;
-        tmpMinChange.j = tempRes[idx].j;
-        tmpMinChange.i = tempRes[idx].i;
+        tmpMinChange.change = tempRes[0].change;
+        tmpMinChange.j = tempRes[0].j;
+        tmpMinChange.i = tempRes[0].i;
         __syncthreads();
     }
     
