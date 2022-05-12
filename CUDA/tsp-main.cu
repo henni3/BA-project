@@ -44,13 +44,13 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
-    int* restart_array;
-    cudaMalloc((void**)&restart_array, restarts * sizeof(int));
+    //int* restart_array;
+    //cudaMalloc((void**)&restart_array, restarts * sizeof(int));
 
     //CPU malloc
     glo_res_h = (int*) malloc(2*restarts*sizeof(int));
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    int* host_restart = (int*) malloc(restarts * sizeof(int));
+    //int* host_restart = (int*) malloc(restarts * sizeof(int));
 
     //testing timer for cities 100 program
     REPEAT = 0;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
         twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                         is_d, glo_results, 
-                                                        cities, totIter, restart_array);
+                                                        cities, totIter);
         //run reduction of all local optimum cost across multiple blocks
         num_blocks_gl_re = (num_blocks_tour+1)/2;
         mult_sharedMem = (block_size*2) * sizeof(int);
@@ -86,12 +86,12 @@ int main(int argc, char* argv[]) {
         //print results
         cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
         cudaMemcpy(host_restart, restart_array, restarts* sizeof(int),cudaMemcpyDeviceToHost);
-        int re_sum = 0;
-        for (int i = 0; i < restarts; i++){
-            re_sum += host_restart[i];
-        }
-        float average = (float) re_sum /  (float) restarts;
-        printf("average nr. of restarts is %f, for %d climbers \n", average, restarts);
+        //int re_sum = 0;
+        //for (int i = 0; i < restarts; i++){
+        //    re_sum += host_restart[i];
+        //}
+        //float average = (float) re_sum /  (float) restarts;
+        //printf("average nr. of restarts is %f, for %d climbers \n", average, restarts);
 
         
         //tour matrix row wise
@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
     }
     printf("]\n");
 
-    free(host_restart);
-    cudaFree(restart_array);
+    //free(host_restart);
+    //cudaFree(restart_array);
     cudaFree(tourMatrixIn_d);
     free(distMatrix); free(tourMatrix_h); free(glo_res_h); 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); 

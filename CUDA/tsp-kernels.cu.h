@@ -5,7 +5,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int* glo_is,
                           int* glo_result, 
                           int cities, 
-                          int totIter, int* re_array){
+                          int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change;
@@ -38,7 +38,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         if(idx < 1){
-            repeats++;
+           //repeats++;
             minChange[0] = ChangeTuple();
         }
         // reset each threads local min change
@@ -127,7 +127,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-        re_array[blockIdx.x] = repeats;
+        //re_array[blockIdx.x] = repeats;
     }
 }
 
