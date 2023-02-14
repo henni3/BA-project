@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
         cudaDeviceSynchronize();
         gettimeofday(&end, NULL);
 
-    //Testing the program version where the i and j indexes are calculated
+    //Testing the program version where the i and j indexes are calculated (version 3)
     }else{
         //Dry run program
         run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
