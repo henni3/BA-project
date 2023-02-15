@@ -44,21 +44,23 @@ void init(int block_size,
     mkFlags<<< num_blocks_shp, block_size >>>(len, index_shp_sc_d, flags_d); // was totIter
 
     cudaMalloc((void**)&flag_int,       totIter*sizeof(int));
+    // Convert from char to int.
     convert<<< num_blocks, block_size >>> (flag_int, flags_d, totIter);
     
-    //Make is array
+    //Make i's array
     // 1. scan the flag array
     scanInc<Add<int> > (block_size, totIter, is_d, flag_int, d_tmp_int);
     // 2. minus each element of is_d array with one to get the final is_d array
     minusOne<<< num_blocks, block_size >>> (totIter, is_d);
  
-    //Make js array
+    //Make j's array
     // 1. create an array of ones
     replicate1<<< num_blocks, block_size >>> (totIter, oneArr);
     // 2. segmented scan on the flag array
     sgmScanInc<Add<int> > (block_size, totIter, js_d, flags_d, oneArr, seg_sc_tmp_int, d_tmp_flag);
     // 3. minus each element of js_d array with one to get the final js_d array
     minusOne<<< num_blocks, block_size >>> (totIter, js_d);
+    // Store both the information of i's and j's in one array.
     zip<<< num_blocks, block_size>>> (is_d,js_d,totIter);
     
     //free cuda memory
