@@ -78,7 +78,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
         }
         __syncthreads();
     }
-    return result_arr[idx].change;
+    return result_arr[0].change;
 }
 
 //Random tour generator for all restarts, basen on SPLASH-2 code

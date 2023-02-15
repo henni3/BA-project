@@ -3,8 +3,6 @@
 #include "constants.cu.h"
 #include <stdio.h>
 
-//#define DEBUG 0
-
 __global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
                           int* glo_is,
@@ -14,7 +12,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change;
-    int repeats = 0;
+    //int repeats = 0;
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
@@ -22,11 +20,11 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     volatile ChangeTuple* minChange = tempRes + block_size;        //minChange holds the current best change
     volatile unsigned short* tour =
                  (volatile unsigned short*)(minChange + 1);  //tour for this climber
-//#if DEBUG
+
     if(minChange == NULL){
         printf("pointer error\n");
     }
-//#endif
+
     //Preparing data for the 2 opt algorithm
     int ip1, jp1;
 
