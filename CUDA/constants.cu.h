@@ -12,7 +12,7 @@
 //#define WORKGROUP_SIZE      128
 //#define MAX_WORKGROUP_SIZE  1024
 
-#define GPU_RUNS            100
+#define GPU_RUNS            10
 #define NUM_BLOCKS_SCAN     1024
 #define ELEMS_PER_THREAD    8
 #define TILE                32
