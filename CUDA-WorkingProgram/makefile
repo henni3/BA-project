@@ -1,5 +1,5 @@
 COMPILER?=nvcc
-OPT_FLAGS?=-O3 -arch=compute_35 --use_fast_math
+OPT_FLAGS?=-O3 --use_fast_math
 LDFLAGS?=-lOpenCL
 
 TEST_TSP=test-tsp
@@ -21,3 +21,4 @@ all: $(TEST_TSP) $(TEST_TSP100)
 
 clean:
 	rm -f $(TEST_TSP) $(TEST_TSP100)
+
