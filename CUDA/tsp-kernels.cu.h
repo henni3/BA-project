@@ -41,6 +41,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     __syncthreads();
     //Computation for one climber
     while(minChange[0].change < 0){
+        __syncthreads();
         if(idx < 1){
            //repeats++;
             minChange[0] = ChangeTuple();
