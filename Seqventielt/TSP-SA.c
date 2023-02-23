@@ -1,5 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "tsp_data.h"
+#include <time.h>
+
+// creating tours
+void createTour(int* tour, int cities){
+    for(int t = 1; t < cities; t++){
+        tour[t] = t;
+        //printf ("tour creatinon yeilds %d \n", tour[t]);
+    }
+    tour[0] = 0;
+
+    int randNumFrom, randNumTo, to;
+    for (int i = 0; i < cities*10; i++) {
+        randNumFrom = rand() % cities;
+        randNumTo = rand() % cities;
+        if (randNumFrom && randNumTo){
+        to = tour[randNumTo];
+        tour[randNumTo] = tour[randNumFrom];
+        tour[randNumFrom] = to;
+        }
+    }
+    tour[cities] = tour[0];
+}
 
 //Two optimization swapping
 void twoOptSwap(int* itTour, int i, int j){
@@ -22,84 +43,137 @@ int change (int** distM, int* tour, int i, int j){
     return (distM[ti][tj] + distM[tiplus1][tjplus1] - (distM[ti][tiplus1] + distM[tj][tjplus1]));
 }
 
+int fitness (int*distM, int* tour, int cities) {
+    int cost = 0;
+    for (int i = 0; i < cities; i++) {
+        cost += distM[cities * tour[i] + tour[i+1]];
+    }
+    return cost;
+}
+
 //Borrowed from https://stackoverflow.com/questions/1202687/how-do-i-get-a-specific-range-of-numbers-from-rand
 //Compute random number in a specific range
-int random(int min, int max){
+int randomRange(int min, int max){
    return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
 
 // Simulated Annealing
-int* simulatedAnnealing(int** distM, int* currTour, int cities, int maxIter){
+int simulatedAnnealing(int* distM, int* currTour, int cities){
     //initialising
     int iter, i, j, currChange, optChange;
-    double m, temperature;
+    double c, temperature;
     int* optTour = malloc((cities + 1 ) * sizeof(int));
-    m = (double)(cities * (cities-1))/2; //give another name
-    temperature = pow(m,3.0);
+    int edges = (cities * (cities-1))/2; //give another name
+    temperature = pow(10,3);
+    int start_temp = pow(edges,3);
     iter = 0;
+    int equal_counter = 0;
     //compute simulated annealing
-    while(iter < maxIter){
+    while(temperature > 0.0025){
         if(RAND_MAX < cities){ //should we have an alternativ way to handle this problem?
             printf("Usage: number of cities (%d) is larger than RAND_MAX (%d)\n", cities, RAND_MAX);
             exit(1);
         }
         //Tjek efter om denne måde er den bedste måde at lave random på
-        i = random(0,(cities - 3)); //select random city
-        j = random(i+2,(cities - 1)); //select random city
-        if(i =! j) { //Det gør de ikke med ovenstående måde at finde i og j
+        i = randomRange(0,(cities - 1)); //select random city
+        j = randomRange(0,(cities - 1)); //select random city
+        if(i != j) { //Det gør de ikke med ovenstående måde at finde i og j
             memcpy(optTour, currTour, sizeof(int) * (cities + 1));
             twoOptSwap(optTour, i, j);
-            currChange = change(distM, currTour, i, j);
-            optChange = change(distM, optTour, i, j);
+            //currChange = change(distM, currTour, i, j);
+            //optChange = change(distM, optTour, i, j);
             //double check this is correct
-            if(currChange > optChange){
+            int currFit = fitness(distM, currTour, cities);
+            int newFit = fitness(distM, optTour, cities);
+            if( currFit > newFit ){
                 memcpy(currTour, optTour, sizeof(int) * (cities + 1));
-            }else{
+                equal_counter = 0;
+            }
+            else if (currFit == newFit)
+            {
+                equal_counter++;
+                if(equal_counter >= cities*10) {
+                    //break;
+                }
+            }
+            
+            else{
+                c = (double)rand() / (float)RAND_MAX;
+                int costDiff = newFit - currFit;
+                double check = exp(- (double)costDiff / temperature);
+                if (c < check) {
+                    memcpy(currTour, optTour, sizeof(int) * (cities + 1));
+                    equal_counter = 0;
+                }
 
             }
             
         }
+        iter++;
+        double factor = 1.56E5;
+        double alpha =  (factor * sqrt((double) cities)) / (factor * cities);
+        temperature = temperature * alpha;
+        if(iter % 10000 == 0) {
+            printf("iterations is %d, with cost %d", iter, fitness(distM,currTour, cities));
+            printf("and temperature %f \n", temperature);
+        }
 
     }
-    free(optPath);
+    int finalCost = fitness(distM,currTour, cities);
+    printf("cost of tour %d after simulated annelaing with %d iterations \n", finalCost, iter);
+    free(optTour);
+    return iter;
 
 }
 
-int main() {
-    int row = 6;
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        exit(1);
+    }
+    srand(time(0));
+    char* fileName = argv[1];
+    int* distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    int cities = fileToDistM(fileName, distMatrix);
+    printf("number of cities is %d \n", cities);
+    if( cities > MAXCITIES){
+        printf("too many cities :( \n");
+        exit(1);
+    }
+    distMatrix = (int*) realloc(distMatrix,sizeof(int) * cities * cities);
+    /*int row = 6;
     int column = 6;
     int cities = column - 1;
     int** distM = malloc(row*sizeof(int*));
     for (int i = 0; i < row; i++) {
         distM[i] = malloc(column * sizeof(int));
     }
-   
     memcpy(distM[0], (int[6]) {0,1,2,3,4,5}, sizeof(int) * (column));
     memcpy(distM[1], (int[6]) {1,0,4,6,8,3}, sizeof(int) * (column));
     memcpy(distM[2], (int[6]) {2,4,0,4,5,2}, sizeof(int) * (column));
     memcpy(distM[3], (int[6]) {3,6,4,0,2,3}, sizeof(int) * (column));
     memcpy(distM[4], (int[6]) {4,8,5,2,0,4}, sizeof(int) * (column));
     memcpy(distM[5], (int[6]) {5,3,2,3,4,0}, sizeof(int) * (column));
-
+    */
     int* tour = malloc((cities + 1 ) * sizeof(int));
     createTour(tour, cities);
-    int * opt_tour = twoOptMove(distM, tour, cities);
+    printf("tour is:");
+    for (int i =0; i < cities + 1 ; i++) {
+        printf("%d, ", tour[i]);
+    }
+    printf("\n done");
+
+    //int * opt_tour = twoOptMove(distM, tour, cities);
     int oldCost = 0;
     int newCost = 0;
-    for (int i = 0; i < cities +1 ; i++ ) {
-        if(i < cities){
-            oldCost += distM[tour[i]][tour[i+1]];
-            newCost += distM[opt_tour[i]][opt_tour[i+1]];
-            //printf("new_cost is = %d \n",newCost);
-            //printf("distM: %d\n", distM[opt_tour[i]][opt_tour[i+1]]);
-        }
-        printf("%d is City %d \n", i, opt_tour[i]);
+    simulatedAnnealing(distMatrix, tour, cities);
+    printf("tour after annealing is:");
+    for (int i =0; i < cities + 1 ; i++) {
+        printf("%d, ", tour[i]);
     }
-    printf("Old cost: %d, new cost: %d\n", oldCost, newCost);
-    for (int i = 0; i < row; i++) {
-        free(distM[i]);
-    }
-    free(opt_tour);
-    free(distM);
+    //for (int i = 0; i < row; i++) {
+    //    free(distM[i]);
+    //}
+    free(distMatrix);
     free(tour);
+    return 0;
 }
