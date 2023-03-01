@@ -14,7 +14,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int i, j, change, ip1, jp1;
     //int repeats = 0;
     ChangeTuple localMinChange;
-    ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
+    ChangeTuple maxValue = ChangeTuple(2147483647, 65535, 65535);
     
     //shared memory for both tour, minChange and tempRes
     extern __shared__ unsigned char totShared[];             
