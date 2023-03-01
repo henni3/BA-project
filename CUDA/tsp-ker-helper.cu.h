@@ -113,7 +113,21 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
     }
 }
 
+//Reduction on all the local minimum changes found by each thread
+//to find the best minimum change for this climber.
+__device__ void reduceLocalMinChange(int block_size, 
+                                    int idx, 
+                                    volatile ChangeTuple* tempRes){     
 
+    //Reduction on all the local minimum changes found by each thread
+    //to find the best minimum change for this climber.
+    for (int size = block_size >> 1; size > 0; size >>= 1 ){
+        if (idx < size) {
+            tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + size]);
+        }
+        __syncthreads();
+    }
+}
 
 
 /** Reduces all the local optimum cost to find the

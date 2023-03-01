@@ -11,22 +11,21 @@ __global__ void twoOptKer(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int i, j, change;
+    int i, j, change, ip1, jp1;
     //int repeats = 0;
     ChangeTuple localMinChange;
-    extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
-
+    ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
+    
+    //shared memory for both tour, minChange and tempRes
+    extern __shared__ unsigned char totShared[];             
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
-    volatile ChangeTuple* minChange = tempRes + block_size;        //minChange holds the current best change
+    volatile ChangeTuple* minChange = tempRes + block_size;                 //minChange holds the current best change
     volatile unsigned short* tour =
-                 (volatile unsigned short*)(minChange + 1);  //tour for this climber
+                 (volatile unsigned short*)(minChange + 1);                 //tour for this climber
 
     if(minChange == NULL){
         printf("pointer error\n");
     }
-
-    //Preparing data for the 2 opt algorithm
-    int ip1, jp1;
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
@@ -42,11 +41,11 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         __syncthreads();
-        if(idx < 1){
+        if(idx == 0){
            //repeats++;
             minChange[0] = ChangeTuple();
         }
-        // reset each threads local min change
+        //reset each threads local min change
         localMinChange = ChangeTuple();
         
         /***
@@ -71,39 +70,21 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             localMinChange = minInd::apply(localMinChange,check);
         }
         //Write each threads local minimum change (best change found)
-        //to the shared array tempRes. 
+        //to the shared array tempRes. If there are threads does not hold a
+        //calculated local minimum change (i.e. totIter < block_size), then
+        //write the maximum values to tempRes.
         if(idx < totIter){
-            //tempRes[idx].change = localMinChange.change;
-            //tempRes[idx].i = localMinChange.i;
-            //tempRes[idx].j = localMinChange.j;
             tempRes[idx] = ChangeTuple(localMinChange);
+        }else{
+            tempRes[idx] = maxValue;
         }
         __syncthreads();
         
-        //Preparation for the reduction on all local minimum changes.
-        int num_elems, num_threads;
-        if(totIter < block_size){
-            num_elems = totIter;
-        }else{
-            num_elems = block_size;
-        }
-        num_threads = (num_elems + 1 ) / 2;
-
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        while(num_threads != num_elems){
-            if (idx < num_threads){
-                tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-            }
-            __syncthreads();
+        reduceLocalMinChange(block_size, idx, tempRes);
 
-            num_elems = num_threads;
-            num_threads= (num_elems + 1)/ 2;
-        }
-        /*ChangeTuple elm  = scanIncBlock<minInd>(tempRes, idx);
-        if ( idx == blockDim.x-1 ){
-            tempRes[0] = elm;
-        }*/
+        //The best local minimum changes found is stored in variable best.
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
@@ -116,10 +97,10 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        if(idx < 1){
-            minChange[idx].change = tempRes[idx].change;
-            minChange[idx].j = tempRes[idx].j;
-            minChange[idx].i = tempRes[idx].i;
+        if(idx == 0){
+            minChange[0].change = tempRes[0].change;
+            minChange[0].j = tempRes[0].j;
+            minChange[0].i = tempRes[0].i;
         }
         __syncthreads();
     }
