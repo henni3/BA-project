@@ -14,7 +14,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int i, j, change, ip1, jp1;
     //int repeats = 0;
     ChangeTuple localMinChange;
-    ChangeTuple maxValue = ChangeTuple(2147483647, 65535, 65535);
+    ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
     
     //shared memory for both tour, minChange and tempRes
     extern __shared__ unsigned char totShared[];             
@@ -82,7 +82,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        reduceLocalMinChange(block_size, idx, tempRes);
+        //reduceLocalMinChange(block_size, idx, tempRes);
 
         //The best local minimum changes found is stored in variable best.
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
