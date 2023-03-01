@@ -5,7 +5,7 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s <block-size> <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities) or 3 (calculatedIandJ)>\n", argv[0]);
         exit(1);
     }
-    printf("Blocksize has to be a number of 2^x otherwise reduce does not work..");
+    printf("\nBlocksize has to be a number of 2^x otherwise reduce does not work..\n");
     // Collect input arguments
     int block_size = atoi(argv[1]);
     char* file_name = argv[2];
