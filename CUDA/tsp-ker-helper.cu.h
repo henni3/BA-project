@@ -173,12 +173,10 @@ __global__ void multBlockReduce(int* glo_result,
         //reduce on elements in shared memory (second layer to second 
         //last layer of reduce).
         for(int i = tot_threads; i > 1; i>>=1){
-            if(idx < i){
-                if(idx + i < n){
-                    if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
-                        sharedMem[idx*2] = sharedMem[(idx + i)*2];
-                        sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
-                    }
+            if(idx + i < n){
+                if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
+                    sharedMem[idx*2] = sharedMem[(idx + i)*2];
+                    sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
                 }
             }
             n = i;

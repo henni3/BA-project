@@ -69,14 +69,14 @@ void init(int block_size,
 }
 
 void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int restarts){
-    int num_blocks_gl_re = (num_blocks_tour+1)/2;
+    int num_blocks = (num_blocks_tour+1)/2;
     int mult_sharedMem = (block_size*2) * sizeof(int);
-    for(int i = num_blocks_gl_re; i > 1; i>>=1){
-        multBlockReduce<<<i, block_size, mult_sharedMem>>>(glo_results, restarts);
-        i++;
+    int num_elems = restarts;
+    while(num_elems > 1){
+        multBlockReduce<<<num_blocks, block_size, mult_sharedMem>>>(glo_results, num_elems);
+        num_elems = num_blocks;
+        num_blocks = (num_blocks + block_size-1)/block_size;
     }
-    //run reduction on the last block
-    multBlockReduce<<<1, block_size, mult_sharedMem>>>(glo_results, restarts);
 }
 
 void run_original(unsigned short *tourMatrixIn_d, 
