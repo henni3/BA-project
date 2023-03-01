@@ -21,8 +21,6 @@
 #define MULT                1103515245
 #define ADD                 12345
 #define MASK                0x7fffffff
-#define INT_MAX             0x7fffffff
-#define USHRT_MAX           0xffff
 
 
 typedef unsigned int uint32_t;
