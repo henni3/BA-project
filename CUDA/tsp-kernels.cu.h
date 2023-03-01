@@ -76,7 +76,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         if(idx < totIter){
             tempRes[idx] = ChangeTuple(localMinChange);
         }else{
-            tempRes[idx] = maxValue;
+            tempRes[idx] = ChangeTuple(maxValue);
         }
         __syncthreads();
         
