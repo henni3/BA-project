@@ -83,6 +83,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         reduceLocalMinChange(block_size, idx, tempRes);
+	if(idx < 1) {
+		printf("we get through the reduce");
+	}
 
         //The best local minimum changes found is stored in variable best.
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
