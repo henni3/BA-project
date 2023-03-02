@@ -129,6 +129,9 @@ __device__ void reduceLocalMinChange(int block_size,
             tempRes[idx] = ChangeTuple(best);        
             }
         __syncthreads();
+        if(size =< 1){
+            break;
+        }
     }
 }
 
