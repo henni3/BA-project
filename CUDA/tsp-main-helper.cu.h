@@ -64,7 +64,7 @@ void init(int block_size,
     zip<<< num_blocks, block_size>>> (is_d,js_d,totIter);
     
     //free cuda memory
-    cudaFree(index_shp_d);  cudaFree(index_shp_sc_d);
+    cudaFree(index_shp_d);  cudaFree(index_shp_sc_d); cudaFree(flag_int);
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
 }
 
