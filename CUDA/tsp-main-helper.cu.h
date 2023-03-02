@@ -90,6 +90,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
+    time = 12345;
     //Create tour matrix column wise
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
