@@ -83,7 +83,7 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
         reduceLocalMinChange(block_size, tempRes);
-        __syncthreads();
+
         //The best local minimum changes found is stored in variable best.
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
@@ -97,10 +97,13 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        if(idx == 0){
+        /*if(idx == 0){
             minChange[0].change = tempRes[0].change;
             minChange[0].j = tempRes[0].j;
             minChange[0].i = tempRes[0].i;
+        }*/
+        if(idx == 0){
+            minChange[0] = ChangeTuple(maxValue);
         }
         __syncthreads();
     }
