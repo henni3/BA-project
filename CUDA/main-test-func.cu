@@ -16,14 +16,14 @@ int main() {
     init(block_size, cities, totIter, is_d, js_d);
 
     cudaMemcpy(is_h, is_d, totIter*sizeof(uint32_t), cudaMemcpyDeviceToHost);
-    printf("i     j\n")
+    printf("i     j\n");
     for(int ind = 0; ind < totIter; ind++){
         int num = is_h[ind];
         i = num >> 16;
         j = (num & 0xffff) + i + 2;
         printf("%d     %d\n", i,j);
     }
-    printf("end\n")
+    printf("end\n");
 
     return 0;
 }
