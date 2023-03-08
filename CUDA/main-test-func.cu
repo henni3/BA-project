@@ -3,12 +3,13 @@
 int main() {
     initHwd();
 
-    //TEST: is i and j array correct?
-    int block_size, cities, totIter, *is_d, *js_d, *is_h, i, j;
-    block_size = 32;
-    cities = 5;
+    //TEST: is i and j array correct? Yes it is
+    int block_size, cities, totIter, *is_d, *js_d, *is_h, *isAndjs_d, i, j;
+    block_size = 1024;
+    cities = 65;
     totIter = ((cities-1) * (cities-2))/2;
 
+    cudaMalloc((void**)&isAndjs_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     is_h = (int*) malloc(totIter*sizeof(uint32_t));
