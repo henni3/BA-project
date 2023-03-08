@@ -4,7 +4,7 @@ int main() {
     initHwd();
 
     //TEST: is i and j array correct?
-    int block_size, cities, totIter, *is_d, *js_d, *is_h;
+    int block_size, cities, totIter, *is_d, *js_d, *is_h, i, j;
     block_size = 32;
     cities = 5;
     totIter = ((cities-1) * (cities-2))/2;
