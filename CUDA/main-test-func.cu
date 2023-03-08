@@ -9,7 +9,6 @@ int main() {
     cities = 609;
     totIter = ((cities-1) * (cities-2))/2;
 
-    cudaMalloc((void**)&isAndjs_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     is_h = (int*) malloc(totIter*sizeof(uint32_t));
@@ -26,7 +25,7 @@ int main() {
     }
     printf("end\n");*/
 
-    
+    cudaFree(is_d); cudaFree(js_d); free(is_h);
 
     return 0;
 }
