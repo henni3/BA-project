@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     printf("Distance matrix\n");
     for(int ind = 0; ind < cities; ind++){
         for(int indj = 0; indj < cities; indj++){
-            printf("%d, ", distMatrix[ind * cities + indj];)
+            printf("%d, ", distMatrix[ind * cities + indj]);
         }
         printf("\n");
     } 
