@@ -6,7 +6,7 @@ int main() {
     //TEST: is i and j array correct? Yes it is
     int block_size, cities, totIter, *is_d, *js_d, *is_h, *isAndjs_d, i, j;
     block_size = 1024;
-    cities = 65;
+    cities = 609;
     totIter = ((cities-1) * (cities-2))/2;
 
     cudaMalloc((void**)&isAndjs_d, totIter*sizeof(uint32_t));
