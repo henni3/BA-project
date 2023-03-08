@@ -4,6 +4,7 @@ LDFLAGS?=-lOpenCL
 
 TEST_TSP=test-tsp
 REP_TSP=rep-tsp
+TEST_FUNC=func-test
 .PHONY: clean all run
 
 default: compile run
