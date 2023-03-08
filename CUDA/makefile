@@ -8,7 +8,7 @@ REP_TSP=rep-tsp
 
 default: compile run
 
-compile: $(TEST_TSP) $(REP_TSP)
+compile: $(TEST_TSP) $(REP_TSP) $(TEST_FUNC)
 
 $(TEST_TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) tsp-main.cu
@@ -16,8 +16,11 @@ $(TEST_TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKe
 $(REP_TSP):dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-kernels.cu.h tsp-main-testing.cu tsp-main-helper.cu.h tsp-ker-helper.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(REP_TSP) tsp-main-testing.cu
 
-all: $(TEST_TSP) $(REP_TSP)
+$(REP_TSP):dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-kernels.cu.h main-test-fun.cu tsp-main-helper.cu.h tsp-ker-helper.cu.h
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST_FUNC) main-test-func
+
+all: $(TEST_TSP) $(REP_TSP) $(TEST_FUNC)
 
 
 clean:
-	rm -f $(TEST_TSP) $(REP_TSP)
+	rm -f $(TEST_TSP) $(REP_TSP) $(TEST_FUNC)
