@@ -37,8 +37,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     distMatrix = (uint32_t*) realloc(distMatrix,sizeof(uint32_t) * cities * cities);
-    cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
-    cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
+    
     
     //print distance matrix
     printf("Distance matrix\n");
@@ -49,6 +48,9 @@ int main(int argc, char* argv[]) {
         printf("\n");
     }
     printf("end");
+ 
+    cudaMalloc((void**)&kerDist, cities*cities*sizeof(uint32_t));
+    cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
         
     
     //Calculate total number of iterations
