@@ -41,11 +41,10 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(kerDist, distMatrix, cities*cities*sizeof(uint32_t), cudaMemcpyHostToDevice);
     
     //print distance matrix
-    //print distance matrix
     printf("Distance matrix\n");
-    for(int ind = 0; ind < cities; ind++){
-        for(int indj = 0; indj < cities; indj++){
-            printf("%d, ", distMatrix[ind * cities + indj]);
+    for(int i = 0; i < cities; i++){
+        for(int j = 0; j < cities; j++){
+            printf("%d, ", distMatrix[i * cities + j]);
         }
         printf("\n");
     }
