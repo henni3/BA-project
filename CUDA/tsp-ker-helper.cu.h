@@ -85,7 +85,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
 __global__ void createToursColumnWise(unsigned short* tourMatrix,
-                            int* toMat
+                            int* toMat,
                             int cities,
                             int restarts,
                             int time){
