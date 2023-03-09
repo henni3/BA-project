@@ -29,12 +29,12 @@ int main() {
     printf("end\n");*/
 
     
-    //TEST: Does createTours work correctly?
+    //TEST: Does createTours work correctly? Nope
     cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
     tourMatrixIn_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    int time = 87645688;
+    int time = randomTime.tv_usec;
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     
     cudaMemcpy(tourMatrixIn_h, tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
