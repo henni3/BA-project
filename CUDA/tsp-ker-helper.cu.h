@@ -85,7 +85,7 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
 __global__ void createToursColumnWise(unsigned short* tourMatrix,
-                            int* toMat,
+                            //int* toMat,
                             int cities,
                             int restarts,
                             int time){
@@ -99,8 +99,8 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         //The last city in all tours is the same as the first (which is city 0).
         tourMatrix[restarts * cities + glo_id] = 0;
         
-        toMat[restarts * 0 + glo_id] = 0;
-        toMat[restarts * cities + glo_id] = 0;
+        //toMat[restarts * 0 + glo_id] = 0;
+        //toMat[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
         rand = glo_id + blockIdx.x + time;
@@ -110,7 +110,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             if(to <= 0){
                 to = 1;
             }
-            toMat[restarts * i + glo_id] = to;
+            //toMat[restarts * i + glo_id] = to;
             temp = tourMatrix[restarts * i + glo_id];
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
