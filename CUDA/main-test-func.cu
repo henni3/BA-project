@@ -31,7 +31,7 @@ int main() {
     
     //TEST: Does createTours work correctly?
     cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
-    tourMatrixIn_h = (int*) malloc((cities+1)*restarts*sizeof(unsigned short));
+    tourMatrixIn_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     int num_blocks_tour = (restarts + block_size-1)/block_size; 
     int time = 4000;
