@@ -40,7 +40,7 @@ int main() {
     //gettimeofday(&randomTime, NULL);
     //int time = randomTime.tv_usec;
     int time = 4000;
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, to_Matrix_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     
     cudaMemcpy(tourMatrixIn_h, tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     cudaMemcpy(to_Matrix_h, to_Matrix_d, (cities+1)*restarts*sizeof(int), cudaMemcpyDeviceToHost);
@@ -54,14 +54,14 @@ int main() {
     }
     printf("end");
 
-    printf("To matrix\n");
+    /*printf("To matrix\n");
     for(int i = 0; i < cities+1; i++){
         for(int j = 0; j < restarts; j++){
             printf("%d, ", to_Matrix_h[i * restarts + j]);
         }
         printf("\n");
     }
-    printf("end");
+    printf("end");*/
 
 
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixIn_d), cudaFree(to_Matrix_d);

@@ -91,7 +91,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    //createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -117,7 +117,7 @@ void run_100cities(unsigned short *tourMatrixIn_d,
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    //createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -145,7 +145,7 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    //createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
