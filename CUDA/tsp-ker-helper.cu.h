@@ -106,10 +106,10 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             if (to <= 0){
                 to = 1;
             }
-            tourMatrix[restarts * i + glo_id] = to;
-            /*temp = tourMatrix[restarts * i + glo_id];
+            //tourMatrix[restarts * i + glo_id] = to;
+            temp = tourMatrix[restarts * i + glo_id];
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
-            tourMatrix[restarts * to + glo_id] = temp;*/
+            tourMatrix[restarts * to + glo_id] = temp;
         }
     }
 }
