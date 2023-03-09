@@ -5,7 +5,8 @@ int main() {
 
     //TEST: is i and j array correct? Yes it is
     int block_size, cities, totIter, restarts;
-    int *is_d, *js_d, *is_h, *tourMatrixIn_d, *tourMatrixIn_h;
+    int *is_d, *js_d, *is_h;
+    unsigned short *tourMatrixIn_d, *tourMatrixIn_h;
     block_size = 32;
     cities = 5;
     restarts = 5;
