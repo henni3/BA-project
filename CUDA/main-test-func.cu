@@ -3,15 +3,15 @@
 int main() {
     initHwd();
 
-    //TEST: is i and j array correct? Yes it is
     int block_size, cities, totIter, restarts;
     int *is_d, *js_d, *is_h;
     unsigned short *tourMatrixIn_d, *tourMatrixIn_h;
-    block_size = 32;
+    block_size = 1024;
     cities = 5;
     restarts = 5;
     totIter = ((cities-1) * (cities-2))/2;
 
+    //TEST: is i and j array correct? Yes it is
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     is_h = (int*) malloc(totIter*sizeof(uint32_t));
@@ -34,7 +34,7 @@ int main() {
     tourMatrixIn_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     int num_blocks_tour = (restarts + block_size-1)/block_size; 
-    int time = 4000;
+    int time = 87645688;
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     
     cudaMemcpy(tourMatrixIn_h, tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
