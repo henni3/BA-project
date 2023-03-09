@@ -98,18 +98,18 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         //The last city in all tours is the same as the first (which is city 0).
         tourMatrix[restarts * cities + glo_id] = 0;
         
-        /*//Randomize each tour
+        //Randomize each tour
         rand = glo_id + blockIdx.x + time;
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
-            to = rand % cities;
+            to = rand % (cities-1);
             if (to <= 0){
                 to = 1;
             }
             temp = tourMatrix[restarts * i + glo_id];
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
-        }*/
+        }
     }
 }
 
