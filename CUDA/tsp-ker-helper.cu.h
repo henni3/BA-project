@@ -84,12 +84,12 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
-__global__ void createToursColumnWise(unsigned short* tourMatrix, 
+__global__ void createToursColumnWise(unsigned short* tourMatrix,
+                            int* toMat
                             int cities,
                             int restarts,
                             int time){
     int rand, glo_id, temp, to;
-    //unsigned short yo;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
         //Initiate all tours from 0 to cities
@@ -99,18 +99,20 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         //The last city in all tours is the same as the first (which is city 0).
         tourMatrix[restarts * cities + glo_id] = 0;
         
+        toMat[restarts * 0 + glo_id] = 0;
+        toMat[restarts * cities + glo_id] = 0;
+        
         //Randomize each tour
         rand = glo_id + blockIdx.x + time;
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
-            //yo = (unsigned short) rand % cities;
             to = rand % cities;
             if (to <= 0){
                 to = 1;
             }else if(to > (cities-1)){
                 to = cities-1;
             }
-            //tourMatrix[restarts * i + glo_id] = yo;
+            toMat[restarts * i + glo_id] = to;
             temp = tourMatrix[restarts * i + glo_id];
             tourMatrix[restarts * i + glo_id] = tourMatrix[restarts * to + glo_id];
             tourMatrix[restarts * to + glo_id] = temp;
