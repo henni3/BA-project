@@ -34,6 +34,7 @@ int main() {
     tourMatrixIn_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
 
     int num_blocks_tour = (restarts + block_size-1)/block_size; 
+    struct timeval randomTime = gettimeofday(&randomTime, NULL);
     int time = randomTime.tv_usec;
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     
