@@ -105,6 +105,8 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
             to = rand % cities;
             if (to <= 0){
                 to = 1;
+            }else if(to > (cities-1)){
+                to = cities-1;
             }
             //tourMatrix[restarts * i + glo_id] = to;
             temp = tourMatrix[restarts * i + glo_id];
