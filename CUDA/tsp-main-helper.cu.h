@@ -90,6 +90,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
+    time = 12345;
     //Create tour matrix column wise
     createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
@@ -101,6 +102,15 @@ void run_original(unsigned short *tourMatrixIn_d,
     twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
                                                     is_d, glo_results, 
                                                     cities, totIter);
+
+    int* host_tmp = (int*)malloc(restarts*2*sizeof(int));
+    cudaMemcpy(host_tmp, glo_results, restarts*2*sizeof(int), cudaMemcpyDeviceToHost);
+    printf("\n\nPath lengths before reduce:\n");    
+    for(int i=0; i<restarts; i++) {
+        printf("%d, ", host_tmp[2*i]);
+    }
+    printf("\n\n");
+
     //run reduction of all local optimum cost across multiple blocks
     multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
 }
