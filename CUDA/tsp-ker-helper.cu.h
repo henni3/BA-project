@@ -85,7 +85,6 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
 __global__ void createToursColumnWise(unsigned short* tourMatrix,
-                            //int* toMat,
                             int cities,
                             int restarts,
                             int time){
@@ -98,9 +97,6 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         }
         //The last city in all tours is the same as the first (which is city 0).
         tourMatrix[restarts * cities + glo_id] = 0;
-        
-        //toMat[restarts * 0 + glo_id] = 0;
-        //toMat[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
         rand = glo_id + blockIdx.x + time;
@@ -123,11 +119,15 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
 __device__ void reduceLocalMinChange(int block_size, 
                                     volatile ChangeTuple* tempRes){
     int idx = threadIdx.x;
-    ChangeTuple elem1, elem2, best;
+    //ChangeTuple elem1, elem2, best;
     //Reduction on all the local minimum changes found by each thread
     //to find the best minimum change for this climber.
     for (int size = block_size >> 1; size > 0; size >>= 1 ){
-        if (idx < size) {
+        if(idx < size){
+            tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + size]);
+        }
+        __syncthreads();
+        /*if (idx < size) {
             elem1 = minInd::remVolatile(tempRes[idx]);
             elem2 = minInd::remVolatile(tempRes[idx + size]);
             best = minInd::apply(elem1,elem2);
@@ -136,7 +136,7 @@ __device__ void reduceLocalMinChange(int block_size,
         __syncthreads();
         if(size <= 1){
             break;
-        }
+        }*/
     }
 }
 
