@@ -42,7 +42,12 @@ int main(int argc, char* argv[]) {
         
     
     //Calculate total number of iterations
-    totIter = ((cities-1) * (cities-2))/2;
+    totIter = ((cities-1) * (cities-2))>>1;
+    //Calculate global results array size
+    int num_blocks_res = (((restarts + block_size-1)/block_size)+1)>>1;
+    int glo_res_size = num_blocks_res * 2 * block_size;
+    printf("Size of glo_res_size: %d\n", glo_res_size);
+
 
     //Cuda malloc
     cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));

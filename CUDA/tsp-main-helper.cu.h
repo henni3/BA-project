@@ -68,8 +68,8 @@ void init(int block_size,
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
 }
 
-void multBlockRed(int *glo_results, int num_blocks_tour, int block_size, int restarts){
-    int num_blocks = (num_blocks_tour+1)/2;
+void multBlockRed(int *glo_results, int num_blocks_restarts, int block_size, int restarts){
+    int num_blocks = (num_blocks_restarts+1)/2;
     int mult_sharedMem = (block_size*2) * sizeof(int);
     int num_elems = restarts;
     while(num_elems > 1){
@@ -83,15 +83,15 @@ void run_original(unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    int num_blocks_tour, time;
+    int num_blocks_restarts, time;
     struct timeval randomTime;
 
     //Prepare for column wise tour
-    num_blocks_tour = (restarts + block_size-1)/block_size; 
+    num_blocks_restarts = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -102,22 +102,22 @@ void run_original(unsigned short *tourMatrixIn_d,
                                                     is_d, glo_results, 
                                                     cities, totIter);
     //run reduction of all local optimum cost across multiple blocks
-    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
+    multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
 void run_100cities(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    int num_blocks_tour, time;
+    int num_blocks_restarts, time;
     struct timeval randomTime;
 
     //Prepare for column wise tour
-    num_blocks_tour = (restarts + block_size-1)/block_size;
+    num_blocks_restarts = (restarts + block_size-1)/block_size;
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -130,22 +130,22 @@ void run_100cities(unsigned short *tourMatrixIn_d,
                                                     cities, totIter);
 
     //Run reduction of all local optimum cost across multiple blocks
-    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
+    multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
 void run_calculatedIandJ(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    int num_blocks_tour, time;
+    int num_blocks_restarts, time;
     struct timeval randomTime;
 
     //Prepare for column wise tour
-    num_blocks_tour = (restarts + block_size-1)/block_size; 
+    num_blocks_restarts = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
-    createToursColumnWise<<<num_blocks_tour, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -156,5 +156,5 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
                                                     glo_results, 
                                                     cities, totIter);
     //Run reduction of all local optimum cost across multiple blocks
-    multBlockRed(glo_results, num_blocks_tour, block_size, restarts);
+    multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }

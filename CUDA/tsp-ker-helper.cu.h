@@ -139,7 +139,14 @@ __global__ void multBlockReduce(int* glo_result,
     idx = threadIdx.x;
     glo_id = idx + (blockDim.x * 2) * blockIdx.x;
     
-    //Find limit of how many elements are to be reduced by this block.
+    /*if(idx < totIter){
+        tempRes[idx] = ChangeTuple(localMinChange);
+    }else{
+        tempRes[idx] = ChangeTuple(maxValue);
+    }
+
+
+    *///Find limit of how many elements are to be reduced by this block.
     if(num_elem < ((blockDim.x * 2) * (blockIdx.x + 1))){
         n = num_elem - (blockDim.x * 2) * blockIdx.x;
     }else{
