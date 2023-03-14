@@ -135,18 +135,69 @@ __device__ void reduceLocalMinChange(int block_size,
  * **/
 __global__ void multBlockReduce(int* glo_result, 
                                 int num_elem){
-    int n, idx, glo_id, tot_threads;
+    int n, idx, glo_id, block_size, elem1, elem2;
     idx = threadIdx.x;
-    glo_id = idx + (blockDim.x * 2) * blockIdx.x;
+    block_size = blockDim.x;
+    glo_id = idx + (block_size * 2) * blockIdx.x;
+    extern __shared__ int sharedMem[];    //shared memory
     
-    /*if(idx < totIter){
-        tempRes[idx] = ChangeTuple(localMinChange);
+    //Padding with max integer value
+    /*if(glo_id > num_elems){
+        glo_result[glo_id*2] = INT_MAX;
+        glo_result[(glo_id + tot_threads)*2] = INT_MAX;
+    }else if((glo_id + tot_threads) > num_elems){
+        glo_result[(glo_id + tot_threads)*2] = INT_MAX;
+    }*/
+
+    
+
+
+    /*if(glo_id > num_elems){
+        int elem1 = INT_MAX;
+        int elem2 = INT_MAX;
+    }else if((glo_id + tot_threads) > num_elems){
+        int elem1 = glo_result[glo_id*2];
+        int elem2 = INT_MAX;
     }else{
-        tempRes[idx] = ChangeTuple(maxValue);
+        int elem1 = glo_result[glo_id*2];
+        int elem2 = glo_result[(glo_id + tot_threads)*2];
+    }*/
+
+    if(glo_id > num_elems){
+        sharedMem[idx*2] = INT_MAX;
+        sharedMem[(idx*2)+1] = INT_MAX;
+    }else if((glo_id + block_size) > num_elems){
+        sharedMem[idx*2] = glo_result[(glo_id*2)];
+        sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
+    }else{
+        elem1 = glo_result[glo_id*2];
+        elem2 = glo_result[(glo_id + block_size)*2];
+        if(elem1 <= elem2){
+            sharedMem[idx*2] = elem1;
+            sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
+        }else{
+            sharedMem[idx*2] = elem2;
+            sharedMem[(idx*2)+1] = glo_result[((glo_id + block_size)*2)+1];
+        }
+    }
+    __syncthreads();
+
+    //reduce on elements in shared memory
+    for (int size = block_size >> 1; size > 0; size >>= 1 ){
+        if(idx < size){
+            if(sharedMem[idx*2] > sharedMem[(idx + size)*2]){
+                sharedMem[idx*2] = sharedMem[(idx + size)*2];
+                sharedMem[(idx*2)+1] = sharedMem[((idx + size)*2)+1];
+            }
+        }
+        __syncthreads();
+    }
+    if(idx == 0){        
+        glo_result[blockIdx.x*2] = sharedMem[0];
+        glo_result[(blockIdx.x*2)+1] = sharedMem[1];
     }
 
-
-    *///Find limit of how many elements are to be reduced by this block.
+    /*//Find limit of how many elements are to be reduced by this block.
     if(num_elem < ((blockDim.x * 2) * (blockIdx.x + 1))){
         n = num_elem - (blockDim.x * 2) * blockIdx.x;
     }else{
@@ -200,6 +251,6 @@ __global__ void multBlockReduce(int* glo_result,
                 glo_result[(blockIdx.x*2)+1] = sharedMem[1];
             }
         }
-    }
+    }*/
 }
 
