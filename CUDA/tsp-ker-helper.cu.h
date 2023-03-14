@@ -193,7 +193,7 @@ __global__ void multBlockReduce(int* glo_result,
         __syncthreads();
     }
     if(idx == 0){        
-        glo_result[blockIdx.x*2] = 77;//sharedMem[0];
+        glo_result[blockIdx.x*2] = sharedMem[0];
         glo_result[(blockIdx.x*2)+1] = sharedMem[1];
     }
 
