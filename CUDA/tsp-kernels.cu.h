@@ -12,7 +12,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change, ip1, jp1;
-    //int repeats = 0;
     ChangeTuple localMinChange;
     ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
     
@@ -31,8 +30,9 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t]; 
     }
+    
+    //initialize minChange to shared memory
     if(idx == 0){
-        //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
         minChange[0].change = -1;
     }
@@ -102,9 +102,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
             minChange[0].j = tempRes[0].j;
             minChange[0].i = tempRes[0].i;
         }
-        /*if(idx == 0){
-            minChange[0] = ChangeTuple(maxValue);
-        }*/
         __syncthreads();
     }
     
@@ -120,7 +117,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-        //re_array[blockIdx.x] = repeats;
     }
 }
 
