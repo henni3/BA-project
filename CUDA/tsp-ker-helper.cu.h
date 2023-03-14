@@ -135,7 +135,7 @@ __device__ void reduceLocalMinChange(int block_size,
  * **/
 __global__ void multBlockReduce(int* glo_result, 
                                 int num_elems){
-    int n, idx, glo_id, block_size, elem1, elem2;
+    int idx, glo_id, block_size, elem1, elem2;
     idx = threadIdx.x;
     block_size = blockDim.x;
     glo_id = idx + (block_size * 2) * blockIdx.x;
