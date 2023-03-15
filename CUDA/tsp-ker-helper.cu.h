@@ -149,21 +149,18 @@ __global__ void multBlockReduce(int* glo_result,
         glo_result[(glo_id + tot_threads)*2] = INT_MAX;
     }*/
 
-    
-
-
     /*if(glo_id > num_elems){
-        int elem1 = INT_MAX;
-        int elem2 = INT_MAX;
-    }else if((glo_id + tot_threads) > num_elems){
-        int elem1 = glo_result[glo_id*2];
-        int elem2 = INT_MAX;
+        elem1 = INT_MAX;
+        elem2 = INT_MAX;
+    }else if((glo_id + block_size) > num_elems){
+        elem1 = glo_result[glo_id*2];
+        elem2 = INT_MAX;
     }else{
-        int elem1 = glo_result[glo_id*2];
-        int elem2 = glo_result[(glo_id + tot_threads)*2];
+        elem1 = glo_result[glo_id*2];
+        elem2 = glo_result[(glo_id + block_size)*2];
     }*/
     
-    /*if(glo_id > num_elems){
+    if(glo_id > num_elems){
         sharedMem[idx*2] = 2147483647;//INT_MAX;
         sharedMem[(idx*2)+1] = 2147483647;//INT_MAX;
     }else if((glo_id + block_size) > num_elems){
@@ -180,12 +177,13 @@ __global__ void multBlockReduce(int* glo_result,
             sharedMem[(idx*2)+1] = glo_result[((glo_id + block_size)*2)+1];
         }
     }
-    __syncthreads();*/
-    sharedMem[idx*2] = 100-idx;
-    sharedMem[(idx*2)+1] = 50-idx;
     __syncthreads();
+
+    glo_result[(glo_id*2)] = sharedMem[idx*2];
+    glo_result[(glo_id*2)+1] = sharedMem[(idx*2)+1];
+
     //reduce on elements in shared memory
-    for (int size = block_size >> 1; size > 0; size >>= 1 ){
+    /*for (int size = block_size >> 1; size > 0; size >>= 1 ){
         if(idx < size){
             if(sharedMem[idx*2] > sharedMem[(idx + size)*2]){
                 sharedMem[idx*2] = sharedMem[(idx + size)*2];
@@ -197,7 +195,7 @@ __global__ void multBlockReduce(int* glo_result,
     if(idx == 0){        
         glo_result[blockIdx.x*2] = sharedMem[0];
         glo_result[(blockIdx.x*2)+1] = sharedMem[1];
-    }
+    }*/
 
     /*
     //Find limit of how many elements are to be reduced by this block.
