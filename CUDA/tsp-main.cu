@@ -1,20 +1,19 @@
 #include "tsp-main-helper.cu.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 5) {
-        printf("Usage: %s <block-size> <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities) or 3 (calculatedIandJ)>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities) or 3 (calculatedIandJ)>\n", argv[0]);
         exit(1);
     }
     printf("\nBlocksize has to be a number of 2^x otherwise reduce does not work..\n");
     // Collect input arguments
-    int block_size = atoi(argv[1]);
-    char* file_name = argv[2];
-    int restarts = atoi(argv[3]);
+    char* file_name = argv[1];
+    int restarts = atoi(argv[2]);
     if(restarts <= 0){
         printf("Number of restarts has to be a number larger than 0");
         exit(1);
     }
-    int version = atoi(argv[4]);
+    int version = atoi(argv[3]);
     if((version < 1) || (version > 3)){
         printf("Wrong program version. You can choose between 1, 2 or 3");
         exit(1);
@@ -25,7 +24,7 @@ int main(int argc, char* argv[]) {
     //Create varibales
     struct timeval start, end, diff;
     uint32_t* distMatrix, *kerDist;
-    int cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, elapsed;
+    int block_size, cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, elapsed;
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d, *tourMatrix_h;
 
 
@@ -43,6 +42,20 @@ int main(int argc, char* argv[]) {
     
     //Calculate total number of iterations
     totIter = ((cities-1) * (cities-2))>>1;
+    //Calculate block_size
+    if(totIter > 512){
+        block_size = 1024;
+    }else if(totIter > 256){
+        block_size = 512;
+    }else if(totIter > 128){
+        block_size = 256;
+    }else if(totIter > 64){
+        block_size = 128;
+    }else if(totIter > 32){
+        block_size = 64;
+    }else{
+        block_size = 32;
+    }
 
     //Cuda malloc
     cudaMalloc((void**)&tourMatrixIn_d, (cities+1)*restarts*sizeof(unsigned short));
@@ -141,6 +154,8 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
     //print results
+    printf("Block size: %d\n", block_size);
+    printf("Total iterations: %d\n", totIter);
     printf("Shortest path: %d\n", glo_res_h[0]);
     printf("Tour ID: %d\n", tourId);
     printf("Tour:  [");
