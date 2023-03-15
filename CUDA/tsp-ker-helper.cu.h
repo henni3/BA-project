@@ -198,7 +198,7 @@ __global__ void multBlockReduce(int* glo_result,
     }*/
 
     //Find limit of how many elements are to be reduced by this block.
-    int tot_thread, n;
+    int tot_threads, n;
     if(num_elems < ((block_size* 2) * (blockIdx.x + 1))){
         n = num_elems - (block_size * 2) * blockIdx.x;
     }else{
