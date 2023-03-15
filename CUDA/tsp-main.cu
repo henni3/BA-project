@@ -49,8 +49,7 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short));
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
-    /********REMEMBER TO CORRECT SIZE OF GLO_RESULTS*/
-    cudaMalloc((void**)&glo_results, block_size*sizeof(int));//cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
+    cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
     //CPU malloc
     glo_res_h = (int*) malloc(2*sizeof(int));
@@ -142,13 +141,13 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
     //print results
-    /*printf("Shortest path: %d\n", glo_res_h[0]);
+    printf("Shortest path: %d\n", glo_res_h[0]);
     printf("Tour ID: %d\n", tourId);
     printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
-    printf("]\n");*/
+    printf("]\n");
     
     //Clean up
     free(distMatrix); free(tourMatrix_h); free(glo_res_h);  
