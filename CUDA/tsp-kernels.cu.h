@@ -142,9 +142,9 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     volatile uint32_t* shared_Dist = (volatile uint32_t*) (minChange + 1);       
     volatile unsigned short* tour =
                  (volatile unsigned short*)(shared_Dist + cities * cities);  //tour for this climber
-    if(minChange == NULL){
+    /*if(minChange == NULL){
         printf("pointer error\n");
-    }
+    }*/
 
     ChangeTuple tmpMinChange = ChangeTuple();
 
