@@ -140,6 +140,7 @@ int main(int argc, char* argv[]) {
     
     //print results
     printf("Shortest path: %d\n", glo_res_h[0]);
+    printf("Tour ID: %d\n", tourId);
     printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
