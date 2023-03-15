@@ -160,10 +160,10 @@ __global__ void multBlockReduce(int* glo_result,
         elem2 = glo_result[(glo_id + block_size)*2];
     }*/
     
-    if(glo_id > num_elems){
-        sharedMem[idx*2] = 2147483647;//INT_MAX;
-        sharedMem[(idx*2)+1] = 2147483647;//INT_MAX;
-    }else if((glo_id + block_size) > num_elems){
+    if(glo_id > (num_elems-1)){
+        sharedMem[idx*2] = INT_MAX;
+        sharedMem[(idx*2)+1] = INT_MAX;
+    }else if((glo_id + block_size) > (num_elems-1)){
         sharedMem[idx*2] = glo_result[(glo_id*2)];
         sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
     }else{
