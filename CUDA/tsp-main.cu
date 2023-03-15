@@ -5,7 +5,6 @@ int main(int argc, char* argv[]) {
         printf("Usage: %s <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities) or 3 (calculatedIandJ)>\n", argv[0]);
         exit(1);
     }
-    printf("\nBlocksize has to be a number of 2^x otherwise reduce does not work..\n");
     // Collect input arguments
     char* file_name = argv[1];
     int restarts = atoi(argv[2]);
@@ -42,7 +41,7 @@ int main(int argc, char* argv[]) {
     
     //Calculate total number of iterations
     totIter = ((cities-1) * (cities-2))>>1;
-    //Calculate block_size
+    //Calculate block size for kernels.
     if(totIter > 512){
         block_size = 1024;
     }else if(totIter > 256){
@@ -71,7 +70,7 @@ int main(int argc, char* argv[]) {
     //Dry run init
     init(block_size, cities, totIter, is_d, js_d);
     
-    //Testing the original program version
+    //Running the original program version
     if(1 == version){
         //Dry run program
         run_original(tourMatrixIn_d, tourMatrixTrans_d, 
@@ -79,7 +78,7 @@ int main(int argc, char* argv[]) {
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
-        //testing time for original program over GPU runs
+        //Taking time for original program over GPU runs
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
@@ -95,7 +94,7 @@ int main(int argc, char* argv[]) {
         cudaDeviceSynchronize();
         gettimeofday(&end, NULL);
     
-    //Testing the program optimised for 100 cities version
+    //Running the program optimised for 100 cities version
     }else if(2 == version){
         //Dry run program
         run_100cities(tourMatrixIn_d, tourMatrixTrans_d, 
@@ -103,7 +102,7 @@ int main(int argc, char* argv[]) {
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
-        //testing time for cities 100 program over GPU runs
+        //Taking time for cities 100 program over GPU runs
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
@@ -119,7 +118,7 @@ int main(int argc, char* argv[]) {
         cudaDeviceSynchronize();
         gettimeofday(&end, NULL);
 
-    //Testing the program version where the i and j indexes are calculated (version 3)
+    //Running the program version where the i and j indexes are calculated (version 3)
     }else{
         //Dry run program
         run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
@@ -127,7 +126,7 @@ int main(int argc, char* argv[]) {
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
-        //testing time for program with calculations of i and j, over GPU runs
+        //Taking time for program with calculations of i and j, over GPU runs
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
@@ -154,10 +153,7 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
     //print results
-    printf("Block size: %d\n", block_size);
-    printf("Total iterations: %d\n", totIter);
     printf("Shortest path: %d\n", glo_res_h[0]);
-    printf("Tour ID: %d\n", tourId);
     printf("Tour:  [");
     for(int i = 0; i < cities+1; i++){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
