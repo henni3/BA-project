@@ -138,13 +138,13 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
 
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
-    //volatile ChangeTuple* minChange = tempRes + block_size; //minChange holds the current best change (cos?)
+    volatile ChangeTuple* minChange = tempRes + block_size; //minChange holds the current best change (cos?)
     volatile uint32_t* shared_Dist = (volatile uint32_t*) tempRes + block_size;      
     volatile unsigned short* tour =
                  (volatile unsigned short*)(shared_Dist + cities * cities);  //tour for this climber
-    /*if(minChange == NULL){
+    if(minChange == NULL){
         printf("pointer error\n");
-    }*/
+    }
 
     ChangeTuple tmpMinChange = ChangeTuple();
 

@@ -120,12 +120,9 @@ void run_100cities(unsigned short *tourMatrixIn_d,
     createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //Compute shared memory size
-    /*size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
-                            block_size * sizeof(ChangeTuple) + 
-                            sizeof(ChangeTuple) + 
-                            cities * cities * sizeof(uint32_t);*/
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
+                            sizeof(ChangeTuple) + 
                             cities * cities * sizeof(uint32_t);
     //Run 2 opt kernel
     twoOptKer100Cities<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
