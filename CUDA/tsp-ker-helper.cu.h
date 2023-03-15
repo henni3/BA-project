@@ -183,7 +183,7 @@ __global__ void multBlockReduce(int* glo_result,
     __syncthreads();*/
     sharedMem[idx*2] = 100-idx;
     sharedMem[(idx*2)+1] = 50-idx;
-
+    __syncthreads();
     //reduce on elements in shared memory
     for (int size = block_size >> 1; size > 0; size >>= 1 ){
         if(idx < size){
