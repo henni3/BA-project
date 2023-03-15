@@ -102,7 +102,7 @@ void run_original(unsigned short *tourMatrixIn_d,
                                                     is_d, glo_results, 
                                                     cities, totIter);
     //run reduction of all local optimum cost across multiple blocks
-    glo_res_h = (int*) malloc(2*restarts*sizeof(int));
+    int* glo_res_h = (int*) malloc(2*restarts*sizeof(int));
     cudaMemcpy(glo_res_h, glo_results, 2*restarts*sizeof(int), cudaMemcpyDeviceToHost);
     printf("glo_res before multBlockRed:  \n[");
     for(int i = 0; i < 2*restarts; i++){
