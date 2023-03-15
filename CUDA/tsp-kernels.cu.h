@@ -134,6 +134,8 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     int i, j, change, ip1, jp1;
 
     ChangeTuple localMinChange;
+    ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
+
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
     volatile ChangeTuple* minChange = tempRes + block_size; //minChange holds the current best change (cos?)
@@ -223,7 +225,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         tmpMinChange.i = tempRes[0].i;
         __syncthreads();
     } 
-    int local_opt_cost = sumTourKernel(shared_Dist, tour, cities, tempRes);
+    int local_opt_cost = sumTourKernel100(shared_Dist, tour, cities, tempRes);
 
     //copy best local shared memory black to global memory
     for(int t = idx; t < cities+1; t += block_size){
@@ -249,6 +251,8 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
     block_size = blockDim.x;
     idx = threadIdx.x;
     ChangeTuple localMinChange;
+    //ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
+
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread

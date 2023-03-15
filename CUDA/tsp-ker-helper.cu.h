@@ -81,6 +81,34 @@ __device__ int sumTourKernel(uint32_t* glo_dist,
     return result_arr[0].change;
 }
 
+
+//Compute the local optimum cost for twoOptKer100
+__device__ int sumTourKernel100(volatile uint32_t* glo_dist, 
+                                volatile unsigned short *lo_tour, 
+                                int cities, 
+                                volatile ChangeTuple* result_arr){    
+    int idx = threadIdx.x;
+    int block_size = blockDim.x;
+    int sum = 0;
+    int glo_i, glo_ip1; 
+    for(int i = idx; i < cities; i += block_size){
+        glo_i = lo_tour[i];
+        glo_ip1 = lo_tour[i+1];
+        sum += glo_dist[glo_i * cities + glo_ip1];
+    }
+    result_arr[idx].change = sum;
+    __syncthreads();
+    for (int size = block_size >> 1; size > 0; size >>= 1 ){
+        if (idx < size) {
+            result_arr[idx].change += result_arr[idx+size].change;
+
+        }
+        __syncthreads();
+    }
+    return result_arr[0].change;
+}
+
+
 //Random tour generator for all restarts, basen on SPLASH-2 code
 //With each thread accessing column wise in the matrix to attcheive
 //coalesced access.
