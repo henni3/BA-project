@@ -140,26 +140,9 @@ __global__ void multBlockReduce(int* glo_result,
     block_size = blockDim.x;
     glo_id = idx + (block_size * 2) * blockIdx.x;
     extern __shared__ int sharedMem[];    //shared memory
-    
-    //Padding with max integer value
-    /*if(glo_id > num_elems){
-        glo_result[glo_id*2] = INT_MAX;
-        glo_result[(glo_id + tot_threads)*2] = INT_MAX;
-    }else if((glo_id + tot_threads) > num_elems){
-        glo_result[(glo_id + tot_threads)*2] = INT_MAX;
-    }*/
 
-    /*if(glo_id > num_elems){
-        elem1 = INT_MAX;
-        elem2 = INT_MAX;
-    }else if((glo_id + block_size) > num_elems){
-        elem1 = glo_result[glo_id*2];
-        elem2 = INT_MAX;
-    }else{
-        elem1 = glo_result[glo_id*2];
-        elem2 = glo_result[(glo_id + block_size)*2];
-    }*/
-    
+    //Compare element in global memory across two blocks and the smallest
+    //element will be written to shared memory (first reduce layer).
     if(glo_id > (num_elems-1)){
         sharedMem[idx*2] = INT_MAX;
         sharedMem[(idx*2)+1] = INT_MAX;
@@ -189,67 +172,10 @@ __global__ void multBlockReduce(int* glo_result,
         }
         __syncthreads();
     }
+    //Write result to global memory.
     if(idx == 0){        
         glo_result[blockIdx.x*2] = sharedMem[0];
         glo_result[(blockIdx.x*2)+1] = sharedMem[1];
     }
-
-    /*
-    //Find limit of how many elements are to be reduced by this block.
-    int tot_threads, n;
-    if(num_elems < ((block_size* 2) * (blockIdx.x + 1))){
-        n = num_elems - (block_size * 2) * blockIdx.x;
-    }else{
-        n = block_size * 2;
-    }
-    tot_threads = (n + 1) >> 1;
-
-    extern __shared__ int sharedMem[];    //shared memory
-    //Compare element in global memory across two blocks and the smallest
-    //element will be written to shared memory (first reduce layer).
-    if(idx < tot_threads){
-        elem1 = glo_result[glo_id*2];
-        if(idx + tot_threads < n){
-            elem2 = glo_result[(glo_id + tot_threads)*2];
-            if(elem1 <= elem2){
-                sharedMem[idx*2] = elem1;
-                sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
-            }else{
-                sharedMem[idx*2] = elem2;
-                sharedMem[(idx*2)+1] = glo_result[((glo_id + tot_threads)*2)+1];
-            }
-        }else{
-            sharedMem[idx*2] = elem1;
-            sharedMem[(idx*2)+1] = glo_result[(glo_id*2)+1];
-        }
-        __syncthreads();
-        n = tot_threads;
-        tot_threads = (n+1)/2;
-
-        //reduce on elements in shared memory (second layer to second 
-        //last layer of reduce).
-        for(int i = tot_threads; i > 1; i>>=1){
-            if(idx + i < n){
-                if(sharedMem[idx*2] > sharedMem[(idx + i)*2]){
-                    sharedMem[idx*2] = sharedMem[(idx + i)*2];
-                    sharedMem[(idx*2)+1] = sharedMem[((idx + i)*2)+1];
-                }
-            }
-            n = i;
-            i++;
-            __syncthreads();
-        }
-        //Compare the last two elements of the last reduce layer and
-        //write to global memory.
-        if(idx == 0){
-            if(sharedMem[0] > sharedMem[2]){
-                glo_result[blockIdx.x*2] = sharedMem[2];
-                glo_result[(blockIdx.x*2)+1] = sharedMem[3];
-            }else{
-                glo_result[blockIdx.x*2] = sharedMem[0];
-                glo_result[(blockIdx.x*2)+1] = sharedMem[1];
-            }
-        }
-    }*/
 }
 
