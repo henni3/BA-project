@@ -132,11 +132,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change, ip1, jp1;
-    /*struct timeval startIni, endIni, diffIni, startFor, endFor, diffFor,
-                    startRed, endRed, diffRed, startSwap, endSwap, diffSwap,
-                    startFinal, endFinal, diffFinal;
-    */
-    //gettimeofday(&startIni, NULL); 
+
     ChangeTuple localMinChange;
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
@@ -164,8 +160,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     tmpMinChange.change = -1;
 
     __syncthreads();
-    //gettimeofday(&endIni, NULL);
-    //Computation for one climber
+
     while(tmpMinChange.change < 0){
         tmpMinChange = ChangeTuple();
 
@@ -178,8 +173,6 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
-        //__syncthreads(); //added
-        //gettimeofday(&startFor, NULL); 
         for(int ind = idx; ind < totIter; ind += block_size){
             int num = glo_is[ind];
             i = num >> 16;
@@ -195,41 +188,22 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
         }
-        //__syncthreads(); //added
-        //gettimeofday(&endFor, NULL); 
+
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
         if(idx < totIter){
             tempRes[idx] = ChangeTuple(localMinChange);
+        }else{ //else pad with neutral element
+            tempRes[idx] = ChangeTuple(maxValue);
         }
-        //tempRes[idx] = ChangeTuple(localMinChange);
         __syncthreads();
         
-        //Preparation for the reduction on all local minimum changes.
-        int num_elems, num_threads;
-        if(totIter < block_size){
-            num_elems = totIter;
-        }else{
-            num_elems = block_size;
-        }
-        //num_elems = block_size;
-        num_threads = (num_elems + 1 ) / 2;
-
-        //__syncthreads(); //added
-        //gettimeofday(&startRed, NULL); 
         //Reduction on all the local minimum changes found by each thread
         //to find the best minimum change for this climber.
-        while(num_threads != num_elems){
-            if (idx < num_threads){
-                tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-            }
-            __syncthreads();
-            num_elems = num_threads;
-            num_threads= (num_elems + 1)/ 2;
-        }
+        reduceLocalMinChange(block_size, tempRes);
+        
+        //The best local minimum changes found is stored in variable best.
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
-        //__syncthreads(); //added
-        //gettimeofday(&endRed, NULL); 
         
         //Prepare information for swapping
         int temp, swapCities;
@@ -238,24 +212,18 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
         swapCities = (((j - best.i) + 1) / 2) + i; //the ceiling of j/2 plus i
        
         //swap
-        //__syncthreads(); //added
-        //gettimeofday(&startSwap, NULL); 
         for(int t = idx + i; t < swapCities; t += block_size){
             temp = tour[t];
             tour[t] = tour[j - (t - i)];
             tour[j - (t - i)] = temp;
         }
-        //__syncthreads(); //added
-        //gettimeofday(&startSwap, NULL); 
         
         tmpMinChange.change = tempRes[0].change;
         tmpMinChange.j = tempRes[0].j;
         tmpMinChange.i = tempRes[0].i;
         __syncthreads();
     } 
-    //__syncthreads(); //added
-    //gettimeofday(&startFinal, NULL); 
-    int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes);
+    int local_opt_cost = sumTourKernel(shared_Dist, tour, cities, tempRes);
 
     //copy best local shared memory black to global memory
     for(int t = idx; t < cities+1; t += block_size){
@@ -266,27 +234,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-    }
-    //__syncthreads(); //added
-    //gettimeofday(&endFinal, NULL);
-    /*if(idx == 0){
-        int elapsed;
-        timeval_subtract(&diffIni, &endIni, &startIni);
-        timeval_subtract(&diffFor, &endFor, &startFor);
-        timeval_subtract(&diffRed, &endRed, &startRed);
-        timeval_subtract(&diffSwap, &endSwap, &startSwap);
-        timeval_subtract(&diffFinal, &endFinal, &startFinal);
-        elapsed = (diffIni.tv_sec*1e6+diffIni.tv_usec); 
-        printf("Init: %lu milisecs\n", elapsed/1000);
-        elapsed = (diffFor.tv_sec*1e6+diffFor.tv_usec); 
-        printf("For: %lu milisecs\n", elapsed/1000);
-        elapsed = (diffRed.tv_sec*1e6+diffRed.tv_usec); 
-        printf("Reduce: %lu milisecs\n", elapsed/1000);
-        elapsed = (diffSwap.tv_sec*1e6+diffSwap.tv_usec); 
-        printf("Swap: %lu milisecs\n", elapsed/1000);
-        elapsed = (diffFinal.tv_sec*1e6+diffFinal.tv_usec); 
-        printf("Final: %lu milisecs\n", elapsed/1000);
-    }*/      
+    }   
 }
 
 
