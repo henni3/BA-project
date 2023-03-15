@@ -49,7 +49,8 @@ int main(int argc, char* argv[]) {
     cudaMalloc((void**)&tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short));
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
-    cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
+    /********REMEMBER TO CORRECT SIZE OF GLO_RESULTS*/
+    cudaMalloc((void**)&glo_results, block_size*sizeof(int));//cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
 
     //CPU malloc
     glo_res_h = (int*) malloc(2*sizeof(int));
