@@ -102,7 +102,7 @@ void run_original(unsigned short *tourMatrixIn_d,
                                                     is_d, glo_results, 
                                                     cities, totIter);
     //run reduction of all local optimum cost across multiple blocks
-    //multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
+    multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
 void run_100cities(unsigned short *tourMatrixIn_d, 
