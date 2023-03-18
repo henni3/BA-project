@@ -84,20 +84,6 @@ void multBlockRed(int *glo_results, int num_blocks_restarts, int block_size, int
     }
 }
 
-/*
- * Create randomiezed tours
- */
-void createTours(int restarts, 
-                 int block_size,
-                 int cities,
-                 int num_blocks_restarts, 
-                 unsigned short *tourMatrixIn_d,
-                 unsigned short *tourMatrixTrans_d){
-    //Create tour matrix column wise
-    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
-    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
-
-}
 
 void run_original(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
@@ -128,9 +114,11 @@ void run_100cities(unsigned short *tourMatrixIn_d,
                  int block_size, int cities, int restarts, int totIter){
     int num_blocks_restarts;
     num_blocks_restarts = (restarts + block_size-1)/block_size;
+    
     //Create randomized tours
-    createTours(restarts, block_size, cities, 
-                num_blocks_restarts, tourMatrixIn_d, tourMatrixTrans_d);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
@@ -152,9 +140,11 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
                  int block_size, int cities, int restarts, int totIter){
     int num_blocks_restarts;
     num_blocks_restarts = (restarts + block_size-1)/block_size;
+    
     //Create randomized tours
-    createTours(restarts, block_size, cities, 
-                num_blocks_restarts, tourMatrixIn_d, tourMatrixTrans_d);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
