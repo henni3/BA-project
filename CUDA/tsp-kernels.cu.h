@@ -288,7 +288,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         Each thread calculates the local changes of the given i and j indexes.
         The i and j index calculated depending on which thread is calculating it.
         ***/
-        /*float tmp;
+        float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
             tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
@@ -304,8 +304,8 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
-        }*/
-        for(int ind = idx; ind < totIter; ind += block_size){
+        }
+        /*for(int ind = idx; ind < totIter; ind += block_size){
             int num = glo_is[ind];
             i = num >> 16;
             j = (num & 0xffff) + i + 2;
@@ -318,7 +318,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
-        }
+        }*/
 
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
