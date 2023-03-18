@@ -306,7 +306,7 @@ void runProgram(char* file_name, int restarts, int version){
  
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
-    printf("Version: %d. Optimized program runs on GPU in: %lu microsecond, repeats: %d\n", version, elapsed/1000000, GPU_RUNS);
+    printf("Version: %d. Optimized program runs on GPU in: %lu miliseconds, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
     
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
