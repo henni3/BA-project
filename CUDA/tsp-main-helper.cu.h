@@ -271,7 +271,7 @@ void runProgram(char* file_name, int restarts, int version){
     }else{
         //Dry run program
         run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
-                kerDist, glo_results, 
+                is_d, kerDist, glo_results, 
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
@@ -279,9 +279,9 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
-            //init(block_size, cities, totIter, is_d, js_d);
+            init(block_size, cities, totIter, is_d, js_d);
             run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
-                        kerDist, glo_results, 
+                        is_d, kerDist, glo_results, 
                         block_size, cities, restarts, totIter);
 
             //get results

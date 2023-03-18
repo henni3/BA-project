@@ -54,7 +54,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
-        //float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             int num = glo_is[ind];
             i = num >> 16;
@@ -243,6 +242,7 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
 
 __global__ void twoOptKerCalculated(uint32_t* glo_dist, 
                           unsigned short *glo_tours,
+                          int * glo_is,
                           int* glo_result, 
                           int cities, 
                           int totIter){
@@ -288,7 +288,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         Each thread calculates the local changes of the given i and j indexes.
         The i and j index calculated depending on which thread is calculating it.
         ***/
-        float tmp;
+        /*float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
             tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
@@ -304,37 +304,21 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
+        }*/
+        for(int ind = idx; ind < totIter; ind += block_size){
+            int num = glo_is[ind];
+            i = num >> 16;
+            j = (num & 0xffff) + i + 2;
+            ip1 = i+1;
+            jp1 = j+1; 
+            change = glo_dist[tour[i]*cities+tour[j]] + 
+                    glo_dist[tour[ip1]*cities+tour[jp1]] -
+                    (glo_dist[tour[i]*cities+tour[ip1]] +
+                    glo_dist[tour[j]*cities+tour[jp1]]);
+            //Each thread shall hold the best local change found
+            ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
+            localMinChange = minInd::apply(localMinChange,check);
         }
-        /*//Write each threads local minimum change (best change found)
-        //to the shared array tempRes. 
-        if(idx < totIter){
-            tempRes[idx].change = localMinChange.change;
-            tempRes[idx].i = localMinChange.i;
-            tempRes[idx].j = localMinChange.j;
-        }
-        __syncthreads();
-        
-        //Preparation for the reduction on all local minimum changes.
-        int num_elems, num_threads;
-        if(totIter < block_size){
-            num_elems = totIter;
-        }else{
-            num_elems = block_size;
-        }
-        num_threads = (num_elems + 1)/2;
-
-        //Reduction on all the local minimum changes found by each thread
-        //to find the best minimum change for this climber.
-        while(num_threads != num_elems){
-            if (idx < num_threads){
-                tempRes[idx] = minInd::apply(tempRes[idx],tempRes[idx + num_threads]);
-            }
-            __syncthreads();
-
-            num_elems = num_threads;
-            num_threads = (num_elems + 1)/2;
-        }
-        */
 
         //Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
