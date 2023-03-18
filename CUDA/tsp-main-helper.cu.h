@@ -90,32 +90,12 @@ void run_original(unsigned short *tourMatrixIn_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
   
-    /*int num_blocks_restarts, time;
-    struct timeval randomTime;
-    num_blocks_restarts = (restarts + block_size-1)/block_size;
-    //Prepare for column wise tour
-    gettimeofday(&randomTime, NULL);
-    time = randomTime.tv_usec;
-    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);*/
-    
     int num_blocks_restarts; 
     num_blocks_restarts = (restarts + block_size-1)/block_size; 
     //Create randomized tours
     createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
-    
-    /*//test randomTours
-    unsigned short *tourMatrix_h;
-    tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
-    cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    printf("All tours Tour:\n");
-    for(int i = 0; i < restarts; i++){
-        printf("[");
-        for(int j = 0; j < cities+1; j++){
-            printf("%hu, ", tourMatrix_h[(cities+1)*i+j]);
-        }
-        printf("]\n");
-    }*/
+
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
