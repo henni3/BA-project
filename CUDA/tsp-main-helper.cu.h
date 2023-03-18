@@ -102,7 +102,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     
-    //test randomTours
+    /*//test randomTours
     unsigned short *tourMatrix_h;
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
@@ -113,7 +113,7 @@ void run_original(unsigned short *tourMatrixIn_d,
             printf("%hu, ", tourMatrix_h[(cities+1)*i+j]);
         }
         printf("]\n");
-    }
+    }*/
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
