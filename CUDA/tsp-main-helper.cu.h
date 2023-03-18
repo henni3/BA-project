@@ -89,17 +89,19 @@ void run_original(unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    //int num_blocks_restarts; 
-    //num_blocks_restarts = (restarts + block_size-1)/block_size;   
-    int num_blocks_restarts, time;
+  
+    /*int num_blocks_restarts, time;
     struct timeval randomTime;
     num_blocks_restarts = (restarts + block_size-1)/block_size;
     //Prepare for column wise tour
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);*/
+    
+    int num_blocks_restarts; 
+    num_blocks_restarts = (restarts + block_size-1)/block_size; 
     //Create randomized tours
-    //createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
-    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     
     /*//test randomTours
@@ -134,8 +136,8 @@ void run_100cities(unsigned short *tourMatrixIn_d,
     int num_blocks_restarts;
     num_blocks_restarts = (restarts + block_size-1)/block_size;
     //Create randomized tours
-    //createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
-    //transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
@@ -164,8 +166,8 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
     num_blocks_restarts = (restarts + block_size-1)/block_size;
     
     //Create randomized tours
-    //createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
-    //transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
