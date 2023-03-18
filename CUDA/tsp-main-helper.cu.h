@@ -104,7 +104,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     for(int i = 0; i < cities+1; i++){
         printf("[");
         for(int j = 0; j < restarts; j++){
-            printf("%d, ", tourMatrix_h[restarts*i+j]);
+            printf("%hu, ", tourMatrix_h[(cities+1)*i+j]);
         }
         printf("]\n");
     }
