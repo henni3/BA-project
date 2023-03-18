@@ -93,13 +93,8 @@ void createTours(int restarts,
                  int num_blocks_restarts, 
                  unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d){
-    // Prepare for column wise tour
-    int time;
-    struct timeval randomTime;
-    gettimeofday(&randomTime, NULL);
-    time = randomTime.tv_usec;
     //Create tour matrix column wise
-    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts, time);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
 
 }
