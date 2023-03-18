@@ -95,6 +95,18 @@ void run_original(unsigned short *tourMatrixIn_d,
     //Create randomized tours
     createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+    
+    //test randomTours
+    unsigned short *tourMatrix_h;
+    tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
+    cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    printf("All tours Tour:  [");
+    for(int i = 0; i < cities+1; i++){
+        for(int j 0; j < restarts; j++){
+            printf("%d, ", tourMatrix_h[(cities+1)*i+j]);
+        }
+    }
+    printf("]\n");
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
@@ -134,6 +146,10 @@ void run_100cities(unsigned short *tourMatrixIn_d,
     multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
+/******************************************************* 
+ * run_calculatedIandJ() runs the 2-opt program where
+ * index i and index j is calculated
+*******************************************************/
 void run_calculatedIandJ(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  uint32_t* kerDist, int *glo_results,
@@ -275,7 +291,7 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
-            init(block_size, cities, totIter, is_d, js_d);
+            //init(block_size, cities, totIter, is_d, js_d);
             run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
                         kerDist, glo_results, 
                         block_size, cities, restarts, totIter);
