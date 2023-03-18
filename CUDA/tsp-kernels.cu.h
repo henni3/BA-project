@@ -251,7 +251,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
     block_size = blockDim.x;
     idx = threadIdx.x;
     ChangeTuple localMinChange;
-    //ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
+    ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
 
     extern __shared__ unsigned char totShared[];             //shared memory for both tour, minChange and tempRes
 
@@ -267,13 +267,14 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
     }
+    
+    //initialize minChange to shared memory
     if(idx == 0){
-        //initialize minChange to shared memory
         minChange[0] = ChangeTuple();
         minChange[0].change = -1;
     }
-    
     __syncthreads();
+
     //Computation for one climber
     while(minChange[0].change < 0){
         if(idx < 1){
@@ -304,7 +305,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
             localMinChange = minInd::apply(localMinChange,check);
         }
-        //Write each threads local minimum change (best change found)
+        /*//Write each threads local minimum change (best change found)
         //to the shared array tempRes. 
         if(idx < totIter){
             tempRes[idx].change = localMinChange.change;
@@ -333,6 +334,21 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             num_elems = num_threads;
             num_threads = (num_elems + 1)/2;
         }
+        */
+
+        //Write each threads local minimum change (best change found)
+        //to the shared array tempRes. 
+        if(idx < totIter){
+            tempRes[idx] = ChangeTuple(localMinChange);
+        }else{ //else pad with neutral element
+            tempRes[idx] = ChangeTuple(maxValue);
+        }
+        __syncthreads();
+        
+        //Reduction on all the local minimum changes found by each thread
+        //to find the best minimum change for this climber.
+        reduceLocalMinChange(block_size, tempRes);
+        
         ChangeTuple best = minInd::remVolatile(tempRes[0]);
         //Prepare information for swapping
         int temp, swapCities;
