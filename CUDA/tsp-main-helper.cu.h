@@ -91,11 +91,10 @@ void run_original(unsigned short *tourMatrixIn_d,
                  int block_size, int cities, int restarts, int totIter){
     //int num_blocks_restarts; 
     //num_blocks_restarts = (restarts + block_size-1)/block_size;   
-    int num_blocks_tour, time;
+    int num_blocks_restarts, time;
     struct timeval randomTime;
     num_blocks_restarts = (restarts + block_size-1)/block_size;
     //Prepare for column wise tour
-    num_blocks_tour = (restarts + block_size-1)/block_size; 
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create randomized tours
