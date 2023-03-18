@@ -114,8 +114,7 @@ __device__ int sumTourKernel100(volatile uint32_t* glo_dist,
 //coalesced access.
 __global__ void createToursColumnWise(unsigned short* tourMatrix,
                             int cities,
-                            int restarts,
-                            int time){
+                            int restarts){
     uint32_t rand, glo_id, temp, to;
     glo_id = threadIdx.x + blockIdx.x * blockDim.x;
     if(glo_id < restarts){
@@ -127,7 +126,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         tourMatrix[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
-        rand = glo_id + blockIdx.x + time;
+        rand = glo_id + blockIdx.x;
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
