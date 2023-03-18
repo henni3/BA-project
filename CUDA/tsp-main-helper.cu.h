@@ -6,6 +6,10 @@
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
 
+/************************************************************** 
+ *  Init() computes the i and j indexes and stores them in 
+ *  is_d and js_d.
+ **************************************************************/
 void init(int block_size, 
          int cities, 
          int totIter, 
@@ -68,11 +72,11 @@ void init(int block_size,
     cudaFree(flags_d);  cudaFree(d_tmp_int);  cudaFree(d_tmp_flag);
 }
 
-/* 
+/************************************************************** 
  *  Reduces all the local optimum cost to find the global
  *  optimum cost. 
  *  This is done by parallel reduction across multiple blocks. 
- */
+ **************************************************************/
 void multBlockRed(int *glo_results, int num_blocks_restarts, int block_size, int restarts){
     int num_blocks = (num_blocks_restarts+1)/2;
     int mult_sharedMem = (block_size*2) * sizeof(int);
@@ -84,7 +88,10 @@ void multBlockRed(int *glo_results, int num_blocks_restarts, int block_size, int
     }
 }
 
-
+/******************************************************* 
+ * run_original runs the 2-opt program with no 
+ * optimizations.
+*******************************************************/
 void run_original(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
@@ -109,6 +116,10 @@ void run_original(unsigned short *tourMatrixIn_d,
     multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
+/******************************************************* 
+ * run_100cities runs the 2-opt program with max 100 cities
+ * where tours is stored in shared memory in the kernel.
+*******************************************************/
 void run_100cities(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
@@ -295,7 +306,7 @@ void runProgram(char* file_name, int restarts, int version){
  
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
-    printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
+    printf("Version: %d. Optimized program runs on GPU in: %lu microsecond, repeats: %d\n", version, elapsed/1000000, GPU_RUNS);
     
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
