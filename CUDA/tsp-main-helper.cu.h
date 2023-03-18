@@ -139,7 +139,7 @@ void run_100cities(unsigned short *tourMatrixIn_d,
  * index i and index j is calculated
 *******************************************************/
 void run_calculatedIandJ(unsigned short *tourMatrixIn_d, 
-                 unsigned short *tourMatrixTrans_d,
+                 unsigned short *tourMatrixTrans_d, int* is_d,
                  uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
     int num_blocks_restarts;
@@ -155,7 +155,7 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
                             sizeof(ChangeTuple);
     //run 2 opt kernel 
     twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, 
-                                                    tourMatrixTrans_d, 
+                                                    tourMatrixTrans_d, is_d,
                                                     glo_results, 
                                                     cities, totIter);
     //Run reduction of all local optimum cost across multiple blocks
