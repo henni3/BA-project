@@ -89,12 +89,13 @@ void multBlockRed(int *glo_results, int num_blocks_restarts, int block_size, int
  */
 void createTours(int restarts, 
                  int block_size,
-                 int cities, 
+                 int cities,
+                 int num_blocks_restarts, 
                  unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d){
-    int num_blocks_restarts, time;
-    //Prepare for column wise tour
-    num_blocks_restarts = (restarts + block_size-1)/block_size; 
+    // Prepare for column wise tour
+    int time;
+    struct timeval randomTime;
     gettimeofday(&randomTime, NULL);
     time = randomTime.tv_usec;
     //Create tour matrix column wise
@@ -107,15 +108,19 @@ void run_original(unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-    
+    int num_blocks_restarts;
+    num_blocks_restarts = (restarts + block_size-1)/block_size;
+
     //Create randomized tours
-    createTours(restarts, block_size, cities, tourMatrixIn_d, tourMatrixTrans_d);
+    createTours(restarts, block_size, cities, 
+                tourMatrixIn_d, tourMatrixTrans_d);
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
                             sizeof(ChangeTuple);
     //run 2 opt kernel 
-    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    twoOptKer<<<restarts, block_size, sharedMemSize>>> (kerDist, 
+                                                    tourMatrixTrans_d, 
                                                     is_d, glo_results, 
                                                     cities, totIter);
     //run reduction of all local optimum cost across multiple blocks
@@ -126,16 +131,19 @@ void run_100cities(unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d,
                  int *is_d, uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-
+    int num_blocks_restarts;
+    num_blocks_restarts = (restarts + block_size-1)/block_size;
     //Create randomized tours
-    createTours(restarts, block_size, cities, tourMatrixIn_d, tourMatrixTrans_d);
+    createTours(restarts, block_size, cities, 
+                num_blocks_restarts, tourMatrixIn_d, tourMatrixTrans_d);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
                             sizeof(ChangeTuple) + 
                             cities * cities * sizeof(uint32_t);
     //Run 2 opt kernel
-    twoOptKer100Cities<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    twoOptKer100Cities<<<restarts, block_size, sharedMemSize>>> (kerDist, 
+                                                    tourMatrixTrans_d, 
                                                     is_d, glo_results, 
                                                     cities, totIter);
 
@@ -147,15 +155,18 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
                  unsigned short *tourMatrixTrans_d,
                  uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
-
+    int num_blocks_restarts;
+    num_blocks_restarts = (restarts + block_size-1)/block_size;
     //Create randomized tours
-    createTours(restarts, block_size, cities, tourMatrixIn_d, tourMatrixTrans_d);
+    createTours(restarts, block_size, cities, 
+                num_blocks_restarts, tourMatrixIn_d, tourMatrixTrans_d);
     //Compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
                             sizeof(ChangeTuple);
     //run 2 opt kernel 
-    twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, tourMatrixTrans_d, 
+    twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, 
+                                                    tourMatrixTrans_d, 
                                                     glo_results, 
                                                     cities, totIter);
     //Run reduction of all local optimum cost across multiple blocks
