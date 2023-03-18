@@ -100,13 +100,14 @@ void run_original(unsigned short *tourMatrixIn_d,
     unsigned short *tourMatrix_h;
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    printf("All tours Tour:  [");
+    printf("All tours Tour:\n");
     for(int i = 0; i < cities+1; i++){
+        printf("[");
         for(int j = 0; j < restarts; j++){
             printf("%d, ", tourMatrix_h[(cities+1)*i+j]);
         }
+        printf("]\n");
     }
-    printf("]\n");
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
