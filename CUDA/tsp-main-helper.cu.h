@@ -102,7 +102,7 @@ void run_original(unsigned short *tourMatrixIn_d,
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     printf("All tours Tour:  [");
     for(int i = 0; i < cities+1; i++){
-        for(int j 0; j < restarts; j++){
+        for(int j = 0; j < restarts; j++){
             printf("%d, ", tourMatrix_h[(cities+1)*i+j]);
         }
     }
