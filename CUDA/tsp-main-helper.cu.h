@@ -107,8 +107,8 @@ void run_original(unsigned short *tourMatrixIn_d,
     num_blocks_restarts = (restarts + block_size-1)/block_size;
 
     //Create randomized tours
-    createTours(restarts, block_size, cities,
-                num_blocks_restarts, tourMatrixIn_d, tourMatrixTrans_d);
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
