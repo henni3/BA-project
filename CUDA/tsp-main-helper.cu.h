@@ -101,9 +101,9 @@ void run_original(unsigned short *tourMatrixIn_d,
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     printf("All tours Tour:\n");
-    for(int i = 0; i < cities+1; i++){
+    for(int i = 0; i < restarts; i++){
         printf("[");
-        for(int j = 0; j < restarts; j++){
+        for(int j = 0; j < cities+1; j++){
             printf("%hu, ", tourMatrix_h[(cities+1)*i+j]);
         }
         printf("]\n");
