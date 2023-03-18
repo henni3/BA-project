@@ -139,7 +139,7 @@ void run_100cities(unsigned short *tourMatrixIn_d,
  * index i and index j is calculated
 *******************************************************/
 void run_calculatedIandJ(unsigned short *tourMatrixIn_d, 
-                 unsigned short *tourMatrixTrans_d, int* is_d,
+                 unsigned short *tourMatrixTrans_d,
                  uint32_t* kerDist, int *glo_results,
                  int block_size, int cities, int restarts, int totIter){
     int num_blocks_restarts;
@@ -155,7 +155,7 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
                             sizeof(ChangeTuple);
     //run 2 opt kernel 
     twoOptKerCalculated<<<restarts, block_size, sharedMemSize>>> (kerDist, 
-                                                    tourMatrixTrans_d, is_d,
+                                                    tourMatrixTrans_d,
                                                     glo_results, 
                                                     cities, totIter);
     //Run reduction of all local optimum cost across multiple blocks
@@ -271,7 +271,7 @@ void runProgram(char* file_name, int restarts, int version){
     }else{
         //Dry run program
         run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
-                is_d, kerDist, glo_results, 
+                kerDist, glo_results, 
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
@@ -279,9 +279,8 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
-            //init(block_size, cities, totIter, is_d, js_d);
             run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
-                        is_d, kerDist, glo_results, 
+                        kerDist, glo_results, 
                         block_size, cities, restarts, totIter);
 
             //get results

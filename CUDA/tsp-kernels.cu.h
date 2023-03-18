@@ -242,7 +242,6 @@ __global__ void twoOptKer100Cities(uint32_t* glo_dist,
 
 __global__ void twoOptKerCalculated(uint32_t* glo_dist, 
                           unsigned short *glo_tours,
-                          int * glo_is,
                           int* glo_result, 
                           int cities, 
                           int totIter){
