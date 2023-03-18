@@ -5,7 +5,7 @@
  * and kernels to compute the shortest rout in TSP using
  * 2-opt algorithm. 
 *******************************************************/
-int runProgram(char* file_name, int restarts, int version){
+void runProgram(char* file_name, int restarts, int version){
     //Create varibales
     struct timeval start, end, diff;
     uint32_t* distMatrix, *kerDist;
@@ -151,5 +151,4 @@ int runProgram(char* file_name, int restarts, int version){
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); cudaFree(tourMatrixIn_d);
     cudaFree(kerDist);
     cudaFree(glo_results);
-    return 0;
 }
