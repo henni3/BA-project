@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     if(maxRestarts <= 0){
         printf("Number of maximum restarts has to be a number larger than 0");
         exit(1);
-    }else if(maxRestarts <= restarts){
+    }else if(maxRestarts < restarts){
         printf("Number of maximum restarts has to be larger than minimum restarts");
         exit(1);
     }
