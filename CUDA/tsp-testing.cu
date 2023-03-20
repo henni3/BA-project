@@ -5,8 +5,8 @@ int main() {
     const char* file_name = "../Data/hardcode.tsp";
     initHwd();
 
-    restarts = 10;
-    maxRestarts = 10000;
+    restarts = 1;
+    maxRestarts = 15;
     while(restarts < maxRestarts){
         printf("\nResults from version 1 w %d climbers: \n", restarts);
         runProgram(file_name, restarts, 1);
@@ -17,7 +17,7 @@ int main() {
         printf("\nResults from version 3 w %d climbers: \n", restarts);
         runProgram(file_name, restarts, 3);
         
-        restarts = restarts * 10;
+        restarts++;
     }
    
 
