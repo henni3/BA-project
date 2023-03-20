@@ -2,11 +2,11 @@
 
 int main() {
     int restarts, maxRestarts;
-    char* file_name = "../Data/hardcode.tsp";
+    const char* file_name = "../Data/hardcode.tsp";
     initHwd();
 
     restarts = 10;
-    maxRestarts = 100;
+    maxRestarts = 10000;
     while(restarts < maxRestarts){
         printf("\nResults from version 1 w %d climbers: \n", restarts);
         runProgram(file_name, restarts, 1);
