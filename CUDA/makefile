@@ -14,8 +14,8 @@ compile: $(TSP) $(TEST)
 $(TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(TSP) tsp-main.cu
 
-$(TEST): tsp-kernels.cu.h tsp-testing.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
-	$(COMPILER) $(OPT_FLAGS) -o $(TEST) tsp-testing.cu
+$(TEST): tsp-kernels.cu.h tsp-testing-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST) tsp-testing-main.cu
 
 all: $(TSP) $(TEST)
 
