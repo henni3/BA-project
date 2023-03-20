@@ -7,7 +7,7 @@ int main() {
 
     restarts = 10;
     maxRestarts = 100;
-    for(restars < maxRestarts){
+    for(restarts < maxRestarts){
         printf("\nResults from version 1 w %d climbers: \n", restarts);
         runProgram(file_name, restarts, 1);
 
