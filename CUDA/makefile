@@ -2,18 +2,23 @@ COMPILER?=nvcc
 OPT_FLAGS?=-O3 --use_fast_math
 LDFLAGS?=-lOpenCL
 
-TEST_TSP=test-tsp
+TSP=tsp
+TEST=test
+
 .PHONY: clean all run
 
 default: compile run
 
-compile: $(TEST_TSP)
+compile: $(TSP) $(TEST)
 
-$(TEST_TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
-	$(COMPILER) $(OPT_FLAGS) -o $(TEST_TSP) tsp-main.cu
+$(TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
+	$(COMPILER) $(OPT_FLAGS) -o $(TSP) tsp-main.cu
 
-all: $(TEST_TSP) 
+$(TEST): tsp-kernels.cu.h tsp-testing.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST) tsp-testing.cu
+
+all: $(TSP) $(TEST)
 
 
 clean:
-	rm -f $(TEST_TSP)
+	rm -f $(TSP) $(TEST)
