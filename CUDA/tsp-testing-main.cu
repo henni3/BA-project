@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     initHwd();
 
-    while(restarts < maxRestarts){
+    while(restarts <= maxRestarts){
         printf("\n\nResult with %d climbers: \n", restarts);
         runProgram(file_name, restarts, 1);
         restarts++;
