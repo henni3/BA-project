@@ -2,7 +2,8 @@
 
 int main() {
     int restarts, maxRestarts;
-    const char* file_name = "../Data/hardcode.tsp";
+    const *char file_name[21] = "../Data/hardcode.tsp";
+    //const char* file_name[21] = ;
     initHwd();
 
     restarts = 1;
