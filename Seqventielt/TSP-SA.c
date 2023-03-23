@@ -58,7 +58,7 @@ int randomRange(int min, int max){
 }
 
 // Simulated Annealing
-int simulatedAnnealing(int* distM, int* currTour, int cities){
+int simulatedAnnealing(int* distM, int* currTour, int cities ){
     //initialising
     int iter, i, j, currChange, optChange;
     double c, temperature;
@@ -98,7 +98,7 @@ int simulatedAnnealing(int* distM, int* currTour, int cities){
             }
             
             else{
-                c = (double)rand() / (float)RAND_MAX;
+                c = ((double)rand()) / (float)RAND_MAX;
                 int costDiff = newFit - currFit;
                 double check = exp(- (double)costDiff / temperature);
                 if (c < check) {
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
     if (argc != 2) {
         exit(1);
     }
-    srand(time(0));
+    srand(123456);
     char* fileName = argv[1];
     int* distMatrix = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
     int cities = fileToDistM(fileName, distMatrix);
