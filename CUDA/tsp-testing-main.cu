@@ -22,12 +22,13 @@ int main(int argc, char* argv[]) {
         printf("Number of maximum restarts has to be larger than minimum restarts");
         exit(1);
     }
+    char* true_name = "../Data/swiss42.tsp";
 
     initHwd();
 
     while(restarts <= maxRestarts){
         printf("\n\nResult with %d climbers: \n", restarts);
-        runProgram(file_name, restarts, 1);
+        runProgram(true_name, restarts, 1);
         restarts = restarts*10;
     }
    
