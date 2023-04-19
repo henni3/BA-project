@@ -293,7 +293,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             tmp = (((-1+(sqrt((float) d)))/2)*(-1))+0.9999;
             curr = (int) tmp;
             i = (cities-2) - curr;
-            j = (i+2) + (ind-(totIter-((curr*(curr+1))>>1))); 
+            j = (i+2) + (ind-(totIter-((curr*(curr+1))/2))); 
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
