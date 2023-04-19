@@ -290,7 +290,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         float tmp;
         unsigned int next;
         for(int ind = idx; ind < totIter; ind += block_size){
-            /*d = 1-(4*(-2*(totIter-ind)));
+            d = 1-(4*(-2*(totIter-ind)));
             tmp = ((-1+(sqrt((float) d)))/2)+0.9999;
             curr = (int) tmp;
             i = (cities-2) - curr;
@@ -300,9 +300,9 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
-                    glo_dist[tour[j]*cities+tour[jp1]]);*/
+                    glo_dist[tour[j]*cities+tour[jp1]]);
 
-            d = 1-(4*(-2*(totIter-ind)));
+            /*d = 1-(4*(-2*(totIter-ind)));
             tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
             next = (int) tmp;
             i = (cities-2) - (next-1);
@@ -315,7 +315,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
                     glo_dist[tour[j]*cities+tour[jp1]]);
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
-            localMinChange = minInd::apply(localMinChange,check);
+            localMinChange = minInd::apply(localMinChange,check);*/
         }
 
         //Write each threads local minimum change (best change found)
