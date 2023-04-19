@@ -288,32 +288,18 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
         The i and j index calculated depending on which thread is calculating it.
         ***/
         float tmp;
-        unsigned int next;
         for(int ind = idx; ind < totIter; ind += block_size){
             d = 1-(4*(-2*(totIter-ind)));
             tmp = ((-1+(sqrt((float) d)))/2)+0.9999;
             curr = (int) tmp;
             i = (cities-2) - curr;
-            j = (i+2) + (ind-(totIter-((curr*(curr+1))>>1))); 
+            j = (i+2) + (ind-(totIter-((curr*(curr+1))/2))); 
             ip1 = i+1;
             jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
                     glo_dist[tour[j]*cities+tour[jp1]]);
-
-            /*d = 1-(4*(-2*(totIter-ind)));
-            tmp = (((-1-(sqrt((float) d)))/2)*(-1))+0.9999;
-            next = (int) tmp;
-            i = (cities-2) - (next-1);
-            j = (i+2) + (ind-(totIter-((next*(next-1))/2))); 
-            ip1 = i+1;
-            jp1 = j+1;
-            change = glo_dist[tour[i]*cities+tour[j]] + 
-                    glo_dist[tour[ip1]*cities+tour[jp1]] -
-                    (glo_dist[tour[i]*cities+tour[ip1]] +
-                    glo_dist[tour[j]*cities+tour[jp1]]);*/
-
 
             //Each thread shall hold the best local change found
             ChangeTuple check = ChangeTuple(change,(unsigned short)i, (unsigned short) j);
