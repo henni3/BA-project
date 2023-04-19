@@ -367,7 +367,7 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
 }
 
 
-__global__ void CountKer(uint32_t* glo_dist, 
+/*__global__ void CountKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
                           int* glo_is,
                           int* glo_result, 
@@ -505,4 +505,4 @@ __global__ void CountKer(uint32_t* glo_dist,
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
         //re_array[blockIdx.x] = repeats;
     }
-}
+}*/
