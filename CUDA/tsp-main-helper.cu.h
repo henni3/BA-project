@@ -234,7 +234,7 @@ void runProgram(char* file_name, int restarts, int version){
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d, *tourMatrix_h;
 
     // for testing 
-    int *counter, *counter_h
+    int *counter, *counter_h;
 
     // Collect information from datafile into distMatrix and cities    
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
@@ -405,7 +405,7 @@ void runProgram(char* file_name, int restarts, int version){
     printf("]\n");
 
     if ( version == 4) {
-        int while_tot = counter_h[0]
+        int while_tot = counter_h[0];
         printf("number of while iteartions across all blocks = %d \n", while_tot);
     }
     

@@ -164,10 +164,10 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    __shared__ int counter[block_size];
+    __shared__ int while_block[block_size];
 
     // Init of counter array 
-    counter[idx] = 0;
+    while_block[idx] = 0;
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
@@ -184,7 +184,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     __syncthreads();
     //Computation for one climber
     while(minChange[0].change < 0){
-        counter[idx]++;
+        while_block[idx]++;
         __syncthreads();
         if(idx == 0){
            //repeats++;
@@ -251,7 +251,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         __syncthreads();
     }
 
-    reduceLocalCounter(block_size, counter);
+    reduceLocalCounter(block_size, while_block);
      // while loop = 4*4 * totiter * While_iters
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes); //cosmin do we do this multiple times ( uneccessary computation = threads -1 )
@@ -269,7 +269,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-        counter[blockIdx.x * 2] = counter[0];
+        counter[blockIdx.x * 2] = while_block[0];
         counter[blockIdx.x * 2 + 1]  = blockIdx.x;
     }
     // 4 * 2 
