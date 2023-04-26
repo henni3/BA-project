@@ -251,7 +251,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         __syncthreads();
     }
 
-    reduceLocalCounter(block_size, while_block);
+    reduceLocalCounter(1024, while_block);
      // while loop = 4*4 * totiter * While_iters
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes); //cosmin do we do this multiple times ( uneccessary computation = threads -1 )
