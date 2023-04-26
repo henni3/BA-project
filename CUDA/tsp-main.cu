@@ -13,8 +13,8 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     int version = atoi(argv[3]);
-    if((version < 1) || (version > 3)){
-        printf("Wrong program version. You can choose between 1, 2 or 3");
+    if((version < 1) || (version > 4)){
+        printf("Wrong program version. You can choose between 1, 2 or 3, or 4 for byte count");
         exit(1);
     }
     
