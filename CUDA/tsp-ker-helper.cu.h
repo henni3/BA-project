@@ -157,7 +157,7 @@ __device__ void reduceLocalMinChange(int block_size,
 
 //Reduction on all the local minimum changes found by each thread
 //to find the best minimum change for this climber.
-__device__ void reduceLocalCounter(int block_size, int* arr){
+__device__ void reduceLocalCounter(int block_size, volative int* arr){
     int idx = threadIdx.x;
     for (int size = block_size >> 1; size > 0; size >>= 1 ){
         if(idx < size){
