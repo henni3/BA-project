@@ -164,7 +164,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         printf("pointer error\n");
     }
 
-    __shared__ int while_block[block_size];
+    __shared__ int while_block[1024]; //max blocksize, might be wasted for small inputs
 
     // Init of counter array 
     while_block[idx] = 0;
