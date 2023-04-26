@@ -159,12 +159,13 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     volatile ChangeTuple* minChange = tempRes + block_size;                 //minChange holds the current best change
     volatile unsigned short* tour =
                  (volatile unsigned short*)(minChange + 1);                 //tour for this climber
+    volatile int* while_block = (volatile int*) (tour + cities + 1);
 
     if(minChange == NULL){
         printf("pointer error\n");
     }
 
-    __shared__ int while_block[1024]; //max blocksize, might be wasted for small inputs
+    //extern__shared__ int while_block[1024]; //max blocksize, might be wasted for small inputs
 
     // Init of counter array 
     while_block[idx] = 0;
@@ -251,7 +252,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         __syncthreads();
     }
 
-    reduceLocalCounter(1024, while_block);
+    reduceLocalCounter(block_size, while_block);
      // while loop = 4*4 * totiter * While_iters
     
     int local_opt_cost = sumTourKernel(glo_dist, tour, cities, tempRes); //cosmin do we do this multiple times ( uneccessary computation = threads -1 )
