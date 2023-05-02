@@ -401,16 +401,16 @@ void runProgram(char* file_name, int restarts, int version){
         printf("number of while iteartions across all blocks = %d \n", while_tot);
         //double time = elapsed / 1000.0;
         double while_bytes = (16 * totIter * while_tot) * 1.0e-6f ;
-        double rest = ((6 * cities + 14) * restarts) * 1.+e-6f;
+        double rest = ((6 * cities + 14) * restarts) * 1.0e-6f;
         double tot = while_bytes + rest;
         
 
         //unsigned long long int tot_bytes = ((6 * cities  + 14) * restarts) + (16 * totIter * while_tot);
-        printf("tot Mbytes is %.2f \n", tot_bytes);
+        printf("tot Mbytes is %.2f \n", tot);
 
         //double gb_s = (tot_bytes * 1.0e-3f) / elapsed;
         double gb_new = tot / (elapsed * 1.0e-3);
-        printf("gb_s for %d climbers, on data set %s was %.2f and ran in %lu microseconds \n", restarts, file_name, gb_s, elapsed);
+        printf("gb_s for %d climbers, on data set %s was %.2f and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
 
     }
     //get results
