@@ -201,7 +201,6 @@ void run_test(unsigned short *tourMatrixIn_d,
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
                             sizeof(ChangeTuple) + (sizeof(int) * (block_size)) ;
-    printf("S_memSize = %d \n", sharedMemSize);
     //run 2 opt kernel 
     twoOptKer_test<<<restarts, block_size, sharedMemSize>>> (kerDist, 
                                                     tourMatrixTrans_d, 
@@ -371,7 +370,7 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
-            printf("we get here \n");
+            //printf("we get here \n");
             init(block_size, cities, totIter, is_d, js_d);
             run_test(tourMatrixIn_d, tourMatrixTrans_d, 
                         is_d, kerDist, glo_results, counter, 
@@ -397,6 +396,16 @@ void runProgram(char* file_name, int restarts, int version){
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
     printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
     
+    if ( version == 4) {
+        int while_tot = counter_h[0];
+        printf("number of while iteartions across all blocks = %d \n", while_tot);
+        //double time = elapsed / 1000.0;
+        unsigned long long int tot_bytes = ((6 * cities  + 14) * restarts) + (16 * totIter * while_tot);
+        printf("totbytes is %lu \n", tot_bytes);
+        double gb_s = (tot_bytes * 1.0e-3f) / elapsed;
+        printf("gb_s for %d climbers, on data set %s was %.2f and ran in %lu microseconds \n", restarts, file_name, gb_s, elapsed);
+
+    }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
     
@@ -408,16 +417,6 @@ void runProgram(char* file_name, int restarts, int version){
     }
     printf("]\n");
 
-    if ( version == 4) {
-        int while_tot = counter_h[0];
-        printf("number of while iteartions across all blocks = %d \n", while_tot);
-        //double time = elapsed / 1000.0;
-        unsigned long long int tot_bytes = ((6 * cities  + 14) * restarts) + (16 * totIter * while_tot);
-        printf("totbytes is %lu \n", tot_bytes);
-        double gb_s = (tot_bytes * 1.0e-3f) / elapsed;
-        printf("gb_s for %d climbers, on data set %s was %.2f and ran in %lu microseconds \n", restarts, file_name, gb_s, elapsed);
-
-    }
     
     //Clean up
     free(distMatrix); free(tourMatrix_h); free(glo_res_h); free(counter_h);
