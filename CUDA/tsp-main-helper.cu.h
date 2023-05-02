@@ -400,7 +400,7 @@ void runProgram(char* file_name, int restarts, int version){
         int while_tot = counter_h[0];
         printf("number of while iteartions across all blocks = %d \n", while_tot);
         //double time = elapsed / 1000.0;
-        double while_bytes = (16 * totIter * while_tot) * 1.0e-6f ;
+        double while_bytes = 16 * while_tot * 1.0e-6f * totIter ;
         double rest = ((6 * cities + 14) * restarts) * 1.0e-6f;
         double tot = while_bytes + rest;
         
