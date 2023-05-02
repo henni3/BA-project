@@ -147,6 +147,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
                           int* counter, 
                           int cities, 
                           int totIter){
+    printf("test1.11 \n");
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change, ip1, jp1;
