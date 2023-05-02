@@ -218,6 +218,7 @@ void run_test(unsigned short *tourMatrixIn_d,
     //run reduction of all local optimum cost across multiple blocks
     multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
     multBlockRed(counter, num_blocks_restarts, block_size, restarts);
+    mapReduce<Add<int>>(block_size,restarts, counter, counter);
 }
 
 
@@ -272,7 +273,7 @@ void runProgram(char* file_name, int restarts, int version){
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
     //testing
-    cudaMalloc(&counter, 2 * restarts * sizeof(int));
+    cudaMalloc((void**)&counter, restarts * sizeof(int));
 
 
     //CPU malloc
@@ -281,7 +282,7 @@ void runProgram(char* file_name, int restarts, int version){
 
     // testing
 
-    counter_h = (int*) malloc(2*sizeof(int));
+    counter_h = (int*) malloc(sizeof(int));
     
     //Dry run init
     init(block_size, cities, totIter, is_d, js_d);
@@ -375,7 +376,7 @@ void runProgram(char* file_name, int restarts, int version){
 
             //get results
             cudaMemcpy(glo_res_h, glo_results, 2*sizeof(int), cudaMemcpyDeviceToHost);
-            cudaMemcpy(counter_h, counter, 2 * sizeof(int), cudaMemcpyDeviceToHost);
+            cudaMemcpy(counter_h, counter, sizeof(int), cudaMemcpyDeviceToHost);
             tourId = glo_res_h[1];
         }
         cudaDeviceSynchronize();

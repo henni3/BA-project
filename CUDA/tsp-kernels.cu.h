@@ -272,8 +272,8 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     if(idx == 0){
         glo_result[blockIdx.x * 2] = local_opt_cost;
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
-        counter[blockIdx.x * 2] = while_block[0];
-        counter[blockIdx.x * 2 + 1]  = blockIdx.x;
+        counter[blockIdx.x] = while_block[0];
+        //counter[blockIdx.x * 2 + 1]  = blockIdx.x;
         printf("number of while iters in block %d is : %d  \n", blockIdx.x, while_block[0] );
     }
     // 4 * 2 
