@@ -147,7 +147,6 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
                           int* counter, 
                           int cities, 
                           int totIter){
-    printf("test1.11 \n");
     int block_size = blockDim.x;
     int idx = threadIdx.x;
     int i, j, change, ip1, jp1;
@@ -161,7 +160,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     volatile int* while_block = (volatile int*) (minChange + 1);
     volatile unsigned short* tour =
                  (volatile unsigned short*)(while_block + block_size);                 //tour for this climber
-    printf("test1.12 \n");
+    //printf("test1.12 \n");
 
     if(minChange == NULL){
         printf("pointer error\n");
@@ -170,9 +169,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     //extern__shared__ int while_block[1024]; //max blocksize, might be wasted for small inputs
 
     // Init of counter array 
-    printf("test1.13 \n");
     while_block[idx] = 0;
-    printf("test1.1 \n");
     
 
     //copy global tour to shared memory
@@ -192,7 +189,6 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         while_block[idx]++;
-        printf("test1 \n");
         __syncthreads();
         if(idx == 0){
            //repeats++;
@@ -259,7 +255,6 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         __syncthreads();
     }
     __syncthreads();
-    printf("%d", while_block[idx]);
 
     reduceLocalCounter(block_size, while_block);
      // while loop = 4*4 * totiter * While_iters
@@ -281,7 +276,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
         counter[blockIdx.x] = while_block[0];
         //counter[blockIdx.x * 2 + 1]  = blockIdx.x;
-        printf("number of while iters in block %d is : %d  \n", blockIdx.x, while_block[0] );
+        //printf("number of while iters in block %d is : %d  \n", blockIdx.x, while_block[0] );
     }
     // 4 * 2 
 
