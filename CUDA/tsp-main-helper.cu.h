@@ -217,7 +217,7 @@ void run_test(unsigned short *tourMatrixIn_d,
     */
     //run reduction of all local optimum cost across multiple blocks
     multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
-    multBlockRed(counter, num_blocks_restarts, block_size, restarts);
+    //multBlockRed(counter, num_blocks_restarts, block_size, restarts); 
     mapReduce<Add<int>>(block_size,restarts, counter, counter);
 }
 
