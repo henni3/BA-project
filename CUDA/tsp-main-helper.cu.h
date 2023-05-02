@@ -207,7 +207,7 @@ void run_test(unsigned short *tourMatrixIn_d,
                                                     tourMatrixTrans_d, 
                                                     is_d, glo_results, counter, 
                                                     cities, totIter);
-    cudaPeekAtLastError();
+    gpuAssert( cudaPeekAtLastError());
 
     /*int* host_tmp = (int*)malloc(restarts*2*sizeof(int));
     cudaMemcpy(host_tmp, glo_results, restarts*2*sizeof(int), cudaMemcpyDeviceToHost);
