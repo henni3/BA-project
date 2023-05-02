@@ -169,6 +169,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
 
     // Init of counter array 
     while_block[idx] = 0;
+    
 
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
