@@ -4,6 +4,7 @@ LDFLAGS?=-lOpenCL
 
 TSP=tsp
 TEST=test
+TEST_GB=test_gb
 
 .PHONY: clean all run
 
@@ -16,9 +17,12 @@ $(TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels
 
 $(TEST): tsp-kernels.cu.h tsp-testing-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(TEST) tsp-testing-main.cu
+	
+$(TEST_GB): tsp-kernels.cu.h tsp-testing-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
+	$(COMPILER) $(OPT_FLAGS) -o $(TEST_GB) tsp-gb-test.cu
 
-all: $(TSP) $(TEST)
+all: $(TSP) $(TEST) $(TEST_GB)
 
 
 clean:
-	rm -f $(TSP) $(TEST)
+	rm -f $(TSP) $(TEST) $(TEST_GB)
