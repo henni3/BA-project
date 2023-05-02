@@ -252,7 +252,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         __syncthreads();
     }
     __syncthreads();
-    //printf("%d", while_block[idx]);
+    printf("%d", while_block[idx]);
 
     reduceLocalCounter(block_size, while_block);
      // while loop = 4*4 * totiter * While_iters
@@ -274,7 +274,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         glo_result[blockIdx.x * 2+1] = blockIdx.x;
         counter[blockIdx.x] = while_block[0];
         //counter[blockIdx.x * 2 + 1]  = blockIdx.x;
-       // printf("number of while iters in block %d is : %d  \n", blockIdx.x, while_block[0] );
+        printf("number of while iters in block %d is : %d  \n", blockIdx.x, while_block[0] );
     }
     // 4 * 2 
 
