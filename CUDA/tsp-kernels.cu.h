@@ -175,7 +175,6 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     //copy global tour to shared memory
     for(int t = idx; t < cities+1; t += block_size){
         tour[t] = glo_tours[blockIdx.x * (cities+1) + t];
-        //printf("test2 \n");
         // cities + 1 * 2 bytes
     }
     
