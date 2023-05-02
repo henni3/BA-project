@@ -161,6 +161,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     volatile unsigned short* tour =
                  (volatile unsigned short*)(minChange + 1);                 //tour for this climber
     volatile int* while_block = (volatile int*) (tour + cities + 1);
+    printf("test1.12 \n");
 
     if(minChange == NULL){
         printf("pointer error\n");
@@ -169,6 +170,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     //extern__shared__ int while_block[1024]; //max blocksize, might be wasted for small inputs
 
     // Init of counter array 
+    printf("test1.13 \n");
     while_block[idx] = 0;
     printf("test1.1 \n");
     
