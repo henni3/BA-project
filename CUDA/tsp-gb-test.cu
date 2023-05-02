@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     initHwd();
     for (int i = 1; i < restarts; i += 10) {
         runProgram(file_name, i, 4);
-        printf("iteration %d \n", i);
+        //printf("iteration %d \n", i);
         if (i == 1) {
             i--;
         }
