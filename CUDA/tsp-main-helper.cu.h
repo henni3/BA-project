@@ -370,7 +370,7 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
-            printf("we get here \n")
+            printf("we get here \n");
             init(block_size, cities, totIter, is_d, js_d);
             run_test(tourMatrixIn_d, tourMatrixTrans_d, 
                         is_d, kerDist, glo_results, counter, 
