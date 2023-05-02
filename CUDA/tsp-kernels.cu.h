@@ -187,6 +187,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     //Computation for one climber
     while(minChange[0].change < 0){
         while_block[idx]++;
+        printf("test1 \n");
         __syncthreads();
         if(idx == 0){
            //repeats++;
