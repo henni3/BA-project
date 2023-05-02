@@ -200,7 +200,7 @@ void run_test(unsigned short *tourMatrixIn_d,
     //compute shared memory size
     size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
                             block_size * sizeof(ChangeTuple) + 
-                            sizeof(ChangeTuple) + (sizeof(int) * (cities + 1)) ;
+                            sizeof(ChangeTuple) + (sizeof(int) * (block_size)) ;
     printf("S_memSize = %d \n", sharedMemSize);
     //run 2 opt kernel 
     twoOptKer_test<<<restarts, block_size, sharedMemSize>>> (kerDist, 
