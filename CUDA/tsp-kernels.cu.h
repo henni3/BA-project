@@ -158,9 +158,9 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
     extern __shared__ unsigned char totShared[];             
     volatile ChangeTuple* tempRes = (volatile ChangeTuple*)&totShared;       //tempRes holds the best local changes found by each thread
     volatile ChangeTuple* minChange = tempRes + block_size;                 //minChange holds the current best change
+    volatile int* while_block = (volatile int*) (minChange + 1);
     volatile unsigned short* tour =
-                 (volatile unsigned short*)(minChange + 1);                 //tour for this climber
-    volatile int* while_block = (volatile int*) (tour + cities + 1);
+                 (volatile unsigned short*)(while_block + block_size);                 //tour for this climber
     printf("test1.12 \n");
 
     if(minChange == NULL){
