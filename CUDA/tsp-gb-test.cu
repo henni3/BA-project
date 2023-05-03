@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     initHwd();
-    printf("something has changed please \n");
     for (int i = 50; i <= restarts; i += 50) {
         runProgram(file_name, i, 4);
         //printf("iteration %d \n", i);

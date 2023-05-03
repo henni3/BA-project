@@ -10,7 +10,7 @@ TEST_GB=test_gb
 
 default: compile run
 
-compile: $(TSP) $(TEST)
+compile: $(TSP) $(TEST) (TEST_GB)
 
 $(TSP): tsp-kernels.cu.h tsp-main.cu dataCollector.cu.h hostSkel.cu.h pbbKernels.cu.h constants.cu.h tsp-main-helper.cu.h tsp-ker-helper.cu.h
 	$(COMPILER) $(OPT_FLAGS) -o $(TSP) tsp-main.cu
