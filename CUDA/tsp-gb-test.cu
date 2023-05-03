@@ -1,7 +1,7 @@
 #include "tsp-main-helper.cu.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
+    if (argc != 4) {
         printf("Usage: %s <file-name> <number-of-restarts (multiple of 50)> <cities> \n", argv[0]);
         exit(1);
     }
