@@ -16,6 +16,7 @@ int main(int argc, char* argv[]) {
         printf("Number of restarts has to be a number larger than 0");
         exit(1);
     }
+    int cities = atoi(argv[3]);
     int jump = cities;
     initHwd();
     for (int i = 50; i <= restarts; i += jump) {
