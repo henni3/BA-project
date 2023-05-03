@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
     //int cities = atoi(argv[3]);
     int jump = restarts / 10;
     initHwd();
+    printf("testing for %s, each run repeated 100 times and taken average time \n", file_name);
     for (int i = 10; i <= restarts; i += jump) {
         runProgram(file_name, i, 4);
         //printf("iteration %d \n", i);

@@ -393,7 +393,7 @@ void runProgram(char* file_name, int restarts, int version){
     
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
-    printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
+    //printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
     
     if ( version == 4) {
         int while_tot = counter_h[0];
