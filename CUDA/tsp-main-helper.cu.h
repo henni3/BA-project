@@ -411,7 +411,7 @@ void runProgram(char* file_name, int restarts, int version){
         double gb_new = tot / (elapsed * 1.0e-3);
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
-        printf("gb/s : Climbers: elapsed:  %.2f,  %d, %lu  \n", gb_new, restarts, elapsed);
+        printf("gb/s : Climbers: elapsed microseconds:  %.2f,  %d, %lu  \n", gb_new, restarts, elapsed);
         
     }
     //get results
