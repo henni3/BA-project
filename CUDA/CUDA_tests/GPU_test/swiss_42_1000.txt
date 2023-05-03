@@ -1,0 +1,85 @@
+Device name: NVIDIA A100-PCIE-40GB
+Number of hardware threads: 221184
+Max block size: 1024
+Shared memory size: 49152
+====
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 1514 
+tot Mbytes is 19.88 
+gb_s for 50 climbers, on data set ../Data/swiss42.tsp was 32.32 gb/s and ran in 615 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 2996 
+tot Mbytes is 39.33 
+gb_s for 100 climbers, on data set ../Data/swiss42.tsp was 67.47 gb/s and ran in 583 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 4436 
+tot Mbytes is 58.24 
+gb_s for 150 climbers, on data set ../Data/swiss42.tsp was 102.36 gb/s and ran in 569 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 5908 
+tot Mbytes is 77.57 
+gb_s for 200 climbers, on data set ../Data/swiss42.tsp was 129.93 gb/s and ran in 597 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 7398 
+tot Mbytes is 97.13 
+gb_s for 250 climbers, on data set ../Data/swiss42.tsp was 142.42 gb/s and ran in 682 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 8882 
+tot Mbytes is 116.61 
+gb_s for 300 climbers, on data set ../Data/swiss42.tsp was 206.76 gb/s and ran in 564 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 10461 
+tot Mbytes is 137.34 
+gb_s for 350 climbers, on data set ../Data/swiss42.tsp was 228.52 gb/s and ran in 601 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 11974 
+tot Mbytes is 157.21 
+gb_s for 400 climbers, on data set ../Data/swiss42.tsp was 251.53 gb/s and ran in 625 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 13428 
+tot Mbytes is 176.30 
+gb_s for 450 climbers, on data set ../Data/swiss42.tsp was 269.98 gb/s and ran in 653 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 14966 
+tot Mbytes is 196.49 
+gb_s for 500 climbers, on data set ../Data/swiss42.tsp was 273.28 gb/s and ran in 719 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 16451 
+tot Mbytes is 215.98 
+gb_s for 550 climbers, on data set ../Data/swiss42.tsp was 281.96 gb/s and ran in 766 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 17891 
+tot Mbytes is 234.89 
+gb_s for 600 climbers, on data set ../Data/swiss42.tsp was 293.98 gb/s and ran in 799 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 19395 
+tot Mbytes is 254.64 
+gb_s for 650 climbers, on data set ../Data/swiss42.tsp was 306.79 gb/s and ran in 830 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 20906 
+tot Mbytes is 274.47 
+gb_s for 700 climbers, on data set ../Data/swiss42.tsp was 312.26 gb/s and ran in 879 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 22436 
+tot Mbytes is 294.56 
+gb_s for 750 climbers, on data set ../Data/swiss42.tsp was 319.83 gb/s and ran in 921 microseconds 
+Version: 4. Optimized program runs on GPU in: 0 milisecs, repeats: 100
+number of while iteartions across all blocks = 23841 
+tot Mbytes is 313.01 
+gb_s for 800 climbers, on data set ../Data/swiss42.tsp was 329.48 gb/s and ran in 950 microseconds 
+Version: 4. Optimized program runs on GPU in: 1 milisecs, repeats: 100
+number of while iteartions across all blocks = 25399 
+tot Mbytes is 333.46 
+gb_s for 850 climbers, on data set ../Data/swiss42.tsp was 332.80 gb/s and ran in 1002 microseconds 
+Version: 4. Optimized program runs on GPU in: 1 milisecs, repeats: 100
+number of while iteartions across all blocks = 26866 
+tot Mbytes is 352.72 
+gb_s for 900 climbers, on data set ../Data/swiss42.tsp was 341.45 gb/s and ran in 1033 microseconds 
+Version: 4. Optimized program runs on GPU in: 1 milisecs, repeats: 100
+number of while iteartions across all blocks = 28343 
+tot Mbytes is 372.11 
+gb_s for 950 climbers, on data set ../Data/swiss42.tsp was 346.80 gb/s and ran in 1073 microseconds 
+Version: 4. Optimized program runs on GPU in: 1 milisecs, repeats: 100
+number of while iteartions across all blocks = 29823 
+tot Mbytes is 391.54 
+gb_s for 1000 climbers, on data set ../Data/swiss42.tsp was 354.66 gb/s and ran in 1104 microseconds 
