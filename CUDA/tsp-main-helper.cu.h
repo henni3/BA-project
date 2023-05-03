@@ -397,7 +397,7 @@ void runProgram(char* file_name, int restarts, int version){
     
     if ( version == 4) {
         int while_tot = counter_h[0];
-        printf("number of while iteartions across all blocks = %d \n", while_tot);
+        //printf("number of while iteartions across all blocks = %d \n", while_tot);
         //double time = elapsed / 1000.0;
         double while_bytes = 16 * while_tot * 1.0e-6f * totIter ;
         double rest = ((6 * cities + 14) * restarts) * 1.0e-6f;
@@ -405,11 +405,11 @@ void runProgram(char* file_name, int restarts, int version){
         
 
         //unsigned long long int tot_bytes = ((6 * cities  + 14) * restarts) + (16 * totIter * while_tot);
-        printf("tot Mbytes is %.2f \n", tot);
+        //printf("tot Mbytes is %.2f \n", tot);
 
         //double gb_s = (tot_bytes * 1.0e-3f) / elapsed;
         double gb_new = tot / (elapsed * 1.0e-3);
-        printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
+        //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
         printf("gb/s : Climbers: elapsed:  %.2f,  %d, %lu  \n", gb_new, restarts, elapsed);
         
