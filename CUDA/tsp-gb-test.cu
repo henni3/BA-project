@@ -8,8 +8,8 @@ int main(int argc, char* argv[]) {
     // Collect input arguments
     char* file_name = argv[1];
     int restarts = atoi(argv[2]);
-    if (restarts % 10 != 0) {
-        printf("restarts must be multiple of 10 \n");
+    if (restarts % 50 != 0) {
+        printf("restarts must be multiple of 50 \n");
         exit(1);
     } 
     if(restarts <= 0){
