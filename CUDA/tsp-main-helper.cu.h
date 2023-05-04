@@ -393,7 +393,7 @@ void runProgram(char* file_name, int restarts, int version){
     
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
-    printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
+    //printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
     
     if ( version == 4) {
         int while_tot = counter_h[0];
@@ -410,7 +410,7 @@ void runProgram(char* file_name, int restarts, int version){
         double gb_new = tot / (elapsed * 1.0e-3);
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
-        printf("gb/s :, Climbers:, elapsed microseconds:,    %.2f,  %d, %lu  \n", gb_new, restarts, elapsed, average_iter);
+        printf("gb/s :, Climbers:, elapsed microseconds:,    %.2f,  %d, %lu , %d  \n", gb_new, restarts, elapsed, average_iter);
         
     }
     //get results
