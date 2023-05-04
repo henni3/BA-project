@@ -397,8 +397,8 @@ void runProgram(char* file_name, int restarts, int version){
     
     if ( version == 4) {
         int while_tot = counter_h[0];
-        printf("while tot is %d", while_tot);
-        int average_iter = while_tot / restarts;
+        //printf("while tot is %d", while_tot);
+        int average_iter = while_tot / restarts + 0.5;
         //printf("number of while iteartions across all blocks = %d \n", while_tot);
         //double time = elapsed / 1000.0;
         double while_bytes = 16 * while_tot * 1.0e-6f * totIter ;
