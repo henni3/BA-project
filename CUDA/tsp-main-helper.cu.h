@@ -367,6 +367,7 @@ void runProgram(char* file_name, int restarts, int version){
         cudaDeviceSynchronize();
         
         //Taking time for original program over GPU runs
+        gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
             //printf("we get here \n");
