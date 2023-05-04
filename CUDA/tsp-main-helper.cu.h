@@ -367,7 +367,6 @@ void runProgram(char* file_name, int restarts, int version){
         cudaDeviceSynchronize();
         
         //Taking time for original program over GPU runs
-        gettimeofday(&start, NULL); 
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
             //printf("we get here \n");
@@ -397,6 +396,7 @@ void runProgram(char* file_name, int restarts, int version){
     
     if ( version == 4) {
         int while_tot = counter_h[0];
+        int average_iter = while_tot / restarts;
         //printf("number of while iteartions across all blocks = %d \n", while_tot);
         //double time = elapsed / 1000.0;
         double while_bytes = 16 * while_tot * 1.0e-6f * totIter ;
@@ -411,7 +411,7 @@ void runProgram(char* file_name, int restarts, int version){
         double gb_new = tot / (elapsed * 1.0e-3);
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
-        printf("gb/s : Climbers: elapsed microseconds:  %.2f,  %d, %lu  \n", gb_new, restarts, elapsed);
+        printf("gb/s : elapsed microseconds:  Climbers: avg while_iters:  %.2f, %lu , %d , %d \n", gb_new, restarts, elapsed, average_iter);
         
     }
     //get results
