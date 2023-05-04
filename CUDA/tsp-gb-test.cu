@@ -20,12 +20,14 @@ int main(int argc, char* argv[]) {
     initHwd();
     
     for (char* dataset : file_names ) {
-         printf("testing for %s, each run repeated 100 times and taken average time \n", dataset);
+        printf("testing for %s, each run repeated 100 times and taken average time \n", dataset);
         for (int i = jump; i <= restarts; i += jump) {
-        runProgram(dataset, i, 4);
-        //printf("iteration %d \n", i);
+            runProgram(dataset, i, 4);
+            //printf("iteration %d \n", i);
+        
+        }
+
         printf("\n\n");
-    }
     }
 
     return 0;
