@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     // Collect input arguments
-    char* file_names[];
+    char* file_names[argc-2];
     for( int i = 2; i < argc; i++) {
         file_names[i-2] = argv[i];
     }
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     for (char* dataset : file_names ) {
          printf("testing for %s, each run repeated 100 times and taken average time \n", dataset);
         for (int i = jump; i <= restarts; i += jump) {
-        runProgram(file_name, i, 4);
+        runProgram(dataset, i, 4);
         //printf("iteration %d \n", i);
         printf("\n\n");
     }
