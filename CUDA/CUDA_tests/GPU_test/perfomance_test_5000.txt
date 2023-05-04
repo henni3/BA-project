@@ -1,0 +1,83 @@
+Device name: NVIDIA A100-PCIE-40GB
+Number of hardware threads: 221184
+Max block size: 1024
+Shared memory size: 49152
+====
+testing for ../Data/swiss42.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    230.08,  500, 854 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    329.31,  1000, 1189 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    393.49,  1500, 1491 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    424.97,  2000, 1842 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    437.95,  2500, 2231 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    452.66,  3000, 2588 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    461.64,  3500, 2962 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    472.78,  4000, 3310 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    478.82,  4500, 3686 , 29  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    485.90,  5000, 4040 , 29  
+
+
+testing for ../Data/berlin52.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    463.41,  500, 951 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    567.15,  1000, 1548 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    613.50,  1500, 2152 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    646.39,  2000, 2721 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    663.37,  2500, 3319 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    675.77,  3000, 3905 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    684.81,  3500, 4500 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    693.38,  4000, 5079 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    698.75,  4500, 5663 , 43  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    698.43,  5000, 6303 , 43  
+
+
+testing for ../Data/kroA100.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    964.11,  500, 3731 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1492.21,  1000, 4802 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1581.83,  1500, 6798 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1642.44,  2000, 8756 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1675.62,  2500, 10758 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1699.52,  3000, 12717 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1715.09,  3500, 14694 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1728.96,  4000, 16668 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1739.02,  4500, 18686 , 93  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1746.79,  5000, 20659 , 92  
+
+
+testing for ../Data/kroA200.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2001.52,  500, 11550 , 146  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2261.16,  1000, 20602 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2364.13,  1500, 29350 , 146  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2457.52,  2000, 37767 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2472.52,  2500, 47064 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2452.13,  3000, 56953 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2505.57,  3500, 64987 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2537.08,  4000, 73279 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2536.39,  4500, 82637 , 147  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2548.25,  5000, 91442 , 147  
+
+
+testing for ../Data/kroB100.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1291.62,  500, 2762 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1501.25,  1000, 4766 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1595.10,  1500, 6741 , 92  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1633.19,  2000, 8734 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1676.05,  2500, 10649 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1700.64,  3000, 12577 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1714.48,  3500, 14543 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1725.98,  4000, 16502 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1735.64,  4500, 18488 , 91  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    1746.45,  5000, 20437 , 91  
+
+
+testing for ../Data/pr439.tsp, each run repeated 100 times and taken average time 
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2151.82,  500, 94225 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2373.48,  1000, 170444 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2478.26,  1500, 244778 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2491.53,  2000, 325819 , 265  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2529.01,  2500, 400197 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2538.91,  3000, 477543 , 263  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2564.85,  3500, 552151 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2575.00,  4000, 629019 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2574.97,  4500, 707634 , 264  
+gb/s :, Climbers:, elapsed microseconds:, average while iters    2582.41,  5000, 784501 , 264  
+
+
