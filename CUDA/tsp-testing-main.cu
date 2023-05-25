@@ -22,7 +22,6 @@ int main(int argc, char* argv[]) {
         printf("Number of maximum restarts has to be larger than minimum restarts");
         exit(1);
     }
-    //char* true_name = "../Data/swiss42.tsp";
 
     initHwd();
 
