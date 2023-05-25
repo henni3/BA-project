@@ -1,6 +1,10 @@
 #include "tsp-main-helper.cu.h"
 
-/*Run program by "make run" in terminal*/
+/* 
+ * Run program by inserting "make pre_pro && ./pre_pro" to terminal. 
+ * This will run the program with dataset kroA100.tsp with 75000 
+ * restarts on version 1.
+ */
 int main() {
     int restarts;
     char* file_name;

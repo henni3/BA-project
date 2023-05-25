@@ -1,5 +1,10 @@
 #include "tsp-main-helper.cu.h"
-
+/* 
+ * To run this program insert example "make tsp && ./tsp ../Data/hardcode.tsp 5 1" 
+ * to terminal.
+ * This main program is created for running the 4 different versions on different number 
+ * of climbers on different datasets.
+ */
 int main(int argc, char* argv[]) {
     if (argc != 4) {
         printf("Usage: %s <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities), 3 (calculatedIandJ) or 4 (GB/s)>\n", argv[0]);

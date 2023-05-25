@@ -1,5 +1,11 @@
 #include "tsp-main-helper.cu.h"
 
+/* 
+ * To run this program insert example "make test && ./test ../Data/hardcode.tsp 5 50" 
+ * to terminal.
+ * This main program is created for testing the result with different number 
+ * climbers on different datasets. These tests are only performed on version 1.
+ */
 int main(int argc, char* argv[]) {
     int restarts, maxRestarts;
     char* file_name;
