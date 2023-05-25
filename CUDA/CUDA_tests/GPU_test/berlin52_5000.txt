@@ -1,0 +1,16 @@
+Device name: NVIDIA A100-PCIE-40GB
+Number of hardware threads: 221184
+Max block size: 1024
+Shared memory size: 49152
+====
+testing for ../Data/berlin52.tsp, each run repeated 100 times and taken average time 
+gb/s : Climbers: elapsed microseconds:  14.27,  10, 582  
+gb/s : Climbers: elapsed microseconds:  338.84,  510, 1327  
+gb/s : Climbers: elapsed microseconds:  555.91,  1010, 1596  
+gb/s : Climbers: elapsed microseconds:  604.71,  1510, 2197  
+gb/s : Climbers: elapsed microseconds:  640.57,  2010, 2758  
+gb/s : Climbers: elapsed microseconds:  657.66,  2510, 3360  
+gb/s : Climbers: elapsed microseconds:  673.15,  3010, 3934  
+gb/s : Climbers: elapsed microseconds:  685.03,  3510, 4511  
+gb/s : Climbers: elapsed microseconds:  694.54,  4010, 5083  
+gb/s : Climbers: elapsed microseconds:  699.62,  4510, 5669  

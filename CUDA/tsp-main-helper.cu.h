@@ -98,7 +98,7 @@ void run_original(unsigned short *tourMatrixIn_d,
                  int block_size, int cities, int restarts, int totIter){
   
     int num_blocks_restarts; 
-    num_blocks_restarts = (restarts + block_size-1)/block_size; 
+    num_blocks_restarts = (restarts + block_size-1)/block_size; // nvm
     //Create randomized tours
     createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
     transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
@@ -182,6 +182,46 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
     multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
 }
 
+/******************************************************* 
+ * test runs the 2-opt program with no 
+ * optimizations.
+*******************************************************/
+void run_test(unsigned short *tourMatrixIn_d, 
+                 unsigned short *tourMatrixTrans_d,
+                 int *is_d, uint32_t* kerDist, int *glo_results, int *counter, 
+                 int block_size, int cities, int restarts, int totIter){
+  
+    int num_blocks_restarts; 
+    num_blocks_restarts = (restarts + block_size-1)/block_size; // nvm
+    //Create randomized tours
+    createToursColumnWise<<<num_blocks_restarts, block_size>>> (tourMatrixIn_d, cities, restarts);
+    transposeTiled<unsigned short, TILE>(tourMatrixIn_d, tourMatrixTrans_d, (cities+1), restarts);
+
+    //compute shared memory size
+    size_t sharedMemSize = (cities+1) * sizeof(unsigned short) + 
+                            block_size * sizeof(ChangeTuple) + 
+                            sizeof(ChangeTuple) + (sizeof(int) * (block_size)) ;
+    //run 2 opt kernel 
+    twoOptKer_test<<<restarts, block_size, sharedMemSize>>> (kerDist, 
+                                                    tourMatrixTrans_d, 
+                                                    is_d, glo_results, counter, 
+                                                    cities, totIter);
+    gpuAssert( cudaPeekAtLastError());
+
+    /*int* host_tmp = (int*)malloc(restarts*2*sizeof(int));
+    cudaMemcpy(host_tmp, glo_results, restarts*2*sizeof(int), cudaMemcpyDeviceToHost);
+    printf("\n\nPath lengths before reduce:\n");    
+    for(int i=0; i<restarts; i++) {
+        printf("%d, ", host_tmp[2*i]);
+    }
+    printf("\n\n");
+    */
+    //run reduction of all local optimum cost across multiple blocks
+    multBlockRed(glo_results, num_blocks_restarts, block_size, restarts);
+    //multBlockRed(counter, num_blocks_restarts, block_size, restarts); 
+    mapReduce<Add<int>>(block_size,restarts, counter, counter);
+}
+
 
 /******************************************************* 
  * runProgram() prepares variables and calls functions
@@ -195,6 +235,8 @@ void runProgram(char* file_name, int restarts, int version){
     int block_size, cities, totIter, *is_d, *js_d, *glo_results, *glo_res_h, tourId, elapsed;
     unsigned short *tourMatrixIn_d, *tourMatrixTrans_d, *tourMatrix_h;
 
+    // for testing 
+    int *counter, *counter_h;
 
     // Collect information from datafile into distMatrix and cities    
     distMatrix = (uint32_t*) malloc(sizeof(uint32_t) * MAXCITIES * MAXCITIES);
@@ -231,10 +273,17 @@ void runProgram(char* file_name, int restarts, int version){
     cudaMalloc((void**)&is_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&js_d, totIter*sizeof(uint32_t));
     cudaMalloc((void**)&glo_results, 2*restarts*sizeof(int));
+    //testing
+    cudaMalloc((void**)&counter, restarts * sizeof(int));
+
 
     //CPU malloc
     glo_res_h = (int*) malloc(2*sizeof(int));
     tourMatrix_h = (unsigned short*) malloc((cities+1)*restarts*sizeof(unsigned short));
+
+    // testing
+
+    counter_h = (int*) malloc(sizeof(int));
     
     //Dry run init
     init(block_size, cities, totIter, is_d, js_d);
@@ -288,7 +337,7 @@ void runProgram(char* file_name, int restarts, int version){
         gettimeofday(&end, NULL);
 
     //Running the program version where the i and j indexes are calculated (version 3)
-    }else{
+    }else if( 3 == version){
         //Dry run program
         run_calculatedIandJ(tourMatrixIn_d, tourMatrixTrans_d, 
                 kerDist, glo_results, 
@@ -310,16 +359,64 @@ void runProgram(char* file_name, int restarts, int version){
         cudaDeviceSynchronize();
         gettimeofday(&end, NULL);
     }
+    else if ( 4 == version) {
+                //Dry run program
+        run_test(tourMatrixIn_d, tourMatrixTrans_d, 
+                is_d, kerDist, glo_results, counter,
+                block_size, cities, restarts, totIter);
+        cudaDeviceSynchronize();
+        
+        //Taking time for original program over GPU runs
+        gettimeofday(&start, NULL); 
+        for(int i = 0; i < GPU_RUNS; i++){
+            //run program
+            //printf("we get here \n");
+            init(block_size, cities, totIter, is_d, js_d);
+            run_test(tourMatrixIn_d, tourMatrixTrans_d, 
+                        is_d, kerDist, glo_results, counter, 
+                        block_size, cities, restarts, totIter);
+
+            //get results
+            cudaMemcpy(glo_res_h, glo_results, 2*sizeof(int), cudaMemcpyDeviceToHost);
+            cudaMemcpy(counter_h, counter, sizeof(int), cudaMemcpyDeviceToHost);
+            tourId = glo_res_h[1];
+        }
+        cudaDeviceSynchronize();
+        gettimeofday(&end, NULL);
+
+    }
+    else {
+        printf("version not recoginized, something went wrong, understood version: %d", version);
+        exit(-1);
+    }
     
     
- 
     timeval_subtract(&diff, &end, &start);
     elapsed = (diff.tv_sec*1e6+diff.tv_usec) / GPU_RUNS; 
-    printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
+    //printf("Version: %d. Optimized program runs on GPU in: %lu milisecs, repeats: %d\n", version, elapsed/1000, GPU_RUNS);
     
+    if ( version == 4) {
+        int while_tot = counter_h[0];
+        //printf("while tot is %d", while_tot);
+        int average_iter = while_tot / restarts + 0.5;
+        //printf("number of while iteartions across all blocks = %d \n", while_tot);
+        //double time = elapsed / 1000.0;
+        double while_bytes = 16 * while_tot * 1.0e-6f * totIter ;
+        double rest = ((6 * cities + 14) * restarts) * 1.0e-6f;
+        double tot = while_bytes + rest;
+        
+
+        //unsigned long long int tot_bytes = ((6 * cities  + 14) * restarts) + (16 * totIter * while_tot);
+        //double gb_s = (tot_bytes * 1.0e-3f) / elapsed;
+        double gb_new = tot / (elapsed * 1.0e-3);
+        //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
+        //For testing
+        printf("gb/s :, Climbers:, elapsed microseconds:, average while iters    %.2f,  %d, %lu , %d  \n", gb_new, restarts, elapsed, average_iter);
+        
+    }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    
+    /*
     //print results
     printf("Shortest path: %d\n", glo_res_h[0]);
     printf("Tour:  [");
@@ -327,10 +424,12 @@ void runProgram(char* file_name, int restarts, int version){
         printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
     }
     printf("]\n");
+    */
     
     //Clean up
-    free(distMatrix); free(tourMatrix_h); free(glo_res_h);  
+    free(distMatrix); free(tourMatrix_h); free(glo_res_h); free(counter_h);
     cudaFree(is_d); cudaFree(js_d); cudaFree(tourMatrixTrans_d); cudaFree(tourMatrixIn_d);
     cudaFree(kerDist);
     cudaFree(glo_results);
+    cudaFree(counter);  
 }

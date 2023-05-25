@@ -155,6 +155,18 @@ __device__ void reduceLocalMinChange(int block_size,
 }
 
 
+//Reduction on all iterations in the while loop of a climber, reduced across all threads.
+__device__ void reduceLocalCounter(int block_size, volatile int* arr){
+    int idx = threadIdx.x;
+    for (int size = block_size >> 1; size > 0; size >>= 1 ){
+        if(idx < size){
+            arr[idx] += arr[idx + size];
+        }
+        __syncthreads();
+    }
+}
+
+
 /** Reduces all the local optimum cost to find the
  *  global optimum cost. 
  *  This is done by parallel reduction across multiple blocks. 
