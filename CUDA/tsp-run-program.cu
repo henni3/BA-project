@@ -4,7 +4,7 @@
 int main() {
     int restarts;
     char* file_name;
-    restarts = 1000;
+    restarts = 10000;
     file_name = "../Data/kroA100.tsp";
 
     initHwd();
