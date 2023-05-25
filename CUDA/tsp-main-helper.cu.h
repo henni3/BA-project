@@ -416,15 +416,17 @@ void runProgram(char* file_name, int restarts, int version){
     }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    /*
-    //print results
-    printf("Shortest path: %d\n", glo_res_h[0]);
-    printf("Tour:  [");
-    for(int i = 0; i < cities+1; i++){
-        printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
+    //Print only when we are not testing for GB/s
+    if(version < 4){
+        //print results
+        printf("Shortest path: %d\n", glo_res_h[0]);
+        printf("Tour:  [");
+        for(int i = 0; i < cities+1; i++){
+            printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
+        }
+        printf("]\n");
     }
-    printf("]\n");
-    */
+
     
     //Clean up
     free(distMatrix); free(tourMatrix_h); free(glo_res_h); free(counter_h);
