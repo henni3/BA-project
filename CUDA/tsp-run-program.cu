@@ -3,7 +3,7 @@
 /* 
  * Run program by inserting "make pre_pro && ./pre_pro" to terminal. 
  * This will run the program with dataset kroA100.tsp with 75000 
- * restarts on version 1.
+ * climbers on version 1.
  */
 int main() {
     int restarts;

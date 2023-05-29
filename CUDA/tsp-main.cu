@@ -7,7 +7,7 @@
  */
 int main(int argc, char* argv[]) {
     if (argc != 4) {
-        printf("Usage: %s <file-name> <number-of-restarts> <Which program version? 1 (original), 2 (100Cities), 3 (calculatedIandJ) or 4 (GB/s)>\n", argv[0]);
+        printf("Usage: %s <file-name> <number-of-climbers> <Which program version? 1 (original), 2 (100Cities), 3 (calculatedIandJ) or 4 (GB/s)>\n", argv[0]);
         exit(1);
     }
     // Collect input arguments

@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        printf("Usage: %s <number-of-restarts> <list of files>\n", argv[0]);
+        printf("Usage: %s <number-of-climbers> <list of files>\n", argv[0]);
         exit(1);
     }
     // Collect input arguments
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
     }
     int restarts = atoi(argv[1]);
     if(restarts <= 0){
-        printf("Number of restarts has to be a number larger than 0");
+        printf("Number of climbers has to be a number larger than 0");
         exit(1);
     }
     //int cities = atoi(argv[3]);
