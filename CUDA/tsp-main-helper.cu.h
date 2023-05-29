@@ -6,6 +6,11 @@
 #include "tsp-kernels.cu.h"
 #include "dataCollector.cu.h"
 
+/* 
+ * This file contains helper function for the main files.
+ */
+
+
 /************************************************************** 
  *  Init() computes the i and j indexes and stores them in 
  *  is_d and js_d.

@@ -3,6 +3,10 @@
 #include <string.h>
 #include <math.h>
 
+/* 
+ * This file collects and transforms the data input
+ */
+
 #define MAXLINE 8192
 #define PI 3.141592
 #define RRR 6378.388

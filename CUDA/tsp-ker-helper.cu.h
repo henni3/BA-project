@@ -1,4 +1,7 @@
 #include <math.h>
+/* 
+ * This file is the kernel helper functions 
+ */
 
 __global__ void mkIndShp(int* index_shp_d, int len){
     int glb_id = blockIdx.x * blockDim.x + threadIdx.x;

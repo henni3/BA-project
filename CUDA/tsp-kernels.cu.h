@@ -2,6 +2,10 @@
 #include <sys/time.h>
 #include "constants.cu.h"
 #include <stdio.h>
+/* 
+ * This file is kernel functions from where the 
+ * version 1, 2, 3 and 4 are executed.
+ */
 
 __global__ void twoOptKer(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
