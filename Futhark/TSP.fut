@@ -4,7 +4,8 @@
 --
 -- compiled input @ ../Data/swiss.txt
 
-
+-- random module taken from Futharks webpage:
+-- https://futhark-lang.org/examples/random-numbers.html
 module type rand ={
     type rng
     val init : i32 -> rng
@@ -13,7 +14,8 @@ module type rand ={
     val split_n : (n: i64) -> rng -> [n]rng
 }
 
--- random module taken from Futharks webpage
+-- random module taken from Futharks webpage:
+-- https://futhark-lang.org/examples/random-numbers.html
 module lcg : rand = {
     type rng = u32
     
@@ -138,7 +140,7 @@ let findMinChange [m] [n] [x] [y] (dist : [m]i32) (tour : [n]i32)
                             (dist[iCity * cities + iCityp1] + 
                             dist[jCity * cities + jCityp1])), i, j) 
                         ) (iota totIter)
-    in reduce changeComparator (2147483647, -1, -1) changeArr
+    in reduce changeComparator (2147483647, 2147483647, 2147483647) changeArr
 
 
 -- 2-opt algorithm
@@ -171,18 +173,7 @@ let flagArrayGen (cities : i32) : ([]i32)=
 
 let main [m] (cities : i32) (numRestarts : i64) 
          (distM : [m]i32) : i32 =
-    --let cities = 5
     let totIter = ((cities-1)*(cities-2))/2 |> i64.i32
-    --let initTour = (iota (i64.i32 cities+1)) |> 
-                    --map(\i -> (i+1)*10)
-     
-    --let oldCost = cost tour distM  
-    --let distM = [0,4,6,8,3,
-    --             4,0,4,5,2,
-    --             6,4,0,2,3,
-    --             8,5,2,0,4,
-    --             3,2,3,4,0]
-
     let flagArr = flagArrayGen cities
     let Iarr = scan (+) 0i32 flagArr |> map (\x -> x-1)
     let Jarr = segmented_scan (+) 0i32 (map bool.i32 (flagArr :> [totIter]i32)) (replicate totIter 1i32) |> map (\x -> x-1)
@@ -192,5 +183,4 @@ let main [m] (cities : i32) (numRestarts : i64)
             in cost minTour distM
         )(iota numRestarts)
     in reduce costComparator 2147483647 allCosts
-    --in mkRandomTour 125 cities
     
