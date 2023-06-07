@@ -188,7 +188,7 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
 *******************************************************/
 void run_test(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
-                 int *is_d, uint32_t* kerDist, int *glo_results, int *counter, 
+                 uint32_t* kerDist, int *glo_results, int *counter, 
                  int block_size, int cities, int restarts, int totIter){
   
     int num_blocks_restarts; 
@@ -204,7 +204,7 @@ void run_test(unsigned short *tourMatrixIn_d,
     //run 2 opt kernel 
     twoOptKer_test<<<restarts, block_size, sharedMemSize>>> (kerDist, 
                                                     tourMatrixTrans_d, 
-                                                    is_d, glo_results, counter, 
+                                                    glo_results, counter, 
                                                     cities, totIter);
     gpuAssert( cudaPeekAtLastError());
 
@@ -362,7 +362,7 @@ void runProgram(char* file_name, int restarts, int version){
     else if ( 4 == version) {
                 //Dry run program
         run_test(tourMatrixIn_d, tourMatrixTrans_d, 
-                is_d, kerDist, glo_results, counter,
+                kerDist, glo_results, counter,
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
@@ -371,7 +371,7 @@ void runProgram(char* file_name, int restarts, int version){
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
             //printf("we get here \n");
-            init(block_size, cities, totIter, is_d, js_d);
+            //init(block_size, cities, totIter, is_d, js_d);
             run_test(tourMatrixIn_d, tourMatrixTrans_d, 
                         is_d, kerDist, glo_results, counter, 
                         block_size, cities, restarts, totIter);

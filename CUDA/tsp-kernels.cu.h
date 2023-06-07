@@ -142,7 +142,6 @@ __global__ void twoOptKer(uint32_t* glo_dist,
 
 __global__ void twoOptKer_test(uint32_t* glo_dist, 
                           unsigned short *glo_tours, 
-                          int* glo_is,
                           int* glo_result,
                           int* counter, 
                           int cities, 
@@ -203,11 +202,13 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         global i array and in the global j array to acheive coalesecing.
         ***/
         for(int ind = idx; ind < totIter; ind += block_size){
-            int num = glo_is[ind]; // 4
-            i = num >> 16;
-            j = (num & 0xffff) + i + 2;
+           int d = 1-(4*(-2*(totIter-ind)));
+           int tmp = ((-1+(sqrt((float) d)))/2)+0.9999;
+           int curr = (int) tmp;
+            i = (cities-2) - curr;
+            j = (i+2) + (ind-(totIter-((curr*(curr+1))/2))); 
             ip1 = i+1;
-            jp1 = j+1; 
+            jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +
