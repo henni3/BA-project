@@ -365,7 +365,7 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int change, d, i, j, ip1, jp1, block_size, idx;
+    int change, d, i, j, ip1, jp1;
     unsigned int curr;
     ChangeTuple localMinChange;
     ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);

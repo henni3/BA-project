@@ -22,8 +22,8 @@ int main(int argc, char* argv[]) {
     for (char* dataset : file_names ) {
         printf("testing for %s, each run repeated 100 times and taken average time \n", dataset);
         printf("GB/s,restarts,elpased,averageIter, cost\n");
-        run_Program(dataset, 1, 4);
-        run_Program(dataset,10,4);
+        runProgram(dataset, 1, 4);
+        runProgram(dataset,10,4);
         for (int i = jump; i <= restarts; i += jump) {
             runProgram(dataset, i, 4);
             //printf("iteration %d \n", i);
