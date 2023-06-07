@@ -416,15 +416,15 @@ void runProgram(char* file_name, int restarts, int version){
         double gb_new = tot / (elapsed * 1.0e-3);
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
-        printf("gb/s :, Climbers:, elapsed microseconds:, average while iters    %.2f,  %d, %lu , %d  \n", gb_new, restarts, elapsed, average_iter);
+        printf("gb/s :, Climbers:, elapsed microseconds:, average while iters    %.2f,  %d, %lu , %d", gb_new, restarts, elapsed, average_iter);
         
     }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
+    printf("Shortest path: %d\n", glo_res_h[0]);
     //Print only when we are not testing for GB/s
     if(version < 4){
         //print results
-        printf("Shortest path: %d\n", glo_res_h[0]);
         printf("Tour:  [");
         for(int i = 0; i < cities+1; i++){
             printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
