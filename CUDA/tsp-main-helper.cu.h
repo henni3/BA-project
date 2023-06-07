@@ -417,7 +417,7 @@ void runProgram(char* file_name, int restarts, int version){
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
         // gbs, number of restarts, elapsed, average iter, cost
-        printf("%.2f,  %d, %lu , %d", gb_new, restarts, elapsed, average_iter);
+        printf("%.2f,%d,%lu,%d", gb_new, restarts, elapsed, average_iter);
         
     }
     //get results
