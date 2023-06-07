@@ -358,15 +358,15 @@ __global__ void twoOptKerCalculated(uint32_t* glo_dist,
 }
 
 __global__ void twoOptKer_test(uint32_t* glo_dist, 
-                          unsigned short *glo_tours, 
-                          int* glo_is,
+                          unsigned short *glo_tours,
                           int* glo_result,
                           int* counter, 
                           int cities, 
                           int totIter){
     int block_size = blockDim.x;
     int idx = threadIdx.x;
-    int i, j, change, ip1, jp1;
+    int change, d, i, j, ip1, jp1, block_size, idx;
+    unsigned int curr;
     ChangeTuple localMinChange;
     ChangeTuple maxValue = ChangeTuple(INT_MAX, USHRT_MAX, USHRT_MAX);
     
@@ -419,12 +419,15 @@ __global__ void twoOptKer_test(uint32_t* glo_dist,
         The i and j index are collected (with a stride of block size) from the 
         global i array and in the global j array to acheive coalesecing.
         ***/
+        float tmp;
         for(int ind = idx; ind < totIter; ind += block_size){
-            int num = glo_is[ind]; // 4
-            i = num >> 16;
-            j = (num & 0xffff) + i + 2;
+            d = 1-(4*(-2*(totIter-ind)));
+            tmp = ((-1+(sqrt((float) d)))/2)+0.9999;
+            curr = (int) tmp;
+            i = (cities-2) - curr;
+            j = (i+2) + (ind-(totIter-((curr*(curr+1))/2))); 
             ip1 = i+1;
-            jp1 = j+1; 
+            jp1 = j+1;
             change = glo_dist[tour[i]*cities+tour[j]] + 
                     glo_dist[tour[ip1]*cities+tour[jp1]] -
                     (glo_dist[tour[i]*cities+tour[ip1]] +

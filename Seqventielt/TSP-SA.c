@@ -54,7 +54,7 @@ int fitness (int*distM, int* tour, int cities) {
 //Borrowed from https://stackoverflow.com/questions/1202687/how-do-i-get-a-specific-range-of-numbers-from-rand
 //Compute random number in a specific range
 int randomRange(int min, int max){
-   return min + rand() / (RAND_MAX / (max - min + 1) + 1);
+   return rand() % (max + 1 - min) + min;
 }
 
 // Simulated Annealing
@@ -64,16 +64,20 @@ int simulatedAnnealing(int* distM, int* currTour, int cities ){
     double c, temperature;
     int* optTour = malloc((cities + 1 ) * sizeof(int));
     int edges = (cities * (cities-1))/2; //give another name
-    temperature = pow(10,3);
     int start_temp = pow(edges,3);
+    temperature = start_temp;
+    //printf("%d \n", start_temp);
+    printf("iterations, cost\n");
     iter = 0;
     int equal_counter = 0;
     //compute simulated annealing
-    while(temperature > 0.0025){
+    while(temperature > 0.00025){
+        //printf("we get here \n");
         if(RAND_MAX < cities){ //should we have an alternativ way to handle this problem?
             printf("Usage: number of cities (%d) is larger than RAND_MAX (%d)\n", cities, RAND_MAX);
             exit(1);
         }
+        iter++;
         //Tjek efter om denne måde er den bedste måde at lave random på
         i = randomRange(0,(cities - 1)); //select random city
         j = randomRange(0,(cities - 1)); //select random city
@@ -109,13 +113,13 @@ int simulatedAnnealing(int* distM, int* currTour, int cities ){
             }
             
         }
-        iter++;
-        double factor = 1.56E5;
-        double alpha =  (factor * sqrt((double) cities)) / (factor * cities);
-        temperature = temperature * alpha;
-        if(iter % 10000 == 0) {
-            printf("iterations is %d, with cost %d", iter, fitness(distM,currTour, cities));
-            printf("and temperature %f \n", temperature);
+        
+        //double factor = 1.56E5;
+        double alpha = 0.89;
+        temperature = start_temp * pow(alpha,iter);
+        if(iter % 10 == 0) {
+            printf("%d, %d \n", iter, fitness(distM,currTour, cities));
+            //printf("and temperature %f \n", temperature);
         }
 
     }
@@ -160,7 +164,7 @@ int main(int argc, char** argv) {
     for (int i =0; i < cities + 1 ; i++) {
         printf("%d, ", tour[i]);
     }
-    printf("\n done");
+    printf("\n done \n");
 
     //int * opt_tour = twoOptMove(distM, tour, cities);
     int oldCost = 0;

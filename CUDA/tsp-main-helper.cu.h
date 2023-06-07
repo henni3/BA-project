@@ -193,7 +193,7 @@ void run_calculatedIandJ(unsigned short *tourMatrixIn_d,
 *******************************************************/
 void run_test(unsigned short *tourMatrixIn_d, 
                  unsigned short *tourMatrixTrans_d,
-                 int *is_d, uint32_t* kerDist, int *glo_results, int *counter, 
+                 uint32_t* kerDist, int *glo_results, int *counter, 
                  int block_size, int cities, int restarts, int totIter){
   
     int num_blocks_restarts; 
@@ -209,7 +209,7 @@ void run_test(unsigned short *tourMatrixIn_d,
     //run 2 opt kernel 
     twoOptKer_test<<<restarts, block_size, sharedMemSize>>> (kerDist, 
                                                     tourMatrixTrans_d, 
-                                                    is_d, glo_results, counter, 
+                                                    glo_results, counter, 
                                                     cities, totIter);
     gpuAssert( cudaPeekAtLastError());
 
@@ -367,7 +367,7 @@ void runProgram(char* file_name, int restarts, int version){
     else if ( 4 == version) {
                 //Dry run program
         run_test(tourMatrixIn_d, tourMatrixTrans_d, 
-                is_d, kerDist, glo_results, counter,
+                kerDist, glo_results, counter,
                 block_size, cities, restarts, totIter);
         cudaDeviceSynchronize();
         
@@ -376,9 +376,9 @@ void runProgram(char* file_name, int restarts, int version){
         for(int i = 0; i < GPU_RUNS; i++){
             //run program
             //printf("we get here \n");
-            init(block_size, cities, totIter, is_d, js_d);
+            //init(block_size, cities, totIter, is_d, js_d);
             run_test(tourMatrixIn_d, tourMatrixTrans_d, 
-                        is_d, kerDist, glo_results, counter, 
+                        kerDist, glo_results, counter, 
                         block_size, cities, restarts, totIter);
 
             //get results
@@ -416,12 +416,13 @@ void runProgram(char* file_name, int restarts, int version){
         double gb_new = tot / (elapsed * 1.0e-3);
         //printf("gb_s for %d climbers, on data set %s was %.2f gb/s and ran in %lu microseconds \n", restarts, file_name, gb_new, elapsed);
         //For testing
-        printf("gb/s :, Climbers:, elapsed microseconds:, average while iters    %.2f,  %d, %lu , %d", gb_new, restarts, elapsed, average_iter);
+        // gbs, number of restarts, elapsed, average iter, cost
+        printf("%.2f,  %d, %lu , %d", gb_new, restarts, elapsed, average_iter);
         
     }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    printf(", Shortest path: %d\n", glo_res_h[0]);
+    printf(",%d\n", glo_res_h[0]);
     //Print only when we are not testing for GB/s
     if(version < 4){
         //print results
@@ -430,7 +431,9 @@ void runProgram(char* file_name, int restarts, int version){
             printf("%d, ", tourMatrix_h[(cities+1)*tourId+i]);
         }
         printf("]\n");
+         printf(", Shortest path: %d\n", glo_res_h[0]);
     }
+    
 
     
     //Clean up

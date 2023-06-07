@@ -252,10 +252,10 @@ int main(int argc, char** argv) {
     int cities = fileToDistM(fileName, distMatrix);
     distMatrix = (int*) realloc(distMatrix, sizeof(int) * cities * cities);
     int MaxIter = atoi(argv[3]);
-    Q = 2.0;
+    Q = 100.0;
     alpha = 1.0;
-    beta = 1.0;
-    rho = 0.05;
+    beta = 5.0;
+    rho = 0.5;
     srand(12345);
     printf("we get to intialize the ants \n");
     Ant* ants = intializeAnts(numAnts, cities, distMatrix);
@@ -267,8 +267,14 @@ int main(int argc, char** argv) {
         updatePheromones(pheromones,ants,distMatrix,numAnts,cities);
         //printf("got through updating in iteration %d \n", i);
         int newCost = shortestPath(ants, distMatrix, numAnts, cities);
+
         if (newCost < bestCost) {
             bestCost = newCost;
+        }
+        if (i % 10 == 0) {
+            //iterations
+            printf("%d %d\n", i, bestCost);
+            //costs
         }
 
     }

@@ -1,0 +1,30 @@
+number of cities is 42 
+tour is:0, 37, 9, 5, 33, 12, 6, 4, 34, 11, 18, 7, 23, 30, 22, 20, 41, 10, 28, 13, 35, 2, 27, 31, 24, 36, 40, 8, 21, 19, 16, 39, 15, 38, 1, 14, 32, 25, 17, 29, 26, 3, 0, 
+ done 
+638277381 
+iterations is 10, with cost 5130and temperature 199025865.319743 
+iterations is 20, with cost 5079and temperature 62059687.912194 
+iterations is 30, with cost 5059and temperature 19351278.074191 
+iterations is 40, with cost 5171and temperature 6034061.331963 
+iterations is 50, with cost 5074and temperature 1881524.104935 
+iterations is 60, with cost 4959and temperature 586691.576816 
+iterations is 70, with cost 5189and temperature 182940.524335 
+iterations is 80, with cost 4957and temperature 57044.001937 
+iterations is 90, with cost 5049and temperature 17787.300921 
+iterations is 100, with cost 5263and temperature 5546.386356 
+iterations is 110, with cost 5135and temperature 1729.458660 
+iterations is 120, with cost 4808and temperature 539.274956 
+iterations is 130, with cost 4711and temperature 168.155206 
+iterations is 140, with cost 4622and temperature 52.433685 
+iterations is 150, with cost 4508and temperature 16.349725 
+iterations is 160, with cost 4440and temperature 5.098125 
+iterations is 170, with cost 4375and temperature 1.589683 
+iterations is 180, with cost 4232and temperature 0.495691 
+iterations is 190, with cost 4201and temperature 0.154565 
+iterations is 200, with cost 4043and temperature 0.048196 
+iterations is 210, with cost 3945and temperature 0.015028 
+iterations is 220, with cost 3739and temperature 0.004686 
+iterations is 230, with cost 3710and temperature 0.001461 
+iterations is 240, with cost 3624and temperature 0.000456 
+cost of tour 3621 after simulated annelaing with 246 iterations 
+tour after annealing is:0, 38, 30, 8, 28, 34, 25, 22, 27, 4, 15, 13, 18, 36, 35, 14, 19, 16, 10, 41, 23, 40, 39, 9, 29, 21, 32, 31, 20, 6, 12, 24, 33, 11, 2, 3, 7, 26, 17, 1, 5, 37, 0, 

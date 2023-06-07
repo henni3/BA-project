@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "tsp_data.h"
+#include <limits.h>
 
 void createTour(int* tour, int cities, int startingCity){
     for(int t = 1; t < cities; t++){
-        tour[t] = t+1;
+        tour[t] = t;
         //printf ("tour creatinon yeilds %d \n", tour[t]);
     }
     tour[0] = startingCity;
@@ -28,6 +30,13 @@ void createTour(int* tour, int cities, int startingCity){
     printf("\n");*/
 }
 
+int fitness (int*distM, int* tour, int cities) {
+    int cost = 0;
+    for (int i = 0; i < cities; i++) {
+        cost += distM[cities * tour[i] + tour[i+1]];
+    }
+    return cost;
+}
 
 void twoOptSwap(int* itTour, int i , int j){
     int minI = i+1;
@@ -42,17 +51,21 @@ void twoOptSwap(int* itTour, int i , int j){
     
 }
 
-int* twoOptMove(int** distM, int cities, int restarts){
-    int bestCost = INT32_MAX;
+int* twoOptMove(int* distM, int cities, int restarts){
+    int bestCost = INT_MAX;
     int cost = 0;
-    int minChange = -1;
     int change, mini, minj, ti, tiplus1, tj, tjplus1;
     int* iterativeTour = malloc((cities + 1 ) * (sizeof(int)));
     int* bestTour = malloc((cities + 1) * (sizeof(int)));
+    int iteration_count = 0;
     //memcpy(iterativeTour, tour, sizeof(int) * (cities +1));
     for (int i = 0; i < restarts; i++){
-        createTour(iterativeTour, cities, 1);
+        createTour(iterativeTour, cities, 0);
+        int minChange = -1;
+        int while_count = 0;
         while(minChange < 0){
+            iteration_count++;
+            while_count ++;
             minChange = 0;
             for(int i = 0; i < cities - 2; i++){
                 ti = iterativeTour[i];
@@ -60,7 +73,7 @@ int* twoOptMove(int** distM, int cities, int restarts){
                 for(int j = i+2; j < cities; j++){
                     tj = iterativeTour[j];
                     tjplus1 = iterativeTour[j+1];
-                    change = distM[ti][tj] + distM[tiplus1][tjplus1] - (distM[ti][tiplus1] + distM[tj][tjplus1]);
+                    change = distM[cities * ti + tj] + distM[cities * tiplus1 + tjplus1] - (distM[cities * ti + tiplus1] + distM[cities * tj + tjplus1]);
                     //printf("change is %d \n", change);
                     if(change < minChange){
                         minChange = change;
@@ -81,40 +94,43 @@ int* twoOptMove(int** distM, int cities, int restarts){
                 //printf("after swap\n");
             }
         }
-        for (int i = 0; i < cities; i++ ) {
-            cost += distM[iterativeTour[i]][iterativeTour[i+1]];
-        }
+        cost = fitness(distM, iterativeTour,cities);
         if(cost < bestCost){
             memcpy(bestTour, iterativeTour, sizeof(int) * (cities +1));
             bestCost = cost;
         }
-    }
+        // number of climbers 
+        printf("%d\n", iteration_count);
+        // tour cost
+        //printf("%d\n", bestCost);
+    }   
     free(iterativeTour);
     return bestTour;
 }
 
 
 int main(int argc, char *argv[]) {
-    if(argc != 2) {
-        printf("Expected one argument. Please enter how many climbers");
+    if(argc != 3) {
+        printf("Expected two arguments. data set,  how many climbers \n");
         return 0;
     }
-    srand(time(NULL));
-    int row = 6;
-    int column = 6;
-    int cities = column - 1;
-    int restarts = atoi(argv[1]);
-    int** distM = malloc(row*sizeof(int*));
-    for (int i = 0; i < row; i++) {
-        distM[i] = malloc(column * sizeof(int));
+    srand(123456);
+    char* fileName = argv[1];
+    int restarts = atoi(argv[2]);
+    int* distM = (int*) malloc(sizeof(int) * MAXCITIES * MAXCITIES);
+    int cities = fileToDistM(fileName, distM);
+    printf("number of cities is %d \n", cities);
+    if( cities > MAXCITIES){
+        printf("too many cities :( \n");
+        exit(1);
     }
-   
-    memcpy(distM[0], (int[6]) {0,1,2,3,4,5}, sizeof(int) * (column));
-    memcpy(distM[1], (int[6]) {1,0,4,6,8,3}, sizeof(int) * (column));
-    memcpy(distM[2], (int[6]) {2,4,0,4,5,2}, sizeof(int) * (column));
-    memcpy(distM[3], (int[6]) {3,6,4,0,2,3}, sizeof(int) * (column));
-    memcpy(distM[4], (int[6]) {4,8,5,2,0,4}, sizeof(int) * (column));
-    memcpy(distM[5], (int[6]) {5,3,2,3,4,0}, sizeof(int) * (column));
+    distM = (int*) realloc(distM,sizeof(int) * cities * cities);
+    /*for (int i = 0; i < cities; i++ ) {
+        for (int j= 0; j < cities; j++) {
+            printf("%d,", distM[cities* i + j]);
+        }
+        printf("\n");
+    }*/
 
     /*for (int i = 0; i < row; i++) {
         for (int j = 0; j < column; j ++) {
@@ -127,20 +143,20 @@ int main(int argc, char *argv[]) {
 
     //int* tour = malloc((cities + 1 ) * sizeof(int));
     //createTour(tour, cities, 1);
-    int * opt_tour = twoOptMove(distM, cities, restarts);
+    int* opt_tour = twoOptMove(distM, cities, restarts);
     int newCost = 0;
+    printf("best tour found [");
     for (int i = 0; i < cities +1 ; i++ ) {
+        printf(" %d,", opt_tour[i]);
         if(i < cities){
-            newCost += distM[opt_tour[i]][opt_tour[i+1]];
+            //printf("edge is edge (%d, %d) \n", opt_tour[i], opt_tour[i + 1]);
+            newCost += distM[cities * opt_tour[i] + opt_tour[i+1]];
             //printf("new_cost is = %d \n",newCost);
-            //printf("distM: %d\n", distM[opt_tour[i]][opt_tour[i+1]]);
+            //printf("distM: %d\n", distM[cities * opt_tour[i] + opt_tour[i+1]]);
         }
-        printf("%d is City %d \n", i, opt_tour[i]);
     }
+    printf("] \n");
     printf("Best cost: %d\n", newCost);
-    for (int i = 0; i < row; i++) {
-        free(distM[i]);
-    }
     free(opt_tour);
     free(distM);
     //free(tour);

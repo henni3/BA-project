@@ -129,7 +129,7 @@ __global__ void createToursColumnWise(unsigned short* tourMatrix,
         tourMatrix[restarts * cities + glo_id] = 0;
         
         //Randomize each tour
-        rand = glo_id + 200 + blockIdx.x * 10;
+        rand = glo_id + blockIdx.x;
         for(int i = 1; i < cities; i++){
             rand = (MULT * rand + ADD) & MASK;
             to = rand % cities;
