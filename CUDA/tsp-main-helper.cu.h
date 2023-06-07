@@ -421,7 +421,7 @@ void runProgram(char* file_name, int restarts, int version){
     }
     //get results
     cudaMemcpy(tourMatrix_h, tourMatrixTrans_d, (cities+1)*restarts*sizeof(unsigned short), cudaMemcpyDeviceToHost);
-    printf("Shortest path: %d\n", glo_res_h[0]);
+    printf(", Shortest path: %d\n", glo_res_h[0]);
     //Print only when we are not testing for GB/s
     if(version < 4){
         //print results
