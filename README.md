@@ -9,7 +9,7 @@ Students: Henriette Naledi Winther Hansen and Jóhann Utne
 - The _Futhark directory_ contains the Futhark implementation of the 2-Opt algorithm.  
 - The _Seqventielt directory_, contains the sequential implementations of the 2-Opt, ACO, and SA algorithms.  
 
-# How to run the project
+# How to Run the Project
 To compile and run the _CUDA implementation_ with a sample program go to the CUDA folder and insert,  
 ```
 make prepro && ./prepro 
@@ -27,7 +27,25 @@ to terminal. To run insert
 this will print the time 10 times and the final number (ending with i32) will be the best cost of the
 tour computed. When loading the dataset berlin52.txt it will automatically run with 100 climbers.  
 
-To compile the _sequential implementation_ go to the insert
+To compile the _sequential implementation_ go to the Seqventielt folder and insert
 ```
 make all
 ```
+in terminal. To run the programs different arguments are needed. To run the _ACO_ program insert
+```
+./aco <../Data/dataset.tsp> <number of ants> < number of iterations>
+```
+in terminal with a dataset, a given number of ants and a given number of iterations. To run the _SA_ program insert
+```
+./sa <../Data/dataset.tsp>
+```
+in terminal with a dataset. To run the _2-Opt_ program insert
+```
+./2opt <../Data/dataset.tsp> <number of climbers>
+```
+in terminal with a dataset and a given number og climbers.  
+
+# Abstract
+This project aims to efficiently solve the Travelling Salesman Problem (TSP) on the GPU. A short survey of three popular heuristic algorithms (2-Opt local search, Ant Colony Optimization, and Simulated annealing) is made. 2-Opt was chosen to be parallelized and implemented in CUDA. The 2 opt algorithm uses ”climbers” that start with an initial solution, and improves it until a local optimum has been found. The GPU implementation exploits both degrees of parallelism by assigning one climber to each block and using threads to generate improved solutions. The code is publicly available at https://github.com/henni3/BA-project. The solution is compared with another 2-Opt implementation on the GPU by O’Neil et al. (https://userweb.cs.txstate.edu/~mb92/papers/pdpta11b.pdf) where one climber is assigned one thread, only using the outer parallelism. The project’s solution was also evaluated on the accuracy, based on climbers and utilization of the hardware GPU measured against the big throughput.  
+Compared to the implementation by O’Neil et al., this project achieved up to 27 times speed up ona 100-city data set with 1000 climbers but falls off for greater numbers of climbers. The accuracy of the solutions was also within < 5% of the optimal solution for 1000 climbers, indicating that a greater number of climbers for some data sets might not be necessary. Our implementation does not reach the big throughput of the GPU of 1555 GB/s for smaller data sets with < 100 cites, but for bigger data sets, the implementation exceeds the big throughput, since the majority of memory accesses happen to faster L2 cache. This shows that the implementation fully utilizes the GPU.
+
