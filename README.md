@@ -3,10 +3,8 @@ Supervisor: Associate Professor, Cosmin Eugen Oance
 Students: Henriette Naledi Winther Hansen and Jóhann Utne
 
 # Structure of Github Repository
-- The _report.pdf_ contains the description of the project and related work. In particular it studies different algorithms to solve the TSP, then choses for this the one most suitable for GPU execution
-
-    , e.g. how to convert the sequential code to parallel code and how to map it efficiently on the GPU hardware, together with a detailed evalution of the GPU performance and accuracy of various strands of se
-- The _CUDA directory_ contains the CUDA implementation of the 2-Opt algorithm, together with publicly available code from O’Neil et.al (https://userweb.cs.txstate.edu/~mb92/papers/pdpta11b.pdf). It also contains the performance data from the performance tests on our version.  
+- The _report.pdf_ document is our BSc thesis: it presents the description of the project including a literature survey on TSP-related work. In particular it presents several algorithms aimed at solving TSP, then it chooses from these the one most suitable for execution on GPU hardware, then it zooms on the parallelization (and optimization) strategy and finally it presents an experiment that systematically evaluates the accuracy and the runtime (GPU) performance of our implementations.
+- The _CUDA directory_ contains the CUDA implementation of the 2-Opt algorithm, together with publicly available code from O’Neil et.al (https://userweb.cs.txstate.edu/~mb92/papers/pdpta11b.pdf).   
 - The _Data directory_, contains all the data sets acquired from the TSBLIB95 library (http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/).  
 - The _Futhark directory_ contains the Futhark implementation of the 2-Opt algorithm.  
 - The _Seqventielt directory_, contains the sequential implementations of the 2-Opt, ACO, and SA algorithms.  
